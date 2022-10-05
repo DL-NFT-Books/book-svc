@@ -3,6 +3,13 @@ post:
     - Books
   summary: Upload Book
   operationId: uploadBook
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+        format: Bearer {token}
+        example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   requestBody:
     content:
       application/json:
@@ -43,6 +50,13 @@ get:
     - Books
   summary: Get books list
   operationId: getBooksList
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+        format: Bearer {token}
+        example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   responses:
     '200':
       description: Success

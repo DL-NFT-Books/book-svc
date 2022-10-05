@@ -10,6 +10,13 @@ get:
     - Books
   summary: Get Book
   operationId: getBook
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+        format: Bearer {token}
+        example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   responses:
     '200':
       description: Success
