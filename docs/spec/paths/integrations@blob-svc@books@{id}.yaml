@@ -1,0 +1,40 @@
+parameters:
+  - name: id
+    in: path
+    description: Book identifier
+    required: true
+    schema:
+      type: integer
+get:
+  tags:
+    - Books
+  summary: Get Book
+  operationId: getBook
+  responses:
+    '200':
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/Book'
+    '400':
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - errors
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetBookError'
+    '404':
+      $ref: '#/components/responses/NotFound'
+    '500':
+      $ref: '#/components/responses/InternalError'
