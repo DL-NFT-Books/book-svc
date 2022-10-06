@@ -2,7 +2,7 @@ log:
   disable_sentry: true
 
 db:
-  url: db_url
+  url: "postgres://book:book@localhost:25432/book?sslmode=disable"
 
 listener:
   addr: :8000
