@@ -13,6 +13,7 @@ type Config interface {
 	pgdb.Databaser
 	types.Copuser
 	comfig.Listenerer
+	JWTConfigurator
 }
 
 type config struct {
@@ -21,14 +22,16 @@ type config struct {
 	types.Copuser
 	comfig.Listenerer
 	getter kv.Getter
+	JWTConfigurator
 }
 
 func New(getter kv.Getter) Config {
 	return &config{
-		getter:     getter,
-		Databaser:  pgdb.NewDatabaser(getter),
-		Copuser:    copus.NewCopuser(getter),
-		Listenerer: comfig.NewListenerer(getter),
-		Logger:     comfig.NewLogger(getter, comfig.LoggerOpts{}),
+		getter:          getter,
+		Databaser:       pgdb.NewDatabaser(getter),
+		Copuser:         copus.NewCopuser(getter),
+		Listenerer:      comfig.NewListenerer(getter),
+		Logger:          comfig.NewLogger(getter, comfig.LoggerOpts{}),
+		JWTConfigurator: NewJWTConfigurator(getter),
 	}
 }

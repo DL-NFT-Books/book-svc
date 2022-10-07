@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"gitlab.com/tokend/nft-books/book-svc/internal/config"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 	"net/http"
 
@@ -13,6 +14,7 @@ type ctxKey int
 const (
 	logCtxKey ctxKey = iota
 	booksQCtxKey
+	jwtCtxKey
 )
 
 func CtxLog(entry *logan.Entry) func(context.Context) context.Context {
@@ -25,6 +27,16 @@ func CtxBooksQ(entry data.BookQ) func(context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, booksQCtxKey, entry)
 	}
+}
+
+func CtxJWT(entry *config.JWT) func(ctx context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, jwtCtxKey, entry)
+	}
+}
+
+func JWT(r *http.Request) *config.JWT {
+	return r.Context().Value(jwtCtxKey).(*config.JWT)
 }
 
 func Log(r *http.Request) *logan.Entry {

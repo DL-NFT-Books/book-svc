@@ -1,12 +1,12 @@
 package service
 
 import (
+	"github.com/go-chi/chi"
+	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/handlers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/helpers"
-
-	"github.com/go-chi/chi"
-	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/tokend/nft-books/book-svc/internal/service/middlewares"
 )
 
 func (s *service) router() chi.Router {
@@ -17,6 +17,10 @@ func (s *service) router() chi.Router {
 		ape.LoganMiddleware(s.log),
 		ape.CtxMiddleware(
 			helpers.CtxLog(s.log),
+			helpers.CtxJWT(s.jwt),
+		),
+		middlewares.CheckAccessToken,
+		ape.CtxMiddleware(
 			helpers.CtxBooksQ(postgres.NewBooksQ(s.db)),
 		),
 	)

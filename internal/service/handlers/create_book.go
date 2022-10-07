@@ -11,20 +11,20 @@ import (
 )
 
 func CreateBook(w http.ResponseWriter, r *http.Request) {
-	//TODO:check auth
-
-	log := helpers.Log(r)
-
 	req, err := requests.NewCreateBookRequest(r)
 	if err != nil {
-		log.WithError(err).Info("invalid request")
+		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
+	err = helpers.CheckMediaTypes(req.Attributes.Banner.Attributes.MimeType, req.Attributes.File.Attributes.MimeType)
+	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
 	media := helpers.MarshalMedia(req.Attributes.Banner, req.Attributes.File)
 	if media == nil {
-		log.WithError(err).Info("failed to marshal media")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
@@ -39,7 +39,6 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	bookID, err := helpers.BooksQ(r).Insert(book)
 	if err != nil {
-		log.WithError(err).Info("failed to save book")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}

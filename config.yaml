@@ -1,8 +1,12 @@
 log:
+  level: debug
   disable_sentry: true
 
 db:
   url: "postgres://book:book@localhost:25432/book?sslmode=disable"
+
+jwt:
+  signature_key: "default"
 
 listener:
   addr: :8000

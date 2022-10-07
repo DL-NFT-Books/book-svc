@@ -8,11 +8,7 @@ import (
 	"net/http"
 )
 
-var (
-	AllowedFileExtensions   = []string{"pdf"}
-	AllowedBannerExtensions = []string{"png", "jpg", "jpeg"}
-	AllowedS3KeyLength      = 36
-)
+const AllowedS3KeyLength = 36
 
 type CreateBookRequest struct {
 	Data resources.Book `json:"data"`
@@ -35,11 +31,11 @@ func (r CreateBookRequest) validate() error {
 		"/data/attributes/price":       validation.Validate(&r.Data.Attributes.Price, validation.Required, validation.Min(0)),
 
 		"/data/attributes/banner/attributes/name":      validation.Validate(&r.Data.Attributes.Banner.Attributes.Name, validation.Required),
-		"/data/attributes/banner/attributes/mime_type": validation.Validate(&r.Data.Attributes.Banner.Attributes.MimeType, validation.Required, validation.In(AllowedBannerExtensions)),
+		"/data/attributes/banner/attributes/mime_type": validation.Validate(&r.Data.Attributes.Banner.Attributes.MimeType, validation.Required),
 		"/data/attributes/banner/attributes/key":       validation.Validate(&r.Data.Attributes.Banner.Attributes.Key, validation.Required, validation.Length(AllowedS3KeyLength, AllowedS3KeyLength)),
 
 		"/data/attributes/file/attributes/name":      validation.Validate(&r.Data.Attributes.File.Attributes.Name, validation.Required),
-		"/data/attributes/file/attributes/mime_type": validation.Validate(&r.Data.Attributes.File.Attributes.MimeType, validation.Required, validation.In(AllowedFileExtensions)),
+		"/data/attributes/file/attributes/mime_type": validation.Validate(&r.Data.Attributes.File.Attributes.MimeType, validation.Required),
 		"/data/attributes/file/attributes/key":       validation.Validate(&r.Data.Attributes.File.Attributes.Key, validation.Required, validation.Length(AllowedS3KeyLength, AllowedS3KeyLength)),
 	}.Filter()
 }

@@ -10,20 +10,14 @@ import (
 )
 
 func GetBookByID(w http.ResponseWriter, r *http.Request) {
-	//TODO:check auth
-
-	log := helpers.Log(r)
-
 	req, err := requests.NewGetBookByIDRequest(r)
 	if err != nil {
-		helpers.Log(r).WithError(err).Info("invalid request")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
 	book, err := helpers.BooksQ(r).FilterByID(req.ID).Get()
 	if err != nil {
-		helpers.Log(r).WithError(err).Error("failed to get book from DB")
 		ape.Render(w, problems.InternalError())
 		return
 	}
@@ -34,7 +28,6 @@ func GetBookByID(w http.ResponseWriter, r *http.Request) {
 
 	result, err := newBook(*book)
 	if err != nil {
-		log.WithError(err).Info("failed to build response")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}

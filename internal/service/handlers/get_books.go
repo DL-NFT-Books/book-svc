@@ -11,20 +11,14 @@ import (
 )
 
 func GetBooks(w http.ResponseWriter, r *http.Request) {
-	//TODO:check auth
-
-	log := helpers.Log(r)
-
 	req, err := requests.NewGetBooksRequest(r)
 	if err != nil {
-		log.WithError(err).Info("invalid request")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
 	books, err := helpers.BooksQ(r).Page(req.OffsetPageParams).Select()
 	if err != nil {
-		log.WithError(err).Info("failed to get books")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
@@ -35,7 +29,6 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 
 	response, err := newBooksList(books)
 	if err != nil {
-		log.WithError(err).Info("failed to build response")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
