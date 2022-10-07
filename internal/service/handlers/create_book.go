@@ -17,13 +17,13 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = helpers.CheckMediaTypes(req.Attributes.Banner.Attributes.MimeType, req.Attributes.File.Attributes.MimeType)
+	err = helpers.CheckMediaTypes(req.Relationships.Banner.Attributes.MimeType, req.Relationships.File.Attributes.MimeType)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	media := helpers.MarshalMedia(req.Attributes.Banner, req.Attributes.File)
+	media := helpers.MarshalMedia(req.Relationships.Banner, req.Relationships.File)
 	if media == nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
@@ -43,7 +43,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req.Key = resources.NewKeyInt64(bookID, resources.BOOK)
+	req.Key = resources.NewKeyInt64(bookID, resources.BOOKS)
 
 	ape.Render(w, resources.BookResponse{
 		Data: req,
@@ -62,13 +62,15 @@ func newBook(book data.Book) (resources.Book, error) {
 	}
 
 	res := resources.Book{
-		Key: resources.NewKeyInt64(book.ID, resources.BOOK),
+		Key: resources.NewKeyInt64(book.ID, resources.BOOKS),
 		Attributes: resources.BookAttributes{
 			Title:       book.Title,
 			Description: book.Description,
 			Price:       book.Price,
-			Banner:      banner,
-			File:        file,
+		},
+		Relationships: resources.BookRelationships{
+			Banner: banner,
+			File:   file,
 		},
 	}
 

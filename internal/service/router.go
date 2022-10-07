@@ -18,13 +18,11 @@ func (s *service) router() chi.Router {
 		ape.CtxMiddleware(
 			helpers.CtxLog(s.log),
 			helpers.CtxJWT(s.jwt),
-		),
-		middlewares.CheckAccessToken,
-		ape.CtxMiddleware(
 			helpers.CtxBooksQ(postgres.NewBooksQ(s.db)),
 		),
+		middlewares.CheckAccessToken,
 	)
-	r.Route("/integrations/book-svc", func(r chi.Router) {
+	r.Route("/integrations", func(r chi.Router) {
 		r.Route("/books", func(r chi.Router) {
 			r.Post("/", handlers.CreateBook)
 			r.Get("/", handlers.GetBooks)

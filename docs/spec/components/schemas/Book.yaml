@@ -3,6 +3,7 @@ allOf:
   - type: object
     required:
       - attributes
+      - relationships
     properties:
       attributes:
         type: object
@@ -10,8 +11,6 @@ allOf:
           - title
           - description
           - price
-          - banner
-          - file
         properties:
           title:
             type: string
@@ -25,6 +24,12 @@ allOf:
             type: integer
             description: Book price ($)
             example: 100
+      relationships:
+        type: object
+        required:
+          - banner
+          - file
+        properties:
           banner:
             $ref: '#/components/schemas/Media'
           file:

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
+	"strings"
 )
 
 var (
@@ -32,13 +33,23 @@ func UnmarshalMedia(media string) (resources.Media, error) {
 	return res, err
 }
 
-func CheckMediaTypes(bannerExt, fileExt string) error {
-	err := checkBannerMimeType(bannerExt)
+func CheckMediaTypes(banner, file string) error {
+	bannerExt := strings.Split(banner, "/")
+	if len(bannerExt) != 2 {
+		return errors.New("invalid mime type")
+	}
+
+	err := checkBannerMimeType(bannerExt[1])
 	if err != nil {
 		return err
 	}
 
-	return checkFileMimeType(fileExt)
+	fileExt := strings.Split(file, "/")
+	if len(bannerExt) != 2 {
+		return errors.New("invalid mime type")
+	}
+
+	return checkFileMimeType(fileExt[1])
 }
 
 func checkBannerMimeType(ext string) error {

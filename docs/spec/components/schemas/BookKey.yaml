@@ -5,6 +5,4 @@ properties:
   type:
     type: string
     enum:
-      - book
-  id:
-    type: integer
+      - books

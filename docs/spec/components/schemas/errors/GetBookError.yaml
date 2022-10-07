@@ -24,13 +24,6 @@ properties:
       Application-specific error code, expressed as a string value
   
 
-  #      General Request Codes:
-  #      * "wrong_file type"
-  #      * "invalid_document_request"
-  #      * "invalid_address"
-  #      * "invalid_puprose"
-  #      * "invalid_type"
-
   meta:
     type: object
     description: "Object containing non-standard meta-information about the error"
