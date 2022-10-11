@@ -19,6 +19,7 @@ func (s *service) router() chi.Router {
 			helpers.CtxLog(s.log),
 			helpers.CtxJWT(s.jwt),
 			helpers.CtxBooksQ(postgres.NewBooksQ(s.db)),
+			helpers.CtxMimeTypes(s.mimeTypes),
 		),
 		middlewares.CheckAccessToken,
 	)

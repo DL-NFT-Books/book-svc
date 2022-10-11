@@ -15,6 +15,7 @@ const (
 	logCtxKey ctxKey = iota
 	booksQCtxKey
 	jwtCtxKey
+	mimeTypesCtxKey
 )
 
 func CtxLog(entry *logan.Entry) func(context.Context) context.Context {
@@ -33,6 +34,16 @@ func CtxJWT(entry *config.JWT) func(ctx context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, jwtCtxKey, entry)
 	}
+}
+
+func CtxMimeTypes(entry *config.MimeTypes) func(ctx context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, mimeTypesCtxKey, entry)
+	}
+}
+
+func MimeTypes(r *http.Request) *config.MimeTypes {
+	return r.Context().Value(mimeTypesCtxKey).(*config.MimeTypes)
 }
 
 func JWT(r *http.Request) *config.JWT {

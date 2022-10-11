@@ -1,5 +1,4 @@
 log:
-  level: debug
   disable_sentry: true
 
 db:
@@ -7,6 +6,14 @@ db:
 
 jwt:
   signature_key: "default"
+
+mime_types:
+  banner:
+    - img/png
+    - img/jpeg
+    - img/jpg
+  file:
+    - application/pdf
 
 listener:
   addr: :8000

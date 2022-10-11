@@ -4,11 +4,7 @@ import (
 	"encoding/json"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
-)
-
-var (
-	AllowedFileExtensions   = []string{"application/pdf"}
-	AllowedBannerExtensions = []string{"img/png", "img/jpg", "img/jpeg"}
+	"net/http"
 )
 
 func MarshalMedia(media ...*resources.Media) []string {
@@ -41,17 +37,17 @@ func UnmarshalMedia(media ...string) ([]resources.Media, error) {
 	return res, nil
 }
 
-func CheckMediaTypes(bannerExt, fileExt string) error {
-	err := checkBannerMimeType(bannerExt)
+func CheckMediaTypes(r *http.Request, bannerExt, fileExt string) error {
+	err := checkBannerMimeType(bannerExt, r)
 	if err != nil {
 		return err
 	}
 
-	return checkFileMimeType(fileExt)
+	return checkFileMimeType(fileExt, r)
 }
 
-func checkBannerMimeType(ext string) error {
-	for _, el := range AllowedBannerExtensions {
+func checkBannerMimeType(ext string, r *http.Request) error {
+	for _, el := range MimeTypes(r).AllowedBannerMimeTypes {
 		if el == ext {
 			return nil
 		}
@@ -59,8 +55,8 @@ func checkBannerMimeType(ext string) error {
 	return errors.New("invalid banner extension")
 }
 
-func checkFileMimeType(ext string) error {
-	for _, el := range AllowedFileExtensions {
+func checkFileMimeType(ext string, r *http.Request) error {
+	for _, el := range MimeTypes(r).AllowedFileMimeTypes {
 		if el == ext {
 			return nil
 		}

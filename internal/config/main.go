@@ -14,6 +14,7 @@ type Config interface {
 	types.Copuser
 	comfig.Listenerer
 	JWTConfigurator
+	MimeTypesConfigurator
 }
 
 type config struct {
@@ -23,15 +24,17 @@ type config struct {
 	comfig.Listenerer
 	getter kv.Getter
 	JWTConfigurator
+	MimeTypesConfigurator
 }
 
 func New(getter kv.Getter) Config {
 	return &config{
-		getter:          getter,
-		Databaser:       pgdb.NewDatabaser(getter),
-		Copuser:         copus.NewCopuser(getter),
-		Listenerer:      comfig.NewListenerer(getter),
-		Logger:          comfig.NewLogger(getter, comfig.LoggerOpts{}),
-		JWTConfigurator: NewJWTConfigurator(getter),
+		getter:                getter,
+		Databaser:             pgdb.NewDatabaser(getter),
+		Copuser:               copus.NewCopuser(getter),
+		Listenerer:            comfig.NewListenerer(getter),
+		Logger:                comfig.NewLogger(getter, comfig.LoggerOpts{}),
+		JWTConfigurator:       NewJWTConfigurator(getter),
+		MimeTypesConfigurator: NewMimeTypesConfigurator(getter),
 	}
 }

@@ -17,7 +17,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = helpers.CheckMediaTypes(req.Banner.Attributes.MimeType, req.File.Attributes.MimeType)
+	err = helpers.CheckMediaTypes(r, req.Banner.Attributes.MimeType, req.File.Attributes.MimeType)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return

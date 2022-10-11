@@ -13,11 +13,12 @@ import (
 )
 
 type service struct {
-	log      *logan.Entry
-	copus    types.Copus
-	listener net.Listener
-	db       *pgdb.DB
-	jwt      *config.JWT
+	log       *logan.Entry
+	copus     types.Copus
+	listener  net.Listener
+	db        *pgdb.DB
+	jwt       *config.JWT
+	mimeTypes *config.MimeTypes
 }
 
 func (s *service) run() error {
@@ -33,11 +34,12 @@ func (s *service) run() error {
 
 func newService(cfg config.Config) *service {
 	return &service{
-		log:      cfg.Log(),
-		copus:    cfg.Copus(),
-		listener: cfg.Listener(),
-		db:       cfg.DB(),
-		jwt:      cfg.JWT(),
+		log:       cfg.Log(),
+		copus:     cfg.Copus(),
+		listener:  cfg.Listener(),
+		db:        cfg.DB(),
+		jwt:       cfg.JWT(),
+		mimeTypes: cfg.MimeTypes(),
 	}
 }
 
