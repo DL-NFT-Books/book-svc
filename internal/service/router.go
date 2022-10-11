@@ -22,13 +22,11 @@ func (s *service) router() chi.Router {
 		),
 		middlewares.CheckAccessToken,
 	)
-	r.Route("/integrations", func(r chi.Router) {
-		r.Route("/books", func(r chi.Router) {
-			r.Post("/", handlers.CreateBook)
-			r.Get("/", handlers.GetBooks)
-			r.Route("/{id}", func(r chi.Router) {
-				r.Get("/", handlers.GetBookByID)
-			})
+	r.Route("/integrations/books", func(r chi.Router) {
+		r.Post("/", handlers.CreateBook)
+		r.Get("/", handlers.GetBooks)
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", handlers.GetBookByID)
 		})
 	})
 

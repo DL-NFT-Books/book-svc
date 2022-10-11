@@ -28,6 +28,10 @@ get:
               data:
                 type: object
                 $ref: '#/components/schemas/Book'
+              included:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Media'
     '400':
       description: Bad Request
       content:

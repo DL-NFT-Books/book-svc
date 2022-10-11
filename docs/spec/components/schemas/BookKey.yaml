@@ -6,3 +6,6 @@ properties:
     type: string
     enum:
       - books
+  id:
+    type: string
+    example: "1"

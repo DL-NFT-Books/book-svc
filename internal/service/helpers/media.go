@@ -11,7 +11,7 @@ var (
 	AllowedBannerExtensions = []string{"img/png", "img/jpg", "img/jpeg"}
 )
 
-func MarshalMedia(media ...resources.Media) []string {
+func MarshalMedia(media ...*resources.Media) []string {
 	var res []string
 
 	for _, v := range media {
@@ -26,10 +26,19 @@ func MarshalMedia(media ...resources.Media) []string {
 	return res
 }
 
-func UnmarshalMedia(media string) (resources.Media, error) {
-	var res resources.Media
-	err := json.Unmarshal([]byte(media), &res)
-	return res, err
+func UnmarshalMedia(media ...string) ([]resources.Media, error) {
+	var res []resources.Media
+	var unmarshalledMedia resources.Media
+
+	for _, value := range media {
+		err := json.Unmarshal([]byte(value), &unmarshalledMedia)
+		if err != nil {
+			return nil, err
+		}
+
+		res = append(res, unmarshalledMedia)
+	}
+	return res, nil
 }
 
 func CheckMediaTypes(bannerExt, fileExt string) error {

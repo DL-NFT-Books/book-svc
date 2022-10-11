@@ -31,6 +31,12 @@ allOf:
           - file
         properties:
           banner:
-            $ref: '#/components/schemas/Media'
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/BannerKey'
           file:
-            $ref: '#/components/schemas/Media'
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/FileKey'

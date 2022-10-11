@@ -19,6 +19,10 @@ post:
             data:
               type: object
               $ref: '#/components/schemas/Book'
+            included:
+              type: array
+              items:
+                $ref: '#/components/schemas/Media'
   responses:
     '200':
       description: Success
@@ -30,6 +34,10 @@ post:
               data:
                 type: object
                 $ref: '#/components/schemas/Book'
+              included:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Media'
     '400':
       description: Bad Request
       content:
@@ -69,6 +77,10 @@ get:
                 type: array
                 items:
                   $ref: '#/components/schemas/Book'
+              included:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Media'
     '404':
       $ref: '#/components/responses/NotFound'
     '500':

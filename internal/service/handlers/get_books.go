@@ -27,26 +27,36 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := newBooksList(books)
+	data, included, err := newBooksList(books)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
 	ape.Render(w, resources.BookListResponse{
-		Data: response,
+		Data:     data,
+		Included: included,
 	})
 }
 
-func newBooksList(books []data.Book) ([]resources.Book, error) {
-	res := make([]resources.Book, len(books))
+func newBooksList(books []data.Book) ([]resources.Book, resources.Included, error) {
+	data := make([]resources.Book, len(books))
+	included := resources.Included{}
+
 	for i, book := range books {
-		responseBook, err := newBook(book)
+		media, err := helpers.UnmarshalMedia(book.Banner, book.File)
 		if err != nil {
-			return nil, err
+			return nil, resources.Included{}, err
 		}
-		res[i] = responseBook
+
+		responseBook, err := newBook(book, media[0].GetKey(), media[1].GetKey())
+		if err != nil {
+			return nil, resources.Included{}, err
+		}
+
+		data[i] = responseBook
+		included.Add(&media[0], &media[1])
 	}
 
-	return res, nil
+	return data, included, nil
 }

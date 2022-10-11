@@ -1,5 +1,7 @@
-allOf:
-  - $ref: '#/components/schemas/MediaKey'
+allOf: #oneOf
+  - oneOf:
+      - $ref: '#/components/schemas/FileKey'
+      - $ref: '#/components/schemas/BannerKey'
   - type: object
     required:
       - attributes

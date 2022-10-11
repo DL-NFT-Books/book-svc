@@ -8,20 +8,28 @@ import (
 	"net/http"
 )
 
-const AllowedS3KeyLength = 36
+const (
+	AllowedS3KeyLength = 36
+)
 
 type CreateBookRequest struct {
-	Data resources.Book `json:"data"`
+	Data     resources.Book     `json:"data"`
+	Included resources.Included `json:"included"`
+	File     *resources.Media   `json:"file"`
+	Banner   *resources.Media   `json:"banner"`
 }
 
-func NewCreateBookRequest(r *http.Request) (resources.Book, error) {
+func NewCreateBookRequest(r *http.Request) (CreateBookRequest, error) {
 	var req CreateBookRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		return resources.Book{}, errors.Wrap(err, "failed to decode request")
+		return CreateBookRequest{}, errors.Wrap(err, "failed to decode request")
 	}
 
-	return req.Data, req.validate()
+	req.File = req.Included.MustMedia(req.Data.Relationships.File.Data.GetKey())
+	req.Banner = req.Included.MustMedia(req.Data.Relationships.Banner.Data.GetKey())
+
+	return req, req.validate()
 }
 
 func (r CreateBookRequest) validate() error {
@@ -30,12 +38,12 @@ func (r CreateBookRequest) validate() error {
 		"/data/attributes/description": validation.Validate(&r.Data.Attributes.Description, validation.Required),
 		"/data/attributes/price":       validation.Validate(&r.Data.Attributes.Price, validation.Required, validation.Min(0)),
 
-		"/data/relationships/banner/attributes/name":      validation.Validate(&r.Data.Relationships.Banner.Attributes.Name, validation.Required),
-		"/data/relationships/banner/attributes/mime_type": validation.Validate(&r.Data.Relationships.Banner.Attributes.MimeType, validation.Required),
-		"/data/relationships/banner/attributes/key":       validation.Validate(&r.Data.Relationships.Banner.Attributes.Key, validation.Required, validation.Length(AllowedS3KeyLength, AllowedS3KeyLength)),
+		"/included/banner/attributes/name":      validation.Validate(&r.Banner.Attributes.Name, validation.Required),
+		"/included/banner/attributes/mime_type": validation.Validate(&r.Banner.Attributes.MimeType, validation.Required),
+		"included/banner/attributes/key":        validation.Validate(&r.Banner.Attributes.Key, validation.Required, validation.Length(AllowedS3KeyLength, AllowedS3KeyLength)),
 
-		"/data/relationships/file/attributes/name":      validation.Validate(&r.Data.Relationships.File.Attributes.Name, validation.Required),
-		"/data/relationships/file/attributes/mime_type": validation.Validate(&r.Data.Relationships.File.Attributes.MimeType, validation.Required),
-		"/data/relationships/file/attributes/key":       validation.Validate(&r.Data.Relationships.File.Attributes.Key, validation.Required, validation.Length(AllowedS3KeyLength, AllowedS3KeyLength)),
+		"/included/file/attributes/name":      validation.Validate(&r.File.Attributes.Name, validation.Required),
+		"/included/file/attributes/mime_type": validation.Validate(&r.File.Attributes.MimeType, validation.Required),
+		"/included/file/attributes/key":       validation.Validate(&r.File.Attributes.Key, validation.Required, validation.Length(AllowedS3KeyLength, AllowedS3KeyLength)),
 	}.Filter()
 }

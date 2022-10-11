@@ -17,22 +17,22 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = helpers.CheckMediaTypes(req.Relationships.Banner.Attributes.MimeType, req.Relationships.File.Attributes.MimeType)
+	err = helpers.CheckMediaTypes(req.Banner.Attributes.MimeType, req.File.Attributes.MimeType)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	media := helpers.MarshalMedia(req.Relationships.Banner, req.Relationships.File)
+	media := helpers.MarshalMedia(req.Banner, req.File)
 	if media == nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
 	book := data.Book{
-		Title:       req.Attributes.Title,
-		Description: req.Attributes.Description,
-		Price:       req.Attributes.Price,
+		Title:       req.Data.Attributes.Title,
+		Description: req.Data.Attributes.Description,
+		Price:       req.Data.Attributes.Price,
 		Banner:      media[0],
 		File:        media[1],
 	}
@@ -43,23 +43,18 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req.Key = resources.NewKeyInt64(bookID, resources.BOOKS)
+	req.Data.Key = resources.NewKeyInt64(bookID, resources.BOOKS)
+
+	included := resources.Included{}
+	included.Add(req.Banner, req.File)
 
 	ape.Render(w, resources.BookResponse{
-		Data: req,
+		Data:     req.Data,
+		Included: included,
 	})
 }
 
-func newBook(book data.Book) (resources.Book, error) {
-	banner, err := helpers.UnmarshalMedia(book.Banner)
-	if err != nil {
-		return resources.Book{}, err
-	}
-
-	file, err := helpers.UnmarshalMedia(book.File)
-	if err != nil {
-		return resources.Book{}, err
-	}
+func newBook(book data.Book, bannerKey, fileKey resources.Key) (resources.Book, error) {
 
 	res := resources.Book{
 		Key: resources.NewKeyInt64(book.ID, resources.BOOKS),
@@ -69,8 +64,12 @@ func newBook(book data.Book) (resources.Book, error) {
 			Price:       book.Price,
 		},
 		Relationships: resources.BookRelationships{
-			Banner: banner,
-			File:   file,
+			Banner: resources.Relation{
+				Data: &bannerKey,
+			},
+			File: resources.Relation{
+				Data: &fileKey,
+			},
 		},
 	}
 
