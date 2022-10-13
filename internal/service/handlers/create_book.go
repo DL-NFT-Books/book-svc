@@ -44,6 +44,10 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req.Data.Key = resources.NewKeyInt64(bookID, resources.BOOKS)
+	req.Banner.Key = resources.NewKeyInt64(bookID, resources.BANNER)
+	req.Data.Relationships.Banner.Data = &req.Banner.Key
+	req.File.Key = resources.NewKeyInt64(bookID, resources.FILE)
+	req.Data.Relationships.File.Data = &req.File.Key
 
 	included := resources.Included{}
 	included.Add(req.Banner, req.File)
@@ -54,7 +58,9 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func newBook(book data.Book, bannerKey, fileKey resources.Key) (resources.Book, error) {
+func newBook(book data.Book) (resources.Book, error) {
+	bannerKey := resources.NewKeyInt64(book.ID, resources.BANNER)
+	documentKey := resources.NewKeyInt64(book.ID, resources.FILE)
 
 	res := resources.Book{
 		Key: resources.NewKeyInt64(book.ID, resources.BOOKS),
@@ -68,7 +74,7 @@ func newBook(book data.Book, bannerKey, fileKey resources.Key) (resources.Book, 
 				Data: &bannerKey,
 			},
 			File: resources.Relation{
-				Data: &fileKey,
+				Data: &documentKey,
 			},
 		},
 	}

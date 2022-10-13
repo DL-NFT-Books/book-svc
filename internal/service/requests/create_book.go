@@ -9,7 +9,9 @@ import (
 )
 
 const (
-	AllowedS3KeyLength = 36
+	S3KeyLength  = 36
+	MinExtLength = 3
+	MaxExtLength = 4
 )
 
 type CreateBookRequest struct {
@@ -40,10 +42,16 @@ func (r CreateBookRequest) validate() error {
 
 		"/included/banner/attributes/name":      validation.Validate(&r.Banner.Attributes.Name, validation.Required),
 		"/included/banner/attributes/mime_type": validation.Validate(&r.Banner.Attributes.MimeType, validation.Required),
-		"included/banner/attributes/key":        validation.Validate(&r.Banner.Attributes.Key, validation.Required, validation.Length(AllowedS3KeyLength, AllowedS3KeyLength)),
+		"included/banner/attributes/key": validation.Validate(
+			&r.Banner.Attributes.Key,
+			validation.Required,
+			validation.Length(S3KeyLength+1+MinExtLength, S3KeyLength+1+MaxExtLength)), //include '.'
 
 		"/included/file/attributes/name":      validation.Validate(&r.File.Attributes.Name, validation.Required),
 		"/included/file/attributes/mime_type": validation.Validate(&r.File.Attributes.MimeType, validation.Required),
-		"/included/file/attributes/key":       validation.Validate(&r.File.Attributes.Key, validation.Required, validation.Length(AllowedS3KeyLength, AllowedS3KeyLength)),
+		"/included/file/attributes/key": validation.Validate(
+			&r.File.Attributes.Key,
+			validation.Required,
+			validation.Length(S3KeyLength+1+MinExtLength, S3KeyLength+1+MaxExtLength)), //include '.'
 	}.Filter()
 }

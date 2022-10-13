@@ -49,12 +49,15 @@ func newBooksList(books []data.Book) ([]resources.Book, resources.Included, erro
 			return nil, resources.Included{}, err
 		}
 
-		responseBook, err := newBook(book, media[0].GetKey(), media[1].GetKey())
+		responseBook, err := newBook(book)
 		if err != nil {
 			return nil, resources.Included{}, err
 		}
 
 		data[i] = responseBook
+
+		media[0].Key = resources.NewKeyInt64(book.ID, resources.BANNER)
+		media[1].Key = resources.NewKeyInt64(book.ID, resources.FILE)
 		included.Add(&media[0], &media[1])
 	}
 

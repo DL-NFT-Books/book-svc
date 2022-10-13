@@ -9,9 +9,9 @@ jwt:
 
 mime_types:
   banner:
-    - img/png
-    - img/jpeg
-    - img/jpg
+    - image/png
+    - image/jpeg
+    - image/jpg
   file:
     - application/pdf
 

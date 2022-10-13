@@ -32,11 +32,14 @@ func GetBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := newBook(*book, media[0].GetKey(), media[1].GetKey())
+	data, err := newBook(*book)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
+
+	media[0].Key = resources.NewKeyInt64(book.ID, resources.BANNER)
+	media[1].Key = resources.NewKeyInt64(book.ID, resources.FILE)
 
 	included := resources.Included{}
 	included.Add(&media[0], &media[1])
