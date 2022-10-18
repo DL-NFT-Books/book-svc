@@ -7,15 +7,21 @@ type BookQ interface {
 	Insert(data Book) (int64, error)
 	Get() (*Book, error)
 	Select() ([]Book, error)
+	Update(data Book) error
+	DeleteByID(id int64) error
 	FilterByID(id int64) BookQ
+	// do not include deleted books
+	FilterActual() BookQ
 	Page(params pgdb.OffsetPageParams) BookQ
 }
 
 type Book struct {
-	ID          int64  `db:"id" structs:"-"`
-	Title       string `db:"title" structs:"title"`
-	Description string `db:"description" structs:"description"`
-	Price       string `db:"price" structs:"price"`
-	Banner      string `db:"banner" structs:"banner"`
-	File        string `db:"file" structs:"file"`
+	ID              int64  `db:"id" structs:"-"`
+	Title           string `db:"title" structs:"title"`
+	Description     string `db:"description" structs:"description"`
+	Price           string `db:"price" structs:"price"`
+	ContractAddress string `db:"contract_address" structs:"contract_address"`
+	Banner          string `db:"banner" structs:"banner"`
+	File            string `db:"file" structs:"file"`
+	Deleted         bool   `db:"deleted" structs:"-"`
 }

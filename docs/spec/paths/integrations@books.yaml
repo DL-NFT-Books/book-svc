@@ -51,6 +51,13 @@ post:
                 type: array
                 items:
                   $ref: '#/components/schemas/CreateBookError'
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: "#/components/schemas/UnauthorizedError"
     '500':
       $ref: '#/components/responses/InternalError'
 get:
@@ -58,13 +65,6 @@ get:
     - Books
   summary: Get books list
   operationId: getBooksList
-  parameters:
-    - in: header
-      name: Authorization
-      schema:
-        type: string
-        format: Bearer {token}
-        example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   responses:
     '200':
       description: Success

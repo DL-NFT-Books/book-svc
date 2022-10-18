@@ -4,8 +4,10 @@ CREATE TABLE book(
     title VARCHAR(64) NOT NULL,
     description VARCHAR(500) NOT NULL,
     price VARCHAR(30) NOT NULL,
+    contract_address VARCHAR(42) NOT NULL,
     banner JSONB NOT NULL,
-    file JSONB NOT NULL
+    file JSONB NOT NULL,
+    deleted BOOLEAN NOT NULL DEFAULT 'f'
 );
 -- +migrate Down
 DROP TABLE book;

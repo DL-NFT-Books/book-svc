@@ -18,7 +18,7 @@ func GetBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	book, err := helpers.BooksQ(r).FilterByID(req.ID).Get()
+	book, err := helpers.GetBookByID(r, req.ID)
 	if err != nil {
 		ape.Render(w, problems.InternalError())
 		return
@@ -34,7 +34,7 @@ func GetBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := newBook(book)
+	data, err := helpers.NewBook(book)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

@@ -5,17 +5,31 @@ import (
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/helpers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/requests"
-	"gitlab.com/tokend/nft-books/book-svc/resources"
 )
 
-func CreateBook(w http.ResponseWriter, r *http.Request) {
-	req, err := requests.NewCreateBookRequest(r)
+func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
+	req, err := requests.NewUpdateBookRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
+	book, err := helpers.GetBookByID(r, req.ID)
+	if err != nil {
+		ape.Render(w, problems.InternalError())
+		return
+	}
+	if book == nil {
+		ape.Render(w, problems.NotFound())
+		return
+	}
+
+	// check if token contract address is not changed
+	if book.ContractAddress != req.Data.Attributes.ContractAddress {
+		ape.Render(w, problems.Conflict())
 		return
 	}
 
@@ -31,7 +45,8 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	book := data.Book{
+	bookToUpdate := data.Book{
+		ID:              req.ID,
 		Title:           req.Data.Attributes.Title,
 		Description:     req.Data.Attributes.Description,
 		Price:           req.Data.Attributes.Price,
@@ -40,23 +55,11 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		File:            media[1],
 	}
 
-	bookID, err := helpers.BooksQ(r).Insert(book)
+	err = helpers.BooksQ(r).Update(bookToUpdate)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
-	req.Data.Key = resources.NewKeyInt64(bookID, resources.BOOKS)
-	req.Banner.Key = resources.NewKeyInt64(bookID, resources.BANNER)
-	req.Data.Relationships.Banner.Data = &req.Banner.Key
-	req.File.Key = resources.NewKeyInt64(bookID, resources.FILE)
-	req.Data.Relationships.File.Data = &req.File.Key
-
-	included := resources.Included{}
-	included.Add(req.Banner, req.File)
-
-	ape.Render(w, resources.BookResponse{
-		Data:     req.Data,
-		Included: included,
-	})
+	ape.Render(w, http.StatusNoContent)
 }

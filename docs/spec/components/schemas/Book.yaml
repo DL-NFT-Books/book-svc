@@ -11,6 +11,7 @@ allOf:
           - title
           - description
           - price
+          - contract_address
         properties:
           title:
             type: string
@@ -24,6 +25,10 @@ allOf:
             type: string
             description: Book price ($)
             example: "10050"
+          contract_address:
+            type: string
+            description: ERC-20 token contract address
+            example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
       relationships:
         type: object
         required:

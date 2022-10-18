@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
+
 	"github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -64,4 +65,28 @@ func (b *BooksQ) FilterByID(id int64) data.BookQ {
 func (b *BooksQ) Page(params pgdb.OffsetPageParams) data.BookQ {
 	b.sql = params.ApplyTo(b.sql, "id")
 	return b
+}
+
+func (b *BooksQ) FilterActual() data.BookQ {
+	b.sql = b.sql.Where(squirrel.Eq{"b.deleted": "f"})
+	return b
+}
+
+func (b *BooksQ) DeleteByID(id int64) error {
+	stmt := squirrel.
+		Update(booksTableName).
+		Set("deleted", "t").
+		Where(squirrel.Eq{"id": id})
+
+	return b.db.Exec(stmt)
+}
+
+func (b *BooksQ) Update(data data.Book) error {
+	clauses := structs.Map(data)
+	stmt := squirrel.
+		Update(booksTableName).
+		SetMap(clauses).
+		Where(squirrel.Eq{"id": data.ID})
+
+	return b.db.Exec(stmt)
 }

@@ -6,6 +6,7 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/handlers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/helpers"
+	"gitlab.com/tokend/nft-books/book-svc/internal/service/middlewares"
 )
 
 func (s *service) router() chi.Router {
@@ -22,10 +23,12 @@ func (s *service) router() chi.Router {
 		),
 	)
 	r.Route("/integrations/books", func(r chi.Router) {
-		r.Post("/", handlers.CreateBook)
+		r.With(middlewares.CheckAccessToken).Post("/", handlers.CreateBook)
 		r.Get("/", handlers.GetBooks)
 		r.Route("/{id}", func(r chi.Router) {
 			r.Get("/", handlers.GetBookByID)
+			r.With(middlewares.CheckAccessToken).Patch("/", handlers.UpdateBookByID)
+			r.With(middlewares.CheckAccessToken).Delete("/", handlers.DeleteBookByID)
 		})
 	})
 

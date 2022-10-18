@@ -5,6 +5,8 @@
 package resources
 
 type BookAttributes struct {
+	// ERC-20 token contract address
+	ContractAddress string `json:"contract_address"`
 	// Book description
 	Description string `json:"description"`
 	// Book price ($)
