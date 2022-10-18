@@ -1,13 +1,15 @@
 package handlers
 
 import (
-	"gitlab.com/distributed_lab/ape"
-	"gitlab.com/distributed_lab/ape/problems"
+	"net/http"
+
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/helpers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/requests"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
-	"net/http"
+
+	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
 )
 
 func GetBooks(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +25,7 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if books == nil {
-		ape.Render(w, problems.NotFound())
+		ape.Render(w, books)
 		return
 	}
 
@@ -49,7 +51,7 @@ func newBooksList(books []data.Book) ([]resources.Book, resources.Included, erro
 			return nil, resources.Included{}, err
 		}
 
-		responseBook, err := newBook(book)
+		responseBook, err := newBook(&book)
 		if err != nil {
 			return nil, resources.Included{}, err
 		}

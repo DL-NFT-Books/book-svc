@@ -6,7 +6,6 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/handlers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/helpers"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/middlewares"
 )
 
 func (s *service) router() chi.Router {
@@ -21,7 +20,6 @@ func (s *service) router() chi.Router {
 			helpers.CtxBooksQ(postgres.NewBooksQ(s.db)),
 			helpers.CtxMimeTypes(s.mimeTypes),
 		),
-		middlewares.CheckAccessToken,
 	)
 	r.Route("/integrations/books", func(r chi.Router) {
 		r.Post("/", handlers.CreateBook)

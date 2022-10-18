@@ -9,9 +9,11 @@ import (
 )
 
 const (
-	S3KeyLength  = 36
-	MinExtLength = 3
-	MaxExtLength = 4
+	S3KeyLength          = 36
+	MinExtLength         = 3
+	MaxExtLength         = 4
+	MaxTitleLength       = 64
+	MaxDescriptionLength = 500
 )
 
 type CreateBookRequest struct {
@@ -36,9 +38,9 @@ func NewCreateBookRequest(r *http.Request) (CreateBookRequest, error) {
 
 func (r CreateBookRequest) validate() error {
 	return validation.Errors{
-		"/data/attributes/title":       validation.Validate(&r.Data.Attributes.Title, validation.Required),
-		"/data/attributes/description": validation.Validate(&r.Data.Attributes.Description, validation.Required),
-		"/data/attributes/price":       validation.Validate(&r.Data.Attributes.Price, validation.Required, validation.Min(0)),
+		"/data/attributes/title":       validation.Validate(&r.Data.Attributes.Title, validation.Required, validation.Length(1, MaxTitleLength)),
+		"/data/attributes/description": validation.Validate(&r.Data.Attributes.Description, validation.Required, validation.Length(1, MaxDescriptionLength)),
+		"/data/attributes/price":       validation.Validate(&r.Data.Attributes.Price, validation.Required),
 
 		"/included/banner/attributes/name":      validation.Validate(&r.Banner.Attributes.Name, validation.Required),
 		"/included/banner/attributes/mime_type": validation.Validate(&r.Banner.Attributes.MimeType, validation.Required),

@@ -58,7 +58,11 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func newBook(book data.Book) (resources.Book, error) {
+func newBook(book *data.Book) (resources.Book, error) {
+	if book == nil {
+		return resources.Book{}, nil
+	}
+
 	bannerKey := resources.NewKeyInt64(book.ID, resources.BANNER)
 	documentKey := resources.NewKeyInt64(book.ID, resources.FILE)
 

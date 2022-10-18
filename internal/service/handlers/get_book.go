@@ -1,12 +1,14 @@
 package handlers
 
 import (
-	"gitlab.com/distributed_lab/ape"
-	"gitlab.com/distributed_lab/ape/problems"
+	"net/http"
+
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/helpers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/requests"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
-	"net/http"
+
+	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
 )
 
 func GetBookByID(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +34,7 @@ func GetBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := newBook(*book)
+	data, err := newBook(book)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

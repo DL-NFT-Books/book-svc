@@ -21,9 +21,9 @@ allOf:
             description: Book description
             example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
           price:
-            type: integer
+            type: string
             description: Book price ($)
-            example: 100
+            example: "10050"
       relationships:
         type: object
         required:
