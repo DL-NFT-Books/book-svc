@@ -55,10 +55,12 @@ func (r CreateBookRequest) validate() error {
 			&r.Data.Attributes.ContractAddress,
 			validation.Required,
 			validation.Match(AddressRegexp)),
+		"/data/attributes/contract_name":    validation.Validate(&r.Data.Attributes.ContractName, validation.Required),
+		"/data/attributes/contract_version": validation.Validate(&r.Data.Attributes.ContractVersion, validation.Required),
 
 		"/included/banner/attributes/name":      validation.Validate(&r.Banner.Attributes.Name, validation.Required),
 		"/included/banner/attributes/mime_type": validation.Validate(&r.Banner.Attributes.MimeType, validation.Required),
-		"included/banner/attributes/key": validation.Validate(
+		"/included/banner/attributes/key": validation.Validate(
 			&r.Banner.Attributes.Key,
 			validation.Required,
 			validation.Length(S3KeyLength+1+MinExtLength, S3KeyLength+1+MaxExtLength)), //include '.'

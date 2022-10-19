@@ -132,6 +132,6 @@ patch:
     '404':
       $ref: '#/components/responses/NotFound'
     '409':
-      description: Conflict, cannot change token contract address
+      description: Conflict, cannot change token contract address or name
     '500':
       $ref: '#/components/responses/InternalError'

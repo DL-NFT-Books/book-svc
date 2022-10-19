@@ -56,6 +56,8 @@ func NewBook(book *data.Book) (resources.Book, error) {
 			Description:     book.Description,
 			Price:           book.Price,
 			ContractAddress: book.ContractAddress,
+			ContractName:    book.ContractName,
+			ContractVersion: book.ContractVersion,
 		},
 		Relationships: resources.BookRelationships{
 			Banner: resources.Relation{

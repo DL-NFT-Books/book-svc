@@ -36,6 +36,8 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		Description:     req.Data.Attributes.Description,
 		Price:           req.Data.Attributes.Price,
 		ContractAddress: req.Data.Attributes.ContractAddress,
+		ContractName:    req.Data.Attributes.ContractName,
+		ContractVersion: req.Data.Attributes.ContractVersion,
 		Banner:          media[0],
 		File:            media[1],
 	}
