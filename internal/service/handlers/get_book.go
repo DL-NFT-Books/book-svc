@@ -40,8 +40,8 @@ func GetBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	media[0].Key = resources.NewKeyInt64(book.ID, resources.BANNER)
-	media[1].Key = resources.NewKeyInt64(book.ID, resources.FILE)
+	media[0].Key = resources.NewKeyInt64(book.ID, resources.BANNERS)
+	media[1].Key = resources.NewKeyInt64(book.ID, resources.FILES)
 
 	included := resources.Included{}
 	included.Add(&media[0], &media[1])

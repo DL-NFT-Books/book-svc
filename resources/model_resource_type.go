@@ -8,7 +8,7 @@ type ResourceType string
 
 // List of ResourceType
 const (
-	BANNER ResourceType = "banner"
-	BOOKS  ResourceType = "books"
-	FILE   ResourceType = "file"
+	BANNERS ResourceType = "banners"
+	BOOKS   ResourceType = "books"
+	FILES   ResourceType = "files"
 )

@@ -6,7 +6,7 @@ properties:
   type:
     type: string
     enum:
-      - file
+      - files
   id:
     type: string
     example: "1"

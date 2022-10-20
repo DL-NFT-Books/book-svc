@@ -33,8 +33,8 @@ func NewBooksList(books []data.Book) ([]resources.Book, resources.Included, erro
 
 		data[i] = responseBook
 
-		media[0].Key = resources.NewKeyInt64(book.ID, resources.BANNER)
-		media[1].Key = resources.NewKeyInt64(book.ID, resources.FILE)
+		media[0].Key = resources.NewKeyInt64(book.ID, resources.BANNERS)
+		media[1].Key = resources.NewKeyInt64(book.ID, resources.FILES)
 		included.Add(&media[0], &media[1])
 	}
 
@@ -46,8 +46,8 @@ func NewBook(book *data.Book) (resources.Book, error) {
 		return resources.Book{}, nil
 	}
 
-	bannerKey := resources.NewKeyInt64(book.ID, resources.BANNER)
-	documentKey := resources.NewKeyInt64(book.ID, resources.FILE)
+	bannerKey := resources.NewKeyInt64(book.ID, resources.BANNERS)
+	documentKey := resources.NewKeyInt64(book.ID, resources.FILES)
 
 	res := resources.Book{
 		Key: resources.NewKeyInt64(book.ID, resources.BOOKS),
