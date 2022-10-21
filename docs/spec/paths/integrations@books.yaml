@@ -1,0 +1,87 @@
+post:
+  tags:
+    - Books
+  summary: Upload Book
+  operationId: uploadBook
+  parameters:
+    - in: header
+      name: Authorization
+      schema:
+        type: string
+        format: Bearer {token}
+        example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            data:
+              type: object
+              $ref: '#/components/schemas/Book'
+            included:
+              type: array
+              items:
+                $ref: '#/components/schemas/Media'
+  responses:
+    '200':
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                $ref: '#/components/schemas/Book'
+              included:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Media'
+    '400':
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - errors
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CreateBookError'
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: "#/components/schemas/UnauthorizedError"
+    '500':
+      $ref: '#/components/responses/InternalError'
+get:
+  tags:
+    - Books
+  summary: Get books list
+  operationId: getBooksList
+  responses:
+    '200':
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+              included:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Media'
+    '404':
+      $ref: '#/components/responses/NotFound'
+    '500':
+      $ref: '#/components/responses/InternalError'

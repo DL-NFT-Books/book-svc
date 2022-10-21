@@ -1,0 +1,57 @@
+allOf:
+  - $ref: '#/components/schemas/BookKey'
+  - type: object
+    required:
+      - attributes
+      - relationships
+    properties:
+      attributes:
+        type: object
+        required:
+          - title
+          - description
+          - price
+          - contract_address
+          - contract_name
+          - contract_version
+        properties:
+          title:
+            type: string
+            description: Book title
+            example: "BDS volume 1"
+          description:
+            type: string
+            description: Book description
+            example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+          price:
+            type: string
+            description: Book price ($)
+            example: "10050"
+          contract_address:
+            type: string
+            description: ERC-20 token contract address
+            example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+          contract_name:
+            type: string
+            description: ERC-20 token contract name
+            example: "BDS1"
+          contract_version:
+            type: string
+            description: ERC-20 token contract version
+            example: "v1"
+      relationships:
+        type: object
+        required:
+          - banner
+          - file
+        properties:
+          banner:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/BannerKey'
+          file:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/FileKey'

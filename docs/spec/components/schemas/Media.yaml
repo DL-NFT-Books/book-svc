@@ -1,0 +1,27 @@
+allOf: #oneOf
+  - oneOf:
+      - $ref: '#/components/schemas/FileKey'
+      - $ref: '#/components/schemas/BannerKey'
+  - type: object
+    required:
+      - attributes
+    properties:
+      attributes:
+        type: object
+        required:
+          - name
+          - mime_type
+          - key
+        properties:
+          name:
+            type: string
+            description: Media title
+            example: "BDS-volume-1-banner.jpg"
+          mime_type:
+            type: string
+            description: Media mime type
+            example: "image/jpg"
+          key:
+            type: string
+            description: S3 key
+            example: "ocuralwkdytwnrmoxuwnedmfk"

@@ -1,9 +1,11 @@
 package service
 
 import (
-	"gitlab.com/distributed_lab/logan/v3"
 	"net"
 	"net/http"
+
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/logan/v3"
 
 	"gitlab.com/tokend/nft-books/book-svc/internal/config"
 
@@ -12,14 +14,16 @@ import (
 )
 
 type service struct {
-	log      *logan.Entry
-	copus    types.Copus
-	listener net.Listener
+	log       *logan.Entry
+	copus     types.Copus
+	listener  net.Listener
+	db        *pgdb.DB
+	mimeTypes *config.MimeTypes
 }
 
-func (s *service) run() error {
+func (s *service) run(cfg config.Config) error {
 	s.log.Info("Service started")
-	r := s.router()
+	r := s.router(cfg)
 
 	if err := s.copus.RegisterChi(r); err != nil {
 		return errors.Wrap(err, "cop failed")
@@ -30,14 +34,16 @@ func (s *service) run() error {
 
 func newService(cfg config.Config) *service {
 	return &service{
-		log:      cfg.Log(),
-		copus:    cfg.Copus(),
-		listener: cfg.Listener(),
+		log:       cfg.Log(),
+		copus:     cfg.Copus(),
+		listener:  cfg.Listener(),
+		db:        cfg.DB(),
+		mimeTypes: cfg.MimeTypes(),
 	}
 }
 
 func Run(cfg config.Config) {
-	if err := newService(cfg).run(); err != nil {
+	if err := newService(cfg).run(cfg); err != nil {
 		panic(err)
 	}
 }
