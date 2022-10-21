@@ -14,6 +14,13 @@ github.com/alecthomas/units
 # github.com/certifi/gocertifi v0.0.0-20200211180108-c7c1fbc02894
 ## explicit; go 1.12
 github.com/certifi/gocertifi
+# github.com/dgrijalva/jwt-go v3.2.0+incompatible
+## explicit
+github.com/dgrijalva/jwt-go
+# github.com/ethereum/go-ethereum v1.10.23
+## explicit; go 1.17
+github.com/ethereum/go-ethereum/common
+github.com/ethereum/go-ethereum/common/hexutil
 # github.com/fatih/structs v1.1.0
 ## explicit
 github.com/fatih/structs
@@ -145,13 +152,27 @@ gitlab.com/distributed_lab/running
 gitlab.com/distributed_lab/urlval
 gitlab.com/distributed_lab/urlval/internal
 gitlab.com/distributed_lab/urlval/internal/betterreflect
-# golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e
+# gitlab.com/tokend/nft-books/doorman v0.1.0-rc.1
+## explicit; go 1.18
+gitlab.com/tokend/nft-books/doorman/connector
+gitlab.com/tokend/nft-books/doorman/connector/config
+gitlab.com/tokend/nft-books/doorman/internal/config
+gitlab.com/tokend/nft-books/doorman/internal/service/helpers
+gitlab.com/tokend/nft-books/doorman/resources
+# gitlab.com/tokene/go-sdk v0.1.1
+## explicit; go 1.18
+gitlab.com/tokene/go-sdk
+# golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 ## explicit; go 1.17
+golang.org/x/crypto/sha3
+# golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a
+## explicit; go 1.17
+golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/text v0.3.6
-## explicit; go 1.11
+# golang.org/x/text v0.3.7
+## explicit; go 1.17
 golang.org/x/text/transform
 golang.org/x/text/unicode/norm
 # gopkg.in/ini.v1 v1.62.0

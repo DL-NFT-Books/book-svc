@@ -10,6 +10,8 @@ import (
 	"gitlab.com/distributed_lab/ape/problems"
 )
 
+// FIXME check permission
+
 func DeleteBookByID(w http.ResponseWriter, r *http.Request) {
 	req, err := requests.NewGetBookByIDRequest(r)
 	if err != nil {

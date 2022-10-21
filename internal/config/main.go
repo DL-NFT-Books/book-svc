@@ -6,6 +6,7 @@ import (
 	"gitlab.com/distributed_lab/kit/copus/types"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/kit/pgdb"
+	doormanCfg "gitlab.com/tokend/nft-books/doorman/connector/config"
 )
 
 type Config interface {
@@ -13,8 +14,8 @@ type Config interface {
 	pgdb.Databaser
 	types.Copuser
 	comfig.Listenerer
-	JWTConfigurator
 	MimeTypesConfigurator
+	doormanCfg.DoormanConfiger
 }
 
 type config struct {
@@ -23,8 +24,8 @@ type config struct {
 	types.Copuser
 	comfig.Listenerer
 	getter kv.Getter
-	JWTConfigurator
 	MimeTypesConfigurator
+	doormanCfg.DoormanConfiger
 }
 
 func New(getter kv.Getter) Config {
@@ -34,7 +35,7 @@ func New(getter kv.Getter) Config {
 		Copuser:               copus.NewCopuser(getter),
 		Listenerer:            comfig.NewListenerer(getter),
 		Logger:                comfig.NewLogger(getter, comfig.LoggerOpts{}),
-		JWTConfigurator:       NewJWTConfigurator(getter),
 		MimeTypesConfigurator: NewMimeTypesConfigurator(getter),
+		DoormanConfiger:       doormanCfg.NewDoormanConfiger(getter),
 	}
 }

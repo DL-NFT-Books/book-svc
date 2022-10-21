@@ -7,13 +7,11 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+
 	"gitlab.com/tokend/nft-books/book-svc/resources"
 )
 
 const (
-	S3KeyLength          = 36
-	MinExtLength         = 3
-	MaxExtLength         = 4
 	MaxTitleLength       = 64
 	MaxDescriptionLength = 500
 )
@@ -60,16 +58,10 @@ func (r CreateBookRequest) validate() error {
 
 		"/included/banner/attributes/name":      validation.Validate(&r.Banner.Attributes.Name, validation.Required),
 		"/included/banner/attributes/mime_type": validation.Validate(&r.Banner.Attributes.MimeType, validation.Required),
-		"/included/banner/attributes/key": validation.Validate(
-			&r.Banner.Attributes.Key,
-			validation.Required,
-			validation.Length(S3KeyLength+1+MinExtLength, S3KeyLength+1+MaxExtLength)), //include '.'
+		"/included/banner/attributes/key":       validation.Validate(&r.Banner.Attributes.Key, validation.Required),
 
 		"/included/file/attributes/name":      validation.Validate(&r.File.Attributes.Name, validation.Required),
 		"/included/file/attributes/mime_type": validation.Validate(&r.File.Attributes.MimeType, validation.Required),
-		"/included/file/attributes/key": validation.Validate(
-			&r.File.Attributes.Key,
-			validation.Required,
-			validation.Length(S3KeyLength+1+MinExtLength, S3KeyLength+1+MaxExtLength)), //include '.'
+		"/included/file/attributes/key":       validation.Validate(&r.File.Attributes.Key, validation.Required),
 	}.Filter()
 }

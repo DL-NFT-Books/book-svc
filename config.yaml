@@ -3,10 +3,7 @@ log:
   disable_sentry: true
 
 db:
-  url: "postgres://book:book@localhost:25432/book?sslmode=disable"
-
-jwt:
-  signature_key: "default"
+  url: "postgres://book:book@localhost:21999/book?sslmode=disable"
 
 mime_types:
   banner:
@@ -17,7 +14,7 @@ mime_types:
     - application/pdf
 
 listener:
-  addr: :8000
+  addr: :8732
 
 cop:
   disabled: true
@@ -25,3 +22,7 @@ cop:
   upstream: "http://..."
   service_name: book-svc
   service_port: 80
+
+doorman:
+  service_url: http://localhost:8054/integrations/doorman
+

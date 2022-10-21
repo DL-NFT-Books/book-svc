@@ -20,7 +20,7 @@ allOf: #oneOf
           mime_type:
             type: string
             description: Media mime type
-            example: "jpg"
+            example: "image/jpg"
           key:
             type: string
             description: S3 key
