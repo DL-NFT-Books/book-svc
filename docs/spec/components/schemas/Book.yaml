@@ -29,16 +29,16 @@ allOf:
             example: "10050"
           contract_address:
             type: string
-            description: ERC-20 token contract address
+            description: Token contract address
             example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
           contract_name:
             type: string
-            description: ERC-20 token contract name
+            description: Token contract name
             example: "BDS1"
           contract_version:
             type: string
-            description: ERC-20 token contract version
-            example: "v1"
+            description: Token contract version
+            example: "1"
       relationships:
         type: object
         required:

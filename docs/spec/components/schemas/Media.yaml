@@ -1,4 +1,4 @@
-allOf: #oneOf
+allOf:
   - oneOf:
       - $ref: '#/components/schemas/FileKey'
       - $ref: '#/components/schemas/BannerKey'
@@ -24,4 +24,4 @@ allOf: #oneOf
           key:
             type: string
             description: S3 key
-            example: "ocuralwkdytwnrmoxuwnedmfk"
+            example: "ocuralwkdytwnrmoxuwnedmfk.jpg"

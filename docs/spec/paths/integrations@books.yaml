@@ -6,6 +6,7 @@ post:
   parameters:
     - in: header
       name: Authorization
+      required: true
       schema:
         type: string
         format: Bearer {token}
@@ -63,8 +64,12 @@ post:
 get:
   tags:
     - Books
-  summary: Get books list
+  summary: Get Books list
   operationId: getBooksList
+  parameters:
+    - $ref: '#/components/parameters/pageLimitParam'
+    - $ref: '#/components/parameters/pageNumberParam'
+    - $ref: '#/components/parameters/sortingParam'
   responses:
     '200':
       description: Success
