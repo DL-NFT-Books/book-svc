@@ -5,8 +5,9 @@ import (
 	"net/http"
 
 	"gitlab.com/distributed_lab/logan/v3"
+	gosdk "gitlab.com/tokend/nft-books/go-sdk"
+
 	"gitlab.com/tokend/nft-books/doorman/internal/config"
-	gosdk "gitlab.com/tokene/go-sdk"
 )
 
 type ctxKey int
