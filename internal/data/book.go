@@ -15,6 +15,9 @@ type BookQ interface {
 	UpdatePriceByID(price string, id int64) error
 	UpdatePriceByAddress(price, address string) error
 
+	UpdateContractNameByID(name string, id int64) error
+	UpdateContractNameByAddress(name, address string) error
+
 	// do not include deleted books
 	FilterActual() BookQ
 	FilterByID(id int64) BookQ
