@@ -15,13 +15,10 @@ type BookQ interface {
 	Update(data Book) error
 	DeleteByID(id int64) error
 
-	UpdatePriceByID(price string, id int64) error
-	UpdatePriceByAddress(price, address string) error
-
-	UpdateContractNameByID(name string, id int64) error
-	UpdateContractNameByAddress(name, address string) error
-
-	UpdateLastBlockById(newLastBlock uint64, id int64) error
+	UpdatePrice(price string, id int64) error
+	UpdateContractName(name string, id int64) error
+	UpdateLastBlock(newLastBlock uint64, id int64) error
+	UpdateSymbol(newSymbol string, id int64) error
 
 	// do not include deleted books
 	FilterActual() BookQ
@@ -33,6 +30,7 @@ type BookQ interface {
 type Book struct {
 	ID              int64  `db:"id" structs:"-"`
 	Title           string `db:"title" structs:"title"`
+	Symbol          string `db:"symbol" structs:"symbol"`
 	Description     string `db:"description" structs:"description"`
 	Price           string `db:"price" structs:"price"`
 	ContractAddress string `db:"contract_address" structs:"contract_address"`

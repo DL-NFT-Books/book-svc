@@ -2,6 +2,7 @@
 CREATE TABLE book(
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR(64) NOT NULL,
+    symbol varchar(8) not null,
     description VARCHAR(500) NOT NULL,
     price VARCHAR(30) NOT NULL,
     contract_address VARCHAR(42) NOT NULL,

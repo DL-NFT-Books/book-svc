@@ -19,6 +19,7 @@ const (
 	bannerColumn         = "banner"
 	fileColumn           = "file"
 	titleColumn          = "title"
+	symbolColumn         = "symbol"
 	lastBlockColumn      = "last_block"
 	descriptionColumn    = "description"
 )
@@ -118,7 +119,7 @@ func (b *BooksQ) Update(data data.Book) error {
 	)
 }
 
-func (b *BooksQ) UpdatePriceByID(price string, id int64) error {
+func (b *BooksQ) UpdatePrice(price string, id int64) error {
 	return b.db.Exec(
 		b.updateBuilder.
 			Set(priceColumn, price).
@@ -128,17 +129,7 @@ func (b *BooksQ) UpdatePriceByID(price string, id int64) error {
 	)
 }
 
-func (b *BooksQ) UpdatePriceByAddress(price, address string) error {
-	return b.db.Exec(
-		b.updateBuilder.
-			Set(priceColumn, price).
-			Where(squirrel.Eq{
-				contactAddressColumn: address,
-			}),
-	)
-}
-
-func (b *BooksQ) UpdateContractNameByID(name string, id int64) error {
+func (b *BooksQ) UpdateContractName(name string, id int64) error {
 	return b.db.Exec(
 		b.updateBuilder.
 			Set(contractNameColumn, name).
@@ -148,20 +139,20 @@ func (b *BooksQ) UpdateContractNameByID(name string, id int64) error {
 	)
 }
 
-func (b *BooksQ) UpdateContractNameByAddress(name, address string) error {
-	return b.db.Exec(
-		b.updateBuilder.
-			Set(contractNameColumn, name).
-			Where(squirrel.Eq{
-				contactAddressColumn: address,
-			}),
-	)
-}
-
-func (b *BooksQ) UpdateLastBlockById(newLastBlock uint64, id int64) error {
+func (b *BooksQ) UpdateLastBlock(newLastBlock uint64, id int64) error {
 	return b.db.Exec(
 		b.updateBuilder.
 			Set(lastBlockColumn, newLastBlock).
+			Where(squirrel.Eq{
+				idColumn: id,
+			}),
+	)
+}
+
+func (b *BooksQ) UpdateSymbol(newSymbol string, id int64) error {
+	return b.db.Exec(
+		b.updateBuilder.
+			Set(symbolColumn, newSymbol).
 			Where(squirrel.Eq{
 				idColumn: id,
 			}),

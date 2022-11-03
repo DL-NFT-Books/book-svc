@@ -109,7 +109,7 @@ func (t *UpdateTracker) ProcessBook(book data.Book) error {
 		})
 	}
 
-	if err = t.db.Books().UpdateLastBlockById(newBlock, book.ID); err != nil {
+	if err = t.db.Books().UpdateLastBlock(newBlock, book.ID); err != nil {
 		return errors.Wrap(err, "failed to update last block")
 	}
 
@@ -134,11 +134,15 @@ func (t *UpdateTracker) GetNewBlock(previousBlock, iterationSize uint64) (uint64
 
 func (t *UpdateTracker) ProcessEvent(event eth_reader.UpdateEvent, id int64) error {
 	return t.db.Transaction(func() error {
-		if err := t.db.Books().UpdateContractNameByID(event.Name, id); err != nil {
+		if err := t.db.Books().UpdateContractName(event.Name, id); err != nil {
 			return errors.Wrap(err, "failed to update status")
 		}
 
-		if err := t.db.Books().UpdatePriceByID(strconv.FormatUint(event.Price, 10), id); err != nil {
+		if err := t.db.Books().UpdatePrice(strconv.FormatUint(event.Price, 10), id); err != nil {
+			return errors.Wrap(err, "failed to update price by id")
+		}
+
+		if err := t.db.Books().UpdateSymbol(event.Symbol, id); err != nil {
 			return errors.Wrap(err, "failed to update price by id")
 		}
 
