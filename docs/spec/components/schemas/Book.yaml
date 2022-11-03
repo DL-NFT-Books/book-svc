@@ -10,10 +10,8 @@ allOf:
         required:
           - title
           - description
-          - price
           - contract_address
           - contract_name
-          - contract_version
         properties:
           title:
             type: string

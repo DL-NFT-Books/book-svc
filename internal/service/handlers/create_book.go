@@ -12,6 +12,8 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/resources"
 )
 
+const defaultContractVersion = "1"
+
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	req, err := requests.NewCreateBookRequest(r)
 	if err != nil {
@@ -31,13 +33,16 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO: get price from token contract (?)
+
 	book := data.Book{
-		Title:           req.Data.Attributes.Title,
-		Description:     req.Data.Attributes.Description,
-		Price:           req.Data.Attributes.Price,
+		Title:       req.Data.Attributes.Title,
+		Description: req.Data.Attributes.Description,
+		// mocked
+		Price:           "100",
 		ContractAddress: req.Data.Attributes.ContractAddress,
 		ContractName:    req.Data.Attributes.ContractName,
-		ContractVersion: req.Data.Attributes.ContractVersion,
+		ContractVersion: defaultContractVersion,
 		Banner:          media[0],
 		File:            media[1],
 	}

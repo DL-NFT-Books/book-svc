@@ -48,13 +48,11 @@ func (r CreateBookRequest) validate() error {
 			&r.Data.Attributes.Description,
 			validation.Required,
 			validation.Length(1, MaxDescriptionLength)),
-		"/data/attributes/price": validation.Validate(&r.Data.Attributes.Price, validation.Required),
 		"/data/attributes/contract_address": validation.Validate(
 			&r.Data.Attributes.ContractAddress,
 			validation.Required,
 			validation.Match(AddressRegexp)),
-		"/data/attributes/contract_name":    validation.Validate(&r.Data.Attributes.ContractName, validation.Required),
-		"/data/attributes/contract_version": validation.Validate(&r.Data.Attributes.ContractVersion, validation.Required),
+		"/data/attributes/contract_name": validation.Validate(&r.Data.Attributes.ContractName, validation.Required),
 
 		"/included/banner/attributes/name":      validation.Validate(&r.Banner.Attributes.Name, validation.Required),
 		"/included/banner/attributes/mime_type": validation.Validate(&r.Banner.Attributes.MimeType, validation.Required),

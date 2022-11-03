@@ -4,14 +4,21 @@ import "gitlab.com/distributed_lab/kit/pgdb"
 
 type BookQ interface {
 	New() BookQ
-	Insert(data Book) (int64, error)
+
 	Get() (*Book, error)
 	Select() ([]Book, error)
+
+	Insert(data Book) (int64, error)
 	Update(data Book) error
 	DeleteByID(id int64) error
-	FilterByID(id int64) BookQ
+
+	UpdatePriceByID(price string, id int64) error
+	UpdatePriceByAddress(price, address string) error
+
 	// do not include deleted books
 	FilterActual() BookQ
+	FilterByID(id int64) BookQ
+
 	Page(params pgdb.OffsetPageParams) BookQ
 }
 
