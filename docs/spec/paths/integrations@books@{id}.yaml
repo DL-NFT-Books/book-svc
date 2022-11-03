@@ -103,7 +103,7 @@ patch:
           properties:
             data:
               type: object
-              $ref: '#/components/schemas/Book'
+              $ref: '#/components/schemas/UpdateBook'
             included:
               type: array
               items:
@@ -133,7 +133,5 @@ patch:
             $ref: "#/components/schemas/UnauthorizedError"
     '404':
       $ref: '#/components/responses/NotFound'
-    '409':
-      description: Conflict, cannot change token contract address or name
     '500':
       $ref: '#/components/responses/InternalError'

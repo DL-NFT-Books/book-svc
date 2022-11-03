@@ -27,13 +27,6 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// check if token contract address or name is not changed
-	if book.ContractAddress != req.Data.Attributes.ContractAddress ||
-		book.ContractName != req.Data.Attributes.ContractName {
-		ape.Render(w, problems.Conflict())
-		return
-	}
-
 	err = helpers.CheckMediaTypes(r, req.Banner.Attributes.MimeType, req.File.Attributes.MimeType)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
@@ -47,15 +40,11 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	bookToUpdate := data.Book{
-		ID:              req.ID,
-		Title:           req.Data.Attributes.Title,
-		Description:     req.Data.Attributes.Description,
-		Price:           req.Data.Attributes.Price,
-		ContractAddress: req.Data.Attributes.ContractAddress,
-		ContractName:    req.Data.Attributes.ContractName,
-		ContractVersion: req.Data.Attributes.ContractVersion,
-		Banner:          media[0],
-		File:            media[1],
+		ID:          req.ID,
+		Title:       req.Data.Attributes.Title,
+		Description: req.Data.Attributes.Description,
+		Banner:      media[0],
+		File:        media[1],
 	}
 
 	err = helpers.BooksQ(r).Update(bookToUpdate)

@@ -19,7 +19,7 @@ post:
           properties:
             data:
               type: object
-              $ref: '#/components/schemas/Book'
+              $ref: '#/components/schemas/CreateBook'
             included:
               type: array
               items:

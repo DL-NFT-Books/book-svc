@@ -4,17 +4,11 @@
 
 package resources
 
-type BookAttributes struct {
+type CreateBookAttributes struct {
 	// Token contract address
 	ContractAddress string `json:"contract_address"`
-	// Token contract name
-	ContractName string `json:"contract_name"`
-	// Token contract version
-	ContractVersion string `json:"contract_version"`
 	// Book description
 	Description string `json:"description"`
-	// Book price ($)
-	Price string `json:"price"`
 	// Book title
 	Title string `json:"title"`
 }

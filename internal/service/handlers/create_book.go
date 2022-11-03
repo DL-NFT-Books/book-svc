@@ -33,7 +33,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: get price from token contract (?)
+	// TODO: get price && name from token contract (?)
 
 	book := data.Book{
 		Title:       req.Data.Attributes.Title,
@@ -41,7 +41,8 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		// mocked
 		Price:           "100",
 		ContractAddress: req.Data.Attributes.ContractAddress,
-		ContractName:    req.Data.Attributes.ContractName,
+		// mocked
+		ContractName:    "contract name",
 		ContractVersion: defaultContractVersion,
 		Banner:          media[0],
 		File:            media[1],
@@ -53,17 +54,20 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req.Data.Key = resources.NewKeyInt64(bookID, resources.BOOKS)
+	data, err := helpers.NewBook(&book)
+	if err != nil {
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+
 	req.Banner.Key = resources.NewKeyInt64(bookID, resources.BANNERS)
-	req.Data.Relationships.Banner.Data = &req.Banner.Key
 	req.File.Key = resources.NewKeyInt64(bookID, resources.FILES)
-	req.Data.Relationships.File.Data = &req.File.Key
 
 	included := resources.Included{}
 	included.Add(req.Banner, req.File)
 
 	ape.Render(w, resources.BookResponse{
-		Data:     req.Data,
+		Data:     data,
 		Included: included,
 	})
 }

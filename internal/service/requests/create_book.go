@@ -19,10 +19,10 @@ const (
 var AddressRegexp = regexp.MustCompile("^(0x)?[0-9a-fA-F]{40}$")
 
 type CreateBookRequest struct {
-	Data     resources.Book     `json:"data"`
-	Included resources.Included `json:"included"`
-	File     *resources.Media   `json:"file"`
-	Banner   *resources.Media   `json:"banner"`
+	Data     resources.CreateBook `json:"data"`
+	Included resources.Included   `json:"included"`
+	File     *resources.Media     `json:"file"`
+	Banner   *resources.Media     `json:"banner"`
 }
 
 func NewCreateBookRequest(r *http.Request) (CreateBookRequest, error) {
@@ -52,7 +52,6 @@ func (r CreateBookRequest) validate() error {
 			&r.Data.Attributes.ContractAddress,
 			validation.Required,
 			validation.Match(AddressRegexp)),
-		"/data/attributes/contract_name": validation.Validate(&r.Data.Attributes.ContractName, validation.Required),
 
 		"/included/banner/attributes/name":      validation.Validate(&r.Banner.Attributes.Name, validation.Required),
 		"/included/banner/attributes/mime_type": validation.Validate(&r.Banner.Attributes.MimeType, validation.Required),

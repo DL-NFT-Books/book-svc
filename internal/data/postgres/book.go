@@ -16,6 +16,10 @@ const (
 	deletedColumn        = "deleted"
 	contractNameColumn   = "contract_name"
 	contactAddressColumn = "contract_address"
+	bannerColumn         = "banner"
+	fileColumn           = "file"
+	titleColumn          = "title"
+	descriptionColumn    = "description"
 )
 
 func NewBooksQ(db *pgdb.DB) data.BookQ {
@@ -101,15 +105,16 @@ func (b *BooksQ) DeleteByID(id int64) error {
 }
 
 func (b *BooksQ) Update(data data.Book) error {
-	clauses := structs.Map(data)
-
-	stmt := b.updateBuilder.
-		SetMap(clauses).
-		Where(squirrel.Eq{
-			idColumn: data.ID,
-		})
-
-	return b.db.Exec(stmt)
+	return b.db.Exec(
+		b.updateBuilder.
+			Set(titleColumn, data.Title).
+			Set(descriptionColumn, data.Description).
+			Set(bannerColumn, data.Banner).
+			Set(fileColumn, data.File).
+			Where(squirrel.Eq{
+				idColumn: data.ID,
+			}),
+	)
 }
 
 func (b *BooksQ) UpdatePriceByID(price string, id int64) error {
