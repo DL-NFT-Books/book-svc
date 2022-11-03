@@ -16,6 +16,19 @@ mime_types:
 listener:
   addr: :8732
 
+update_tracker:
+  name: update_tracker # Name to be displayed in logs
+  capacity: 1
+  iteration_size: 10000
+  runner: # Periods settings
+    normal_period: 10s
+    min_abnormal_period: 10s
+    max_abnormal_period: 10s
+
+ethereum_client: # Rpc and WS addresses
+  rpc: https://eth-goerli.g.alchemy.com/v2/DTb8jEsvO6jtXEwUM9Ri3k3cufBIJX-R
+  web_socket: wss://eth-goerli.g.alchemy.com/v2/DTb8jEsvO6jtXEwUM9Ri3k3cufBIJX-R
+
 cop:
   disabled: true
   endpoint: "http://..."

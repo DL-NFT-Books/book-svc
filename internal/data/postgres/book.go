@@ -19,6 +19,7 @@ const (
 	bannerColumn         = "banner"
 	fileColumn           = "file"
 	titleColumn          = "title"
+	lastBlockColumn      = "last_block"
 	descriptionColumn    = "description"
 )
 
@@ -153,6 +154,16 @@ func (b *BooksQ) UpdateContractNameByAddress(name, address string) error {
 			Set(contractNameColumn, name).
 			Where(squirrel.Eq{
 				contactAddressColumn: address,
+			}),
+	)
+}
+
+func (b *BooksQ) UpdateLastBlockById(newLastBlock uint64, id int64) error {
+	return b.db.Exec(
+		b.updateBuilder.
+			Set(lastBlockColumn, newLastBlock).
+			Where(squirrel.Eq{
+				idColumn: id,
 			}),
 	)
 }

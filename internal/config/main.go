@@ -16,6 +16,9 @@ type Config interface {
 	comfig.Listenerer
 	MimeTypesConfigurator
 	doormanCfg.DoormanConfiger
+
+	UpdateTracker() UpdateTracker
+	EtherClient() EtherClient
 }
 
 type config struct {
@@ -23,9 +26,12 @@ type config struct {
 	pgdb.Databaser
 	types.Copuser
 	comfig.Listenerer
-	getter kv.Getter
 	MimeTypesConfigurator
 	doormanCfg.DoormanConfiger
+
+	getter            kv.Getter
+	updateTrackerOnce comfig.Once
+	ethererOnce       comfig.Once
 }
 
 func New(getter kv.Getter) Config {

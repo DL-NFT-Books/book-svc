@@ -9,7 +9,8 @@ CREATE TABLE book(
     contract_version VARCHAR(20) NOT NULL,
     banner JSONB NOT NULL,
     file JSONB NOT NULL,
-    deleted BOOLEAN NOT NULL DEFAULT 'f'
+    deleted BOOLEAN NOT NULL DEFAULT 'f',
+    last_block bigint
 );
 -- +migrate Down
 DROP TABLE book;

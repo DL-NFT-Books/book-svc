@@ -1,6 +1,9 @@
 package data
 
-import "gitlab.com/distributed_lab/kit/pgdb"
+import (
+	"github.com/ethereum/go-ethereum/common"
+	"gitlab.com/distributed_lab/kit/pgdb"
+)
 
 type BookQ interface {
 	New() BookQ
@@ -17,6 +20,8 @@ type BookQ interface {
 
 	UpdateContractNameByID(name string, id int64) error
 	UpdateContractNameByAddress(name, address string) error
+
+	UpdateLastBlockById(newLastBlock uint64, id int64) error
 
 	// do not include deleted books
 	FilterActual() BookQ
@@ -36,4 +41,9 @@ type Book struct {
 	Banner          string `db:"banner" structs:"banner"`
 	File            string `db:"file" structs:"file"`
 	Deleted         bool   `db:"deleted" structs:"-"`
+	LastBlock       uint64 `db:"last_block" structs:"last_block"`
+}
+
+func (b *Book) Address() common.Address {
+	return common.HexToAddress(b.ContractAddress)
 }
