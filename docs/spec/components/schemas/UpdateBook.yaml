@@ -3,13 +3,14 @@ allOf:
   - type: object
     required:
       - attributes
-      - relationships
     properties:
       attributes:
         type: object
         required:
           - title
           - description
+          - file
+          - banner
         properties:
           title:
             type: string
@@ -19,19 +20,9 @@ allOf:
             type: string
             description: Book description
             example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-      relationships:
-        type: object
-        required:
-          - banner
-          - file
-        properties:
           banner:
-            type: object
-            properties:
-              data:
-                $ref: '#/components/schemas/BannerKey'
+            description: Banner info
+            $ref: '#/components/schemas/Media'
           file:
-            type: object
-            properties:
-              data:
-                $ref: '#/components/schemas/FileKey'
+            description: File info
+            $ref: '#/components/schemas/Media'

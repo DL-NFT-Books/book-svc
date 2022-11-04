@@ -3,17 +3,20 @@ allOf:
   - type: object
     required:
       - attributes
-      - relationships
     properties:
       attributes:
         type: object
         required:
           - title
           - description
+          - created_at
           - contract_address
           - contract_name
+          - contract_symbol
           - contract_version
           - price
+          - file
+          - banner
         properties:
           title:
             type: string
@@ -23,6 +26,10 @@ allOf:
             type: string
             description: Book description
             example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+          created_at:
+            type: time.Time
+            description: Book creation time
+            example: "2022-11-03T21:36:21.022589Z"
           price:
             type: string
             description: Book price ($)
@@ -34,24 +41,18 @@ allOf:
           contract_name:
             type: string
             description: Token contract name
+            example: "Blockchain and decentralized systems volume 1"
+          contract_symbol:
+            type: string
+            description: Token contract symbol
             example: "BDS1"
           contract_version:
             type: string
             description: Token contract version
             example: "1"
-      relationships:
-        type: object
-        required:
-          - banner
-          - file
-        properties:
           banner:
-            type: object
-            properties:
-              data:
-                $ref: '#/components/schemas/BannerKey'
+            description: Banner info
+            $ref: '#/components/schemas/Media'
           file:
-            type: object
-            properties:
-              data:
-                $ref: '#/components/schemas/FileKey'
+            description: File info
+            $ref: '#/components/schemas/Media'

@@ -28,26 +28,13 @@ func GetBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	media, err := helpers.UnmarshalMedia(book.Banner, book.File)
-	if err != nil {
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-
 	data, err := helpers.NewBook(book)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
-	media[0].Key = resources.NewKeyInt64(book.ID, resources.BANNERS)
-	media[1].Key = resources.NewKeyInt64(book.ID, resources.FILES)
-
-	included := resources.Included{}
-	included.Add(&media[0], &media[1])
-
 	ape.Render(w, resources.BookResponse{
-		Data:     data,
-		Included: included,
+		Data: *data,
 	})
 }

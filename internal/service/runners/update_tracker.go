@@ -2,6 +2,8 @@ package runners
 
 import (
 	"context"
+	"strconv"
+
 	"github.com/ethereum/go-ethereum/ethclient"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -11,7 +13,6 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"gitlab.com/tokend/nft-books/book-svc/internal/eth_reader"
-	"strconv"
 )
 
 const updateTrackerKVPage = "update_tracker_page"
@@ -83,6 +84,7 @@ func (t *UpdateTracker) ProcessBook(book data.Book) error {
 		t.log.Debugf("contract last block exceeded last block in the blockchain")
 		return nil
 	}
+
 	events, _, err := t.reader.GetUpdateEvents(book.Address(), book.LastBlock, book.LastBlock+t.iterationSize)
 	if err != nil {
 		return errors.Wrap(err, "failed to get events")
@@ -133,21 +135,16 @@ func (t *UpdateTracker) GetNewBlock(previousBlock, iterationSize uint64) (uint64
 }
 
 func (t *UpdateTracker) ProcessEvent(event eth_reader.UpdateEvent, id int64) error {
-	return t.db.Transaction(func() error {
-		if err := t.db.Books().UpdateContractName(event.Name, id); err != nil {
-			return errors.Wrap(err, "failed to update status")
-		}
+	if err := t.db.Books().UpdateContractParams(
+		event.Name,
+		event.Symbol,
+		event.Price,
+		id,
+	); err != nil {
+		return errors.Wrap(err, "failed to update contract params")
+	}
 
-		if err := t.db.Books().UpdatePrice(strconv.FormatUint(event.Price, 10), id); err != nil {
-			return errors.Wrap(err, "failed to update price by id")
-		}
-
-		if err := t.db.Books().UpdateSymbol(event.Symbol, id); err != nil {
-			return errors.Wrap(err, "failed to update price by id")
-		}
-
-		return nil
-	})
+	return nil
 }
 
 func (t *UpdateTracker) Select(pageNumber uint64) ([]data.Book, error) {

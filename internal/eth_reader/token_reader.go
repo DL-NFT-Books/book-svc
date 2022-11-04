@@ -21,9 +21,10 @@ func NewTokenContractReader(rpc *ethclient.Client) TokenContractReader {
 }
 
 type UpdateEvent struct {
-	Name, Symbol string
-	Price        uint64
-	BlockNumber  uint64
+	Name        string
+	Symbol      string
+	Price       string
+	BlockNumber uint64
 }
 
 func (r *TokenContractReader) GetUpdateEvents(
@@ -62,7 +63,7 @@ func (r *TokenContractReader) GetUpdateEvents(
 			events = append(events, UpdateEvent{
 				Name:        event.TokenName,
 				Symbol:      event.TokenSymbol,
-				Price:       event.NewPrice.Uint64(),
+				Price:       event.NewPrice.String(),
 				BlockNumber: event.Raw.BlockNumber,
 			})
 

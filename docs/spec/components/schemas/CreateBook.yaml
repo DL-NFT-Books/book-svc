@@ -3,7 +3,6 @@ allOf:
   - type: object
     required:
       - attributes
-      - relationships
     properties:
       attributes:
         type: object
@@ -11,6 +10,8 @@ allOf:
           - title
           - description
           - contract_address
+          - banner
+          - file
         properties:
           title:
             type: string
@@ -24,19 +25,9 @@ allOf:
             type: string
             description: Token contract address
             example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
-      relationships:
-        type: object
-        required:
-          - banner
-          - file
-        properties:
           banner:
-            type: object
-            properties:
-              data:
-                $ref: '#/components/schemas/BannerKey'
+            description: Banner info
+            $ref: '#/components/schemas/Media'
           file:
-            type: object
-            properties:
-              data:
-                $ref: '#/components/schemas/FileKey'
+            description: File info
+            $ref: '#/components/schemas/Media'

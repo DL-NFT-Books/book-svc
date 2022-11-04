@@ -16,10 +16,10 @@ const (
 	deletedColumn        = "deleted"
 	contractNameColumn   = "contract_name"
 	contactAddressColumn = "contract_address"
+	contractSymbolColumn = "contract_symbol"
 	bannerColumn         = "banner"
 	fileColumn           = "file"
 	titleColumn          = "title"
-	symbolColumn         = "symbol"
 	lastBlockColumn      = "last_block"
 	descriptionColumn    = "description"
 )
@@ -152,7 +152,19 @@ func (b *BooksQ) UpdateLastBlock(newLastBlock uint64, id int64) error {
 func (b *BooksQ) UpdateSymbol(newSymbol string, id int64) error {
 	return b.db.Exec(
 		b.updateBuilder.
-			Set(symbolColumn, newSymbol).
+			Set(contractSymbolColumn, newSymbol).
+			Where(squirrel.Eq{
+				idColumn: id,
+			}),
+	)
+}
+
+func (b *BooksQ) UpdateContractParams(name, symbol, price string, id int64) error {
+	return b.db.Exec(
+		b.updateBuilder.
+			Set(contractNameColumn, name).
+			Set(contractSymbolColumn, symbol).
+			Set(priceColumn, price).
 			Where(squirrel.Eq{
 				idColumn: id,
 			}),

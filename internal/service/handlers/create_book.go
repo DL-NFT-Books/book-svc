@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -21,13 +22,13 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = helpers.CheckMediaTypes(r, req.Banner.Attributes.MimeType, req.File.Attributes.MimeType)
+	err = helpers.CheckMediaTypes(r, req.Data.Attributes.Banner.Attributes.MimeType, req.Data.Attributes.File.Attributes.MimeType)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	media := helpers.MarshalMedia(req.Banner, req.File)
+	media := helpers.MarshalMedia(&req.Data.Attributes.Banner, &req.Data.Attributes.File)
 	if media == nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
@@ -38,11 +39,14 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	book := data.Book{
 		Title:       req.Data.Attributes.Title,
 		Description: req.Data.Attributes.Description,
+		CreatedAt:   time.Now(),
 		// mocked
 		Price:           "100",
 		ContractAddress: req.Data.Attributes.ContractAddress,
 		// mocked
-		ContractName:    "contract name",
+		ContractName: "contract name",
+		// mocked
+		ContractSymbol:  "contract symbol",
 		ContractVersion: defaultContractVersion,
 		Banner:          media[0],
 		File:            media[1],
@@ -54,20 +58,15 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	book.ID = bookID
+
 	data, err := helpers.NewBook(&book)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
-	req.Banner.Key = resources.NewKeyInt64(bookID, resources.BANNERS)
-	req.File.Key = resources.NewKeyInt64(bookID, resources.FILES)
-
-	included := resources.Included{}
-	included.Add(req.Banner, req.File)
-
 	ape.Render(w, resources.BookResponse{
-		Data:     data,
-		Included: included,
+		Data: *data,
 	})
 }

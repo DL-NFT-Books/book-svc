@@ -16,58 +16,49 @@ func GetBooksByPage(r *http.Request, page pgdb.OffsetPageParams) ([]data.Book, e
 	return BooksQ(r).FilterActual().Page(page).Select()
 }
 
-func NewBooksList(books []data.Book) ([]resources.Book, resources.Included, error) {
+func NewBooksList(books []data.Book) ([]resources.Book, error) {
 	data := make([]resources.Book, len(books))
-	included := resources.Included{}
 
 	for i, book := range books {
-		media, err := UnmarshalMedia(book.Banner, book.File)
-		if err != nil {
-			return nil, resources.Included{}, err
-		}
-
 		responseBook, err := NewBook(&book)
 		if err != nil {
-			return nil, resources.Included{}, err
+			return nil, err
 		}
 
-		data[i] = responseBook
-
-		media[0].Key = resources.NewKeyInt64(book.ID, resources.BANNERS)
-		media[1].Key = resources.NewKeyInt64(book.ID, resources.FILES)
-		included.Add(&media[0], &media[1])
+		data[i] = *responseBook
 	}
 
-	return data, included, nil
+	return data, nil
 }
 
-func NewBook(book *data.Book) (resources.Book, error) {
+func NewBook(book *data.Book) (*resources.Book, error) {
 	if book == nil {
-		return resources.Book{}, nil
+		return nil, nil
 	}
 
-	bannerKey := resources.NewKeyInt64(book.ID, resources.BANNERS)
-	documentKey := resources.NewKeyInt64(book.ID, resources.FILES)
+	media, err := UnmarshalMedia(book.Banner, book.File)
+	if err != nil {
+		return nil, err
+	}
+
+	media[0].Key = resources.NewKeyInt64(book.ID, resources.BANNERS)
+	media[1].Key = resources.NewKeyInt64(book.ID, resources.FILES)
 
 	res := resources.Book{
 		Key: resources.NewKeyInt64(book.ID, resources.BOOKS),
 		Attributes: resources.BookAttributes{
 			Title:           book.Title,
 			Description:     book.Description,
+			CreatedAt:       book.CreatedAt,
 			Price:           book.Price,
 			ContractAddress: book.ContractAddress,
 			ContractName:    book.ContractName,
+			ContractSymbol:  book.ContractSymbol,
 			ContractVersion: book.ContractVersion,
-		},
-		Relationships: resources.BookRelationships{
-			Banner: resources.Relation{
-				Data: &bannerKey,
-			},
-			File: resources.Relation{
-				Data: &documentKey,
-			},
+			File:            media[0],
+			Banner:          media[1],
 		},
 	}
 
-	return res, nil
+	return &res, nil
 }

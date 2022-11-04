@@ -28,14 +28,13 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, included, err := helpers.NewBooksList(books)
+	data, err := helpers.NewBooksList(books)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
 	ape.Render(w, resources.BookListResponse{
-		Data:     data,
-		Included: included,
+		Data: data,
 	})
 }

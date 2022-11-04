@@ -27,13 +27,13 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = helpers.CheckMediaTypes(r, req.Banner.Attributes.MimeType, req.File.Attributes.MimeType)
+	err = helpers.CheckMediaTypes(r, req.Data.Attributes.Banner.Attributes.MimeType, req.Data.Attributes.File.Attributes.MimeType)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	media := helpers.MarshalMedia(req.Banner, req.File)
+	media := helpers.MarshalMedia(&req.Data.Attributes.Banner, &req.Data.Attributes.File)
 	if media == nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

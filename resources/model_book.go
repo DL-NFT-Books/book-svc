@@ -6,8 +6,7 @@ package resources
 
 type Book struct {
 	Key
-	Attributes    BookAttributes    `json:"attributes"`
-	Relationships BookRelationships `json:"relationships"`
+	Attributes BookAttributes `json:"attributes"`
 }
 type BookResponse struct {
 	Data     Book     `json:"data"`
