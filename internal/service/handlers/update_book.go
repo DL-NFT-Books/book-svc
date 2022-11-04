@@ -19,21 +19,29 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 
 	book, err := helpers.GetBookByID(r, req.ID)
 	if err != nil {
-		ape.Render(w, problems.InternalError())
+		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 	if book == nil {
-		ape.Render(w, problems.NotFound())
+		ape.RenderErr(w, problems.NotFound())
 		return
 	}
 
-	err = helpers.CheckMediaTypes(r, req.Data.Attributes.Banner.Attributes.MimeType, req.Data.Attributes.File.Attributes.MimeType)
+	banner := req.Data.Attributes.Banner
+	file := req.Data.Attributes.File
+
+	err = helpers.CheckMediaTypes(r, banner.Attributes.MimeType, file.Attributes.MimeType)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	media := helpers.MarshalMedia(&req.Data.Attributes.Banner, &req.Data.Attributes.File)
+	if err = helpers.SetMediaLinks(r, &banner, &file); err != nil {
+		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
+	media := helpers.MarshalMedia(&banner, &file)
 	if media == nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

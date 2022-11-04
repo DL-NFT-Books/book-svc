@@ -2,9 +2,10 @@ package helpers
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
-	"net/http"
 )
 
 func MarshalMedia(media ...*resources.Media) []string {
@@ -44,6 +45,26 @@ func CheckMediaTypes(r *http.Request, bannerExt, fileExt string) error {
 	}
 
 	return checkFileMimeType(fileExt, r)
+}
+
+func SetMediaLinks(r *http.Request, banner, file *resources.Media) error {
+	dconnector := DocumenterConnector(r)
+
+	bannerLink, err := dconnector.GetDocumentLink(banner.Attributes.Key)
+	if err != nil {
+		return err
+	}
+
+	banner.Attributes.Url = &bannerLink.Data.Attributes.Url
+
+	fileLink, err := dconnector.GetDocumentLink(file.Attributes.Key)
+	if err != nil {
+		return err
+	}
+
+	file.Attributes.Url = &fileLink.Data.Attributes.Url
+
+	return nil
 }
 
 func checkBannerMimeType(ext string, r *http.Request) error {

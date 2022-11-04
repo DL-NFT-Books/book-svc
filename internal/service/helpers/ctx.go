@@ -10,6 +10,7 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 
 	"gitlab.com/distributed_lab/logan/v3"
+	s3connector "gitlab.com/tokend/nft-books/blob-svc/connector/api"
 )
 
 type ctxKey int
@@ -19,6 +20,7 @@ const (
 	booksQCtxKey
 	mimeTypesCtxKey
 	doormanConnectorCtxKey
+	documenterConnectorCtxKey
 )
 
 func CtxLog(entry *logan.Entry) func(context.Context) context.Context {
@@ -58,4 +60,14 @@ func CtxDoormanConnector(entry connector.ConnectorI) func(context.Context) conte
 }
 func DoormanConnector(r *http.Request) connector.ConnectorI {
 	return r.Context().Value(doormanConnectorCtxKey).(connector.ConnectorI)
+}
+
+func CtxDocumenterConnector(entry s3connector.Connector) func(context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, documenterConnectorCtxKey, entry)
+	}
+}
+
+func DocumenterConnector(r *http.Request) s3connector.Connector {
+	return r.Context().Value(documenterConnectorCtxKey).(s3connector.Connector)
 }

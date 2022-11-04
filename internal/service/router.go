@@ -22,6 +22,7 @@ func (s *service) router(cfg config.Config) chi.Router {
 			helpers.CtxBooksQ(postgres.NewBooksQ(s.db)),
 			helpers.CtxMimeTypes(s.mimeTypes),
 			helpers.CtxDoormanConnector(cfg.DoormanConnector()),
+			helpers.CtxDocumenterConnector(*cfg.DocumenterConnector()),
 		),
 	)
 

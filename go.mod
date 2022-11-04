@@ -11,13 +11,14 @@ require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.2.1
 	github.com/pkg/errors v0.9.1
 	github.com/rubenv/sql-migrate v1.2.0
-	github.com/spf13/cast v1.3.1
+	github.com/spf13/cast v1.4.1
 	gitlab.com/distributed_lab/ape v1.7.1
 	gitlab.com/distributed_lab/figure v2.1.0+incompatible
 	gitlab.com/distributed_lab/kit v1.11.1
 	gitlab.com/distributed_lab/logan v3.8.1+incompatible
-	gitlab.com/distributed_lab/running v0.0.0-20200706131153-4af0e83eb96c
+	gitlab.com/distributed_lab/running v1.6.0
 	gitlab.com/distributed_lab/urlval v3.0.0+incompatible
+	gitlab.com/tokend/nft-books/blob-svc v0.0.4-0.20221104125850-7e8369e2ce8a
 	gitlab.com/tokend/nft-books/doorman v0.1.0-rc.1.0.20221024153252-83b51d5f1691
 )
 
@@ -37,7 +38,7 @@ require (
 	github.com/go-ole/go-ole v1.2.1 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/google/jsonapi v0.0.0-20200226002910-c8283f632fb7 // indirect
-	github.com/google/uuid v1.2.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jmoiron/sqlx v1.2.0 // indirect
@@ -46,6 +47,7 @@ require (
 	github.com/lib/pq v1.10.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
+	github.com/nullstyle/go-xdr v0.0.0-20180726165426-f4c839f75077 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/pelletier/go-toml v1.9.3 // indirect
 	github.com/rjeczalik/notify v0.9.1 // indirect
@@ -58,7 +60,11 @@ require (
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	github.com/tklauser/numcpus v0.2.2 // indirect
+	gitlab.com/distributed_lab/json-api-connector v0.2.4 // indirect
 	gitlab.com/distributed_lab/lorem v0.2.0 // indirect
+	gitlab.com/tokend/connectors v0.1.9 // indirect
+	gitlab.com/tokend/go v3.15.0+incompatible // indirect
+	gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 // indirect
 	gitlab.com/tokend/nft-books/go-sdk v0.1.2 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
