@@ -24,7 +24,9 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if books == nil {
-		ape.Render(w, books)
+		ape.Render(w, resources.BookListResponse{
+			Data: make([]resources.Book, 0),
+		})
 		return
 	}
 
