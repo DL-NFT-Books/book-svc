@@ -1,9 +1,9 @@
 package helpers
 
 import (
+	"gitlab.com/tokend/nft-books/book-svc/internal/service/requests"
 	"net/http"
 
-	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
 )
@@ -12,12 +12,12 @@ func GetBookByID(r *http.Request, id int64) (*data.Book, error) {
 	return BooksQ(r).FilterActual().FilterByID(id).Get()
 }
 
-func GetBooksByPage(r *http.Request, page pgdb.OffsetPageParams) ([]data.Book, error) {
-	return BooksQ(r).FilterActual().Page(page).Select()
+func GetBookListByRequest(r *http.Request, request *requests.GetBooksRequest) ([]data.Book, error) {
+	return applyQBooksFilters(BooksQ(r), request).Select()
 }
 
 func NewBooksList(books []data.Book) ([]resources.Book, error) {
-	data := make([]resources.Book, len(books))
+	bookList := make([]resources.Book, len(books))
 
 	for i, book := range books {
 		responseBook, err := NewBook(&book)
@@ -25,10 +25,10 @@ func NewBooksList(books []data.Book) ([]resources.Book, error) {
 			return nil, err
 		}
 
-		data[i] = *responseBook
+		bookList[i] = *responseBook
 	}
 
-	return data, nil
+	return bookList, nil
 }
 
 func NewBook(book *data.Book) (*resources.Book, error) {
@@ -55,10 +55,23 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 			ContractName:    book.ContractName,
 			ContractSymbol:  book.ContractSymbol,
 			ContractVersion: book.ContractVersion,
+			TokenId:         int32(book.TokenId),
+			DeployStatus:    book.DeployStatus,
 			File:            media[0],
 			Banner:          media[1],
 		},
 	}
 
 	return &res, nil
+}
+
+func applyQBooksFilters(q data.BookQ, request *requests.GetBooksRequest) data.BookQ {
+	if request.Status != nil {
+		q = q.FilterByDeployStatus(*request.Status)
+	}
+
+	q = q.Page(request.OffsetPageParams)
+	q = q.FilterActual()
+
+	return q
 }

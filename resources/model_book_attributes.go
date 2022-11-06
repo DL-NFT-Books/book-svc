@@ -20,6 +20,8 @@ type BookAttributes struct {
 	ContractVersion string `json:"contract_version"`
 	// Book creation time
 	CreatedAt time.Time `json:"created_at"`
+	// status of a book deployment
+	DeployStatus DeployStatus `json:"deploy_status"`
 	// Book description
 	Description string `json:"description"`
 	File        Media  `json:"file"`
@@ -27,4 +29,6 @@ type BookAttributes struct {
 	Price string `json:"price"`
 	// Book title
 	Title string `json:"title"`
+	// id from the contract that corresponds to the given book
+	TokenId int32 `json:"token_id"`
 }

@@ -67,13 +67,13 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	book.ID = bookID
 
-	data, err := helpers.NewBook(&book)
+	bookResource, err := helpers.NewBook(&book)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
 	ape.Render(w, resources.BookResponse{
-		Data: *data,
+		Data: *bookResource,
 	})
 }

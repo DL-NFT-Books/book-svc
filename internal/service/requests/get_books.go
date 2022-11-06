@@ -3,11 +3,14 @@ package requests
 import (
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
+	"gitlab.com/tokend/nft-books/book-svc/resources"
 	"net/http"
 )
 
 type GetBooksRequest struct {
 	pgdb.OffsetPageParams
+
+	Status *resources.DeployStatus `filter:"deploy_status"`
 }
 
 func NewGetBooksRequest(r *http.Request) (GetBooksRequest, error) {

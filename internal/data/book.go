@@ -30,6 +30,7 @@ type BookQ interface {
 	FilterActual() BookQ
 	FilterByID(id int64) BookQ
 	FilterByTokenId(tokenId int64) BookQ
+	FilterByDeployStatus(status resources.DeployStatus) BookQ
 
 	Page(params pgdb.OffsetPageParams) BookQ
 }

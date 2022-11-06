@@ -18,7 +18,7 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	books, err := helpers.GetBooksByPage(r, req.OffsetPageParams)
+	books, err := helpers.GetBookListByRequest(r, &req)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

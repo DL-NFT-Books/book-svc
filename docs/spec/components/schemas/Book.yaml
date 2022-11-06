@@ -17,6 +17,8 @@ allOf:
           - price
           - file
           - banner
+          - token_id
+          - deploy_status
         properties:
           title:
             type: string
@@ -56,3 +58,19 @@ allOf:
           file:
             description: File info
             $ref: '#/components/schemas/Media'
+          token_id:
+            type: integer
+            description: id from the contract that corresponds to the given book
+            example: 5
+          deploy_status:
+            type: DeployStatus
+            description: status of a book deployment
+            enum:
+              - name: pending
+                value: 1
+              - name: successful
+                value: 2
+              - name: failed
+                value: 3
+            example: 2
+

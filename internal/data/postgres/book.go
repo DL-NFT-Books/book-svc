@@ -93,6 +93,14 @@ func (b *BooksQ) FilterByTokenId(tokenId int64) data.BookQ {
 	return b
 }
 
+func (b *BooksQ) FilterByDeployStatus(status resources.DeployStatus) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{
+		deployStatusColumn: status,
+	})
+
+	return b
+}
+
 func (b *BooksQ) Page(params pgdb.OffsetPageParams) data.BookQ {
 	b.selectBuilder = params.ApplyTo(b.selectBuilder, idColumn)
 
