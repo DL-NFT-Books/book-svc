@@ -3,6 +3,7 @@ package runners
 import (
 	"context"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -17,7 +18,10 @@ import (
 
 const deployTrackerCursor = "deploy_tracker_last_block"
 
-var BookNotFoundErr = errors.New("book with specified filters was not found")
+var (
+	BookNotFoundErr     = errors.New("book with specified filters was not found")
+	TxStatusNotFoundErr = errors.New("tx status was not found")
+)
 
 type DeployTracker struct {
 	log      *logan.Entry
@@ -174,5 +178,14 @@ func (t *DeployTracker) ProcessEvent(event eth_reader.DeployEvent) error {
 		})
 	}
 
-	return t.database.Books().UpdateDeployStatus(resources.DeploySuccessful, book.ID)
+	switch event.Status {
+	case types.ReceiptStatusSuccessful:
+		return t.database.Books().UpdateDeployStatus(resources.DeploySuccessful, book.ID)
+	case types.ReceiptStatusFailed:
+		return t.database.Books().UpdateDeployStatus(resources.DeployFailed, book.ID)
+	}
+
+	return errors.From(TxStatusNotFoundErr, logan.F{
+		"block_number": event.BlockNumber,
+	})
 }

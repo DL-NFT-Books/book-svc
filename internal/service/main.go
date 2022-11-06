@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+	"gitlab.com/tokend/nft-books/book-svc/internal/service/runners"
 	"net"
 	"net/http"
 
@@ -14,6 +16,7 @@ import (
 )
 
 type service struct {
+	cfg       config.Config
 	log       *logan.Entry
 	copus     types.Copus
 	listener  net.Listener
@@ -29,11 +32,15 @@ func (s *service) run(cfg config.Config) error {
 		return errors.Wrap(err, "cop failed")
 	}
 
+	ctx := context.Background()
+	runners.Run(s.cfg, ctx)
+
 	return http.Serve(s.listener, r)
 }
 
 func newService(cfg config.Config) *service {
 	return &service{
+		cfg:       cfg,
 		log:       cfg.Log(),
 		copus:     cfg.Copus(),
 		listener:  cfg.Listener(),
@@ -44,6 +51,6 @@ func newService(cfg config.Config) *service {
 
 func Run(cfg config.Config) {
 	if err := newService(cfg).run(cfg); err != nil {
-		panic(err)
+		panic(errors.Wrap(err, "failed to initialize a service"))
 	}
 }

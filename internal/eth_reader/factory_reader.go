@@ -1,9 +1,11 @@
 package eth_reader
 
 import (
+	"context"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/nft-books/book-svc/solidity/generated/itokenfactory"
 )
@@ -19,10 +21,10 @@ func NewFactoryContractReader(rpc *ethclient.Client) FactoryContractReader {
 }
 
 type DeployEvent struct {
-	Address      common.Address
-	BlockNumber  uint64
-	Name, Symbol string
-	TokenId      uint64
+	Address         common.Address
+	BlockNumber     uint64
+	Name, Symbol    string
+	TokenId, Status uint64
 }
 
 func (r *FactoryContractReader) GetDeployEvents(
@@ -56,13 +58,22 @@ func (r *FactoryContractReader) GetDeployEvents(
 
 	for iterator.Next() {
 		event := iterator.Event
+
 		if event != nil {
+			receipt, err := r.rpc.TransactionReceipt(context.Background(), event.Raw.TxHash)
+			if err != nil {
+				return nil, 0, errors.Wrap(err, "failed to get tx receipt", logan.F{
+					"tx_hash": event.Raw.TxHash.String(),
+				})
+			}
+
 			events = append(events, DeployEvent{
 				Address:     event.NewTokenContractAddr,
 				BlockNumber: event.Raw.BlockNumber,
 				Name:        event.TokenName,
 				Symbol:      event.TokenSymbol,
 				TokenId:     event.TokenContractId.Uint64(),
+				Status:      receipt.Status,
 			})
 		}
 
