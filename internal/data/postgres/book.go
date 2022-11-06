@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"gitlab.com/tokend/nft-books/book-svc/resources"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
@@ -12,10 +13,12 @@ import (
 const (
 	booksTableName       = "book"
 	idColumn             = "id"
+	tokenIdColumn        = "token_id"
 	priceColumn          = "price"
 	deletedColumn        = "deleted"
 	contractNameColumn   = "contract_name"
 	contactAddressColumn = "contract_address"
+	deployStatusColumn   = "deploy_status"
 	contractSymbolColumn = "contract_symbol"
 	bannerColumn         = "banner"
 	fileColumn           = "file"
@@ -82,6 +85,14 @@ func (b *BooksQ) FilterByID(id int64) data.BookQ {
 	return b
 }
 
+func (b *BooksQ) FilterByTokenId(tokenId int64) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{
+		tokenIdColumn: tokenId,
+	})
+
+	return b
+}
+
 func (b *BooksQ) Page(params pgdb.OffsetPageParams) data.BookQ {
 	b.selectBuilder = params.ApplyTo(b.selectBuilder, idColumn)
 
@@ -133,6 +144,16 @@ func (b *BooksQ) UpdateContractName(name string, id int64) error {
 	return b.db.Exec(
 		b.updateBuilder.
 			Set(contractNameColumn, name).
+			Where(squirrel.Eq{
+				idColumn: id,
+			}),
+	)
+}
+
+func (b *BooksQ) UpdateDeployStatus(newStatus resources.DeployStatus, id int64) error {
+	return b.db.Exec(
+		b.updateBuilder.
+			Set(deployStatusColumn, newStatus).
 			Where(squirrel.Eq{
 				idColumn: id,
 			}),

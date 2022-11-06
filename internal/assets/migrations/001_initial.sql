@@ -12,6 +12,8 @@ CREATE TABLE book(
     banner JSONB NOT NULL,
     file JSONB NOT NULL,
     deleted BOOLEAN NOT NULL DEFAULT 'f',
+    token_id bigint,
+    deploy_status int8,
     last_block bigint
 );
 -- +migrate Down

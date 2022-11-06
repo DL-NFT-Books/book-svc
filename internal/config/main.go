@@ -20,6 +20,7 @@ type Config interface {
 	s3Cfg.Documenter
 
 	UpdateTracker() UpdateTracker
+	DeployTracker() DeployTracker
 	EtherClient() EtherClient
 }
 
@@ -34,6 +35,7 @@ type config struct {
 
 	getter            kv.Getter
 	updateTrackerOnce comfig.Once
+	deployTrackerOnce comfig.Once
 	ethererOnce       comfig.Once
 }
 

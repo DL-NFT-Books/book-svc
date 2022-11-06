@@ -25,6 +25,17 @@ update_tracker:
     min_abnormal_period: 10s
     max_abnormal_period: 10s
 
+deploy_tracker:
+  name: deploy_tracker # Name to be displayed in logs
+  address: 0x63B703318fbcD1F319a5C0036F9bcd6573c483ba
+  runner: # Periods settings
+    normal_period: 10s
+    min_abnormal_period: 10s
+    max_abnormal_period: 10s
+  first_block: 7832143  # A block to begin from
+  iteration_size: 10000
+
+
 ethereum_client: # Rpc and WS addresses
   rpc: https://eth-goerli.g.alchemy.com/v2/DTb8jEsvO6jtXEwUM9Ri3k3cufBIJX-R
   web_socket: wss://eth-goerli.g.alchemy.com/v2/DTb8jEsvO6jtXEwUM9Ri3k3cufBIJX-R

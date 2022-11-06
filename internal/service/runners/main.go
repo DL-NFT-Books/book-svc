@@ -9,6 +9,7 @@ type Runner func(ctx context.Context)
 
 func initializeRunners(cfg config.Config) (runners []Runner) {
 	runners = append(runners, NewUpdateTracker(cfg).Run)
+	runners = append(runners, NewDeployTracker(cfg).Run)
 
 	return
 }
