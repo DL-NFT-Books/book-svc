@@ -35,6 +35,12 @@ deploy_tracker:
   first_block: 7832143  # A block to begin from
   iteration_size: 10000
 
+deploy_signature:
+  eth_signer:
+  token_factory_address:
+  token_factory_name:
+  token_factory_version:
+  chain_id: 5
 
 ethereum_client: # Rpc and WS addresses
   rpc: https://eth-goerli.g.alchemy.com/v2/DTb8jEsvO6jtXEwUM9Ri3k3cufBIJX-R

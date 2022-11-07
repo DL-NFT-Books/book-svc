@@ -1,8 +1,9 @@
 package data
 
 import (
-	"gitlab.com/tokend/nft-books/book-svc/resources"
 	"time"
+
+	"gitlab.com/tokend/nft-books/book-svc/resources"
 
 	"github.com/ethereum/go-ethereum/common"
 	"gitlab.com/distributed_lab/kit/pgdb"

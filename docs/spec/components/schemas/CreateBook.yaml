@@ -9,9 +9,11 @@ allOf:
         required:
           - title
           - description
-          - contract_address
           - banner
           - file
+          - token_name
+          - token_symbol
+          - price
         properties:
           title:
             type: string
@@ -21,13 +23,18 @@ allOf:
             type: string
             description: Book description
             example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-          contract_address:
-            type: string
-            description: Token contract address
-            example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
           banner:
             description: Banner info
             $ref: '#/components/schemas/Media'
           file:
             description: File info
             $ref: '#/components/schemas/Media'
+          token_name:
+            type: string
+            description: Token name
+          token_symbol:
+            type: string
+            description: Token symbol
+          price:
+            type: string
+            description: Price per one token ($)

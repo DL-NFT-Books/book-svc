@@ -3,7 +3,7 @@ package cli
 import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/tokend/nft-books/book-svc/internal/config"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service"
+	"gitlab.com/tokend/nft-books/book-svc/internal/service/api"
 
 	"github.com/alecthomas/kingpin"
 	"gitlab.com/distributed_lab/kit/kv"
@@ -40,7 +40,7 @@ func Run(args []string) bool {
 
 	switch cmd {
 	case serviceCmd.FullCommand():
-		service.Run(cfg)
+		api.Run(cfg)
 	case migrateUpCmd.FullCommand():
 		err = MigrateUp(cfg)
 	case migrateDownCmd.FullCommand():

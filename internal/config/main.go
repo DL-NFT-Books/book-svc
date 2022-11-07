@@ -16,6 +16,7 @@ type Config interface {
 	types.Copuser
 	comfig.Listenerer
 	MimeTypesConfigurator
+	DeploySignatureConfigurator
 	doormanCfg.DoormanConfiger
 	s3Cfg.Documenter
 
@@ -32,6 +33,7 @@ type config struct {
 	MimeTypesConfigurator
 	doormanCfg.DoormanConfiger
 	s3Cfg.Documenter
+	DeploySignatureConfigurator
 
 	getter            kv.Getter
 	updateTrackerOnce comfig.Once
@@ -41,13 +43,14 @@ type config struct {
 
 func New(getter kv.Getter) Config {
 	return &config{
-		getter:                getter,
-		Databaser:             pgdb.NewDatabaser(getter),
-		Copuser:               copus.NewCopuser(getter),
-		Listenerer:            comfig.NewListenerer(getter),
-		Logger:                comfig.NewLogger(getter, comfig.LoggerOpts{}),
-		MimeTypesConfigurator: NewMimeTypesConfigurator(getter),
-		DoormanConfiger:       doormanCfg.NewDoormanConfiger(getter),
-		Documenter:            s3Cfg.NewDocumenter(getter),
+		getter:                      getter,
+		Databaser:                   pgdb.NewDatabaser(getter),
+		Copuser:                     copus.NewCopuser(getter),
+		Listenerer:                  comfig.NewListenerer(getter),
+		Logger:                      comfig.NewLogger(getter, comfig.LoggerOpts{}),
+		MimeTypesConfigurator:       NewMimeTypesConfigurator(getter),
+		DoormanConfiger:             doormanCfg.NewDoormanConfiger(getter),
+		Documenter:                  s3Cfg.NewDocumenter(getter),
+		DeploySignatureConfigurator: NewDeploySignatureConfigurator(getter),
 	}
 }
