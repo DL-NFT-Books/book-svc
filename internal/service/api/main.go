@@ -2,8 +2,11 @@ package api
 
 import (
 	"context"
+	"gitlab.com/tokend/nft-books/book-svc/internal/data"
+	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"net"
 	"net/http"
+	"strconv"
 
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/runners"
 
@@ -15,6 +18,8 @@ import (
 	"gitlab.com/distributed_lab/kit/copus/types"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
+
+const tokenIdIncrementKey = "token_id_increment"
 
 type service struct {
 	cfg                 config.Config
@@ -28,6 +33,13 @@ type service struct {
 
 func (s *service) run(cfg config.Config) error {
 	s.log.Info("Service started")
+	// Update increment key
+	if err := s.setInitialSubscribeOffset(); err != nil {
+		return errors.Wrap(err, "failed to set initial offset", logan.F{
+			"initial_offset": cfg.DeploySignatureConfig().InitialOffset,
+		})
+	}
+
 	r := s.router(cfg)
 
 	if err := s.copus.RegisterChi(r); err != nil {
@@ -38,6 +50,15 @@ func (s *service) run(cfg config.Config) error {
 	runners.Run(s.cfg, ctx)
 
 	return http.Serve(s.listener, r)
+}
+
+func (s *service) setInitialSubscribeOffset() error {
+	keyValueQ := postgres.NewKeyValueQ(s.db)
+
+	return keyValueQ.Upsert(data.KeyValue{
+		Key:   tokenIdIncrementKey,
+		Value: strconv.FormatInt(s.cfg.DeploySignatureConfig().InitialOffset, 10),
+	})
 }
 
 func newService(cfg config.Config) *service {
