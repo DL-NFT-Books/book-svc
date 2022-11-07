@@ -97,7 +97,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		Banner:          media[0],
 		File:            media[1],
 		Deleted:         false,
-		TokenId:         0,
+		TokenId:         createInfo.TokenContractId,
 		DeployStatus:    resources.DeployPending,
 		LastBlock:       0,
 	}
