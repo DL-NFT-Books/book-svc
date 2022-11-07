@@ -60,8 +60,8 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 			ContractVersion: book.ContractVersion,
 			TokenId:         int32(book.TokenId),
 			DeployStatus:    book.DeployStatus,
-			File:            media[0],
-			Banner:          media[1],
+			File:            media[1],
+			Banner:          media[0],
 		},
 	}
 

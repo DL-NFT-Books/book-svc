@@ -2,6 +2,8 @@ package runners
 
 import (
 	"context"
+	"strconv"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -13,7 +15,6 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"gitlab.com/tokend/nft-books/book-svc/internal/eth_reader"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
-	"strconv"
 )
 
 const deployTrackerCursor = "deploy_tracker_last_block"
@@ -173,9 +174,12 @@ func (t *DeployTracker) ProcessEvent(event eth_reader.DeployEvent) error {
 		return errors.Wrap(err, "failed to get book by token id")
 	}
 	if book == nil {
-		return errors.From(BookNotFoundErr, logan.F{
-			"token_id": event.TokenId,
-		})
+		t.log.Warnf("Book with token id %v was not found", event.TokenId)
+
+		return nil
+		//return errors.From(BookNotFoundErr, logan.F{
+		//	"token_id": event.TokenId,
+		//})
 	}
 
 	switch event.Status {

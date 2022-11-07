@@ -25,7 +25,7 @@ func MarshalMedia(media ...*resources.Media) []string {
 
 func UnmarshalMedia(media ...string) ([]resources.Media, error) {
 	var res []resources.Media
-	var unmarshalledMedia resources.Media
+	var unmarshalledMedia *resources.Media
 
 	for _, value := range media {
 		err := json.Unmarshal([]byte(value), &unmarshalledMedia)
@@ -33,7 +33,9 @@ func UnmarshalMedia(media ...string) ([]resources.Media, error) {
 			return nil, err
 		}
 
-		res = append(res, unmarshalledMedia)
+		res = append(res, *unmarshalledMedia)
+		unmarshalledMedia = nil
+
 	}
 	return res, nil
 }
