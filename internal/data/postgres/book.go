@@ -11,20 +11,20 @@ import (
 )
 
 const (
-	booksTableName       = "book"
-	idColumn             = "id"
-	tokenIdColumn        = "token_id"
-	priceColumn          = "price"
-	deletedColumn        = "deleted"
-	contractNameColumn   = "contract_name"
-	contactAddressColumn = "contract_address"
-	deployStatusColumn   = "deploy_status"
-	contractSymbolColumn = "contract_symbol"
-	bannerColumn         = "banner"
-	fileColumn           = "file"
-	titleColumn          = "title"
-	lastBlockColumn      = "last_block"
-	descriptionColumn    = "description"
+	booksTableName        = "book"
+	idColumn              = "id"
+	tokenIdColumn         = "token_id"
+	priceColumn           = "price"
+	deletedColumn         = "deleted"
+	contractNameColumn    = "contract_name"
+	contractAddressColumn = "contract_address"
+	deployStatusColumn    = "deploy_status"
+	contractSymbolColumn  = "contract_symbol"
+	bannerColumn          = "banner"
+	fileColumn            = "file"
+	titleColumn           = "title"
+	lastBlockColumn       = "last_block"
+	descriptionColumn     = "description"
 )
 
 func NewBooksQ(db *pgdb.DB) data.BookQ {
@@ -162,6 +162,16 @@ func (b *BooksQ) UpdateDeployStatus(newStatus resources.DeployStatus, id int64) 
 	return b.db.Exec(
 		b.updateBuilder.
 			Set(deployStatusColumn, newStatus).
+			Where(squirrel.Eq{
+				idColumn: id,
+			}),
+	)
+}
+
+func (b *BooksQ) UpdateContractAddress(newAddress string, id int64) error {
+	return b.db.Exec(
+		b.updateBuilder.
+			Set(contractAddressColumn, newAddress).
 			Where(squirrel.Eq{
 				idColumn: id,
 			}),

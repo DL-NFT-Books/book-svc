@@ -184,6 +184,12 @@ func (t *DeployTracker) ProcessEvent(event eth_reader.DeployEvent) error {
 
 	switch event.Status {
 	case types.ReceiptStatusSuccessful:
+		if err = t.database.Books().UpdateContractAddress(event.Address.String(), book.ID); err != nil {
+			return errors.Wrap(err, "failed to update contract address", logan.F{
+				"contract_address": event.Address.String(),
+			})
+		}
+
 		return t.database.Books().UpdateDeployStatus(resources.DeploySuccessful, book.ID)
 	case types.ReceiptStatusFailed:
 		return t.database.Books().UpdateDeployStatus(resources.DeployFailed, book.ID)

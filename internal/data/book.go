@@ -23,6 +23,7 @@ type BookQ interface {
 
 	UpdatePrice(price string, id int64) error
 	UpdateContractName(name string, id int64) error
+	UpdateContractAddress(newAddress string, id int64) error
 	UpdateLastBlock(newLastBlock uint64, id int64) error
 	UpdateSymbol(newSymbol string, id int64) error
 	UpdateDeployStatus(newStatus resources.DeployStatus, id int64) error
