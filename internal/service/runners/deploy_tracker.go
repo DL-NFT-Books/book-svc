@@ -175,11 +175,7 @@ func (t *DeployTracker) ProcessEvent(event eth_reader.DeployEvent) error {
 	}
 	if book == nil {
 		t.log.Warnf("Book with token id %v was not found", event.TokenId)
-
 		return nil
-		//return errors.From(BookNotFoundErr, logan.F{
-		//	"token_id": event.TokenId,
-		//})
 	}
 
 	switch event.Status {
