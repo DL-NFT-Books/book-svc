@@ -6,11 +6,11 @@ allOf:
     properties:
       attributes:
         type: object
-        required:
-          - title
-          - description
-          - file
-          - banner
+#        required:
+#          - title
+#          - description
+#          - file
+#          - banner
         properties:
           title:
             type: string

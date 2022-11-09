@@ -41,35 +41,28 @@ func UnmarshalMedia(media ...string) ([]resources.Media, error) {
 }
 
 func CheckMediaTypes(r *http.Request, bannerExt, fileExt string) error {
-	err := checkBannerMimeType(bannerExt, r)
+	err := CheckBannerMimeType(bannerExt, r)
 	if err != nil {
 		return err
 	}
 
-	return checkFileMimeType(fileExt, r)
+	return CheckFileMimeType(fileExt, r)
 }
 
-func SetMediaLinks(r *http.Request, banner, file *resources.Media) error {
+func SetMediaLink(r *http.Request, media *resources.Media) error {
 	dconnector := DocumenterConnector(r)
 
-	bannerLink, err := dconnector.GetDocumentLink(banner.Attributes.Key)
+	link, err := dconnector.GetDocumentLink(media.Attributes.Key)
 	if err != nil {
 		return err
 	}
 
-	banner.Attributes.Url = &bannerLink.Data.Attributes.Url
-
-	fileLink, err := dconnector.GetDocumentLink(file.Attributes.Key)
-	if err != nil {
-		return err
-	}
-
-	file.Attributes.Url = &fileLink.Data.Attributes.Url
+	media.Attributes.Url = &link.Data.Attributes.Url
 
 	return nil
 }
 
-func checkBannerMimeType(ext string, r *http.Request) error {
+func CheckBannerMimeType(ext string, r *http.Request) error {
 	for _, el := range MimeTypes(r).AllowedBannerMimeTypes {
 		if el == ext {
 			return nil
@@ -78,7 +71,7 @@ func checkBannerMimeType(ext string, r *http.Request) error {
 	return errors.New("invalid banner extension")
 }
 
-func checkFileMimeType(ext string, r *http.Request) error {
+func CheckFileMimeType(ext string, r *http.Request) error {
 	for _, el := range MimeTypes(r).AllowedFileMimeTypes {
 		if el == ext {
 			return nil

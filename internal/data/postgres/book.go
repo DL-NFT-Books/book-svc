@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+
 	"gitlab.com/tokend/nft-books/book-svc/resources"
 
 	"github.com/Masterminds/squirrel"
@@ -125,15 +126,42 @@ func (b *BooksQ) DeleteByID(id int64) error {
 	return b.db.Exec(stmt)
 }
 
-func (b *BooksQ) Update(data data.Book) error {
+func (b *BooksQ) UpdateFile(file string, id int64) error {
 	return b.db.Exec(
 		b.updateBuilder.
-			Set(titleColumn, data.Title).
-			Set(descriptionColumn, data.Description).
-			Set(bannerColumn, data.Banner).
-			Set(fileColumn, data.File).
+			Set(fileColumn, file).
 			Where(squirrel.Eq{
-				idColumn: data.ID,
+				idColumn: id,
+			}),
+	)
+}
+
+func (b *BooksQ) UpdateBanner(banner string, id int64) error {
+	return b.db.Exec(
+		b.updateBuilder.
+			Set(bannerColumn, banner).
+			Where(squirrel.Eq{
+				idColumn: id,
+			}),
+	)
+}
+
+func (b *BooksQ) UpdateTitle(title string, id int64) error {
+	return b.db.Exec(
+		b.updateBuilder.
+			Set(titleColumn, title).
+			Where(squirrel.Eq{
+				idColumn: id,
+			}),
+	)
+}
+
+func (b *BooksQ) UpdateDescription(desc string, id int64) error {
+	return b.db.Exec(
+		b.updateBuilder.
+			Set(descriptionColumn, desc).
+			Where(squirrel.Eq{
+				idColumn: id,
 			}),
 	)
 }

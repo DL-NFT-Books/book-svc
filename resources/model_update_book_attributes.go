@@ -5,10 +5,10 @@
 package resources
 
 type UpdateBookAttributes struct {
-	Banner Media `json:"banner"`
+	Banner *Media `json:"banner,omitempty"`
 	// Book description
-	Description string `json:"description"`
-	File        Media  `json:"file"`
+	Description *string `json:"description,omitempty"`
+	File        *Media  `json:"file,omitempty"`
 	// Book title
-	Title string `json:"title"`
+	Title *string `json:"title,omitempty"`
 }
