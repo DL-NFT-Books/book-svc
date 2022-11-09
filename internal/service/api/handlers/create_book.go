@@ -35,7 +35,14 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = helpers.SetMediaLinks(r, &banner, &file); err != nil {
+	// setting banner link
+	if err = helpers.SetMediaLink(r, &banner); err != nil {
+		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+
+	// setting file link
+	if err = helpers.SetMediaLink(r, &file); err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
