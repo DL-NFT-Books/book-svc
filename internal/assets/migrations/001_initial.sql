@@ -6,7 +6,7 @@ CREATE TABLE book(
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     price VARCHAR(30) NOT NULL,
     contract_address VARCHAR(42) NOT NULL,
-    contract_name VARCHAR(32) NOT NULL,
+    contract_name VARCHAR(64) NOT NULL,
     contract_symbol varchar(8) not null,
     contract_version VARCHAR(32) NOT NULL,
     banner JSONB NOT NULL,
