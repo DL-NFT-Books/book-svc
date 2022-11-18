@@ -2,6 +2,9 @@ package runners
 
 import (
 	"context"
+	"gitlab.com/tokend/nft-books/book-svc/internal/data/ethereum"
+	"gitlab.com/tokend/nft-books/book-svc/internal/reader"
+	"gitlab.com/tokend/nft-books/book-svc/internal/reader/ethreader"
 	"strconv"
 
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -12,35 +15,25 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/config"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
-	"gitlab.com/tokend/nft-books/book-svc/internal/eth_reader"
 )
 
 const updateTrackerKVPage = "update_tracker_page"
 
 type UpdateTracker struct {
-	log    *logan.Entry
-	rpc    *ethclient.Client
-	reader eth_reader.TokenContractReader
-
-	db data.DB
-
-	name          string
-	capacity      uint64
-	iterationSize uint64
-	runnerCfg     config.Runner
+	log      *logan.Entry
+	rpc      *ethclient.Client
+	cfg      config.UpdateTracker
+	reader   reader.TokenReader
+	database data.DB
 }
 
 func NewUpdateTracker(cfg config.Config) *UpdateTracker {
 	return &UpdateTracker{
-		log:    cfg.Log(),
-		rpc:    cfg.EtherClient().Rpc,
-		reader: eth_reader.NewTokenContractReader(cfg.EtherClient().Rpc),
-
-		db: postgres.NewDB(cfg.DB()),
-
-		name:          cfg.UpdateTracker().Name,
-		iterationSize: cfg.UpdateTracker().IterationSize,
-		runnerCfg:     cfg.UpdateTracker().Runner,
+		log:      cfg.Log(),
+		rpc:      cfg.EtherClient().Rpc,
+		cfg:      cfg.UpdateTracker(),
+		reader:   ethreader.NewTokenContractReader(cfg),
+		database: postgres.NewDB(cfg.DB()),
 	}
 }
 
@@ -48,11 +41,11 @@ func (t *UpdateTracker) Run(ctx context.Context) {
 	running.WithBackOff(
 		ctx,
 		t.log,
-		t.name,
+		t.cfg.Name,
 		t.Track,
-		t.runnerCfg.NormalPeriod,
-		t.runnerCfg.MinAbnormalPeriod,
-		t.runnerCfg.MaxAbnormalPeriod,
+		t.cfg.Runner.NormalPeriod,
+		t.cfg.Runner.MinAbnormalPeriod,
+		t.cfg.Runner.MaxAbnormalPeriod,
 	)
 }
 
@@ -75,27 +68,32 @@ func (t *UpdateTracker) Track(ctx context.Context) error {
 
 func (t *UpdateTracker) ProcessBook(book data.Book) error {
 	t.log.Debugf("Processing book with id of %d", book.ID)
+
 	lastBlock, err := t.rpc.BlockNumber(context.Background())
 	if err != nil {
 		return errors.Wrap(err, "failed to get last block number")
 	}
 
 	if book.LastBlock > lastBlock {
-		t.log.Debugf("contract last block exceeded last block in the blockchain")
+		t.log.Debugf("contract last block exceeded last block in the blockchain. Omitting")
 		return nil
 	}
 
-	events, _, err := t.reader.GetUpdateEvents(book.Address(), book.LastBlock, book.LastBlock+t.iterationSize)
+	events, err := t.reader.
+		From(book.LastBlock).
+		To(book.LastBlock + t.cfg.IterationSize).
+		WithAddress(book.Address()).
+		GetUpdateEvents()
 	if err != nil {
-		return errors.Wrap(err, "failed to get events")
+		return errors.Wrap(err, "failed to get book update events")
 	}
 
 	if len(events) == 0 {
-		t.log.Debug("No events found")
+		t.log.Debug("No book update events found")
 	}
 
 	for _, event := range events {
-		t.log.Debugf("Found event with a block number of %d", event.BlockNumber)
+		t.log.Debugf("Found update book event with a block number %d", event.BlockNumber)
 
 		if err = t.ProcessEvent(event, book.ID); err != nil {
 			return errors.Wrap(err, "failed to process event", logan.F{
@@ -104,38 +102,32 @@ func (t *UpdateTracker) ProcessBook(book data.Book) error {
 		}
 	}
 
-	newBlock, err := t.GetNewBlock(book.LastBlock, t.iterationSize)
+	nextBlock, err := t.GetNextBlock(book.LastBlock, t.cfg.IterationSize, lastBlock)
 	if err != nil {
 		return errors.Wrap(err, "failed to get new block", logan.F{
 			"current_block": book.LastBlock,
 		})
 	}
 
-	if err = t.db.Books().UpdateLastBlock(newBlock, book.ID); err != nil {
+	if err = t.database.Books().UpdateLastBlock(nextBlock, book.ID); err != nil {
 		return errors.Wrap(err, "failed to update last block")
 	}
 
 	return nil
 }
 
-func (t *UpdateTracker) GetNewBlock(previousBlock, iterationSize uint64) (uint64, error) {
-	// Retrieving the last blockchain block number
-	lastBlockchainBlock, err := t.rpc.BlockNumber(context.Background())
-	if err != nil {
-		return 0, errors.Wrap(err, "failed to get the last block in the blockchain")
+func (t *UpdateTracker) GetNextBlock(startBlock, iterationSize, lastBlock uint64) (uint64, error) {
+	t.log.Debugf("Last blockchain block has id of %d", lastBlock)
+
+	if startBlock+iterationSize+1 > lastBlock {
+		return lastBlock + 1, nil
 	}
 
-	t.log.Debugf("Last blockchain block has id of %d", lastBlockchainBlock)
-
-	if previousBlock+iterationSize+1 > lastBlockchainBlock {
-		return lastBlockchainBlock + 1, nil
-	}
-
-	return previousBlock + iterationSize + 1, nil
+	return startBlock + iterationSize + 1, nil
 }
 
-func (t *UpdateTracker) ProcessEvent(event eth_reader.UpdateEvent, id int64) error {
-	if err := t.db.Books().UpdateContractParams(
+func (t *UpdateTracker) ProcessEvent(event ethereum.UpdateEvent, id int64) error {
+	if err := t.database.Books().UpdateContractParams(
 		event.Name,
 		event.Symbol,
 		event.Price,
@@ -148,15 +140,15 @@ func (t *UpdateTracker) ProcessEvent(event eth_reader.UpdateEvent, id int64) err
 }
 
 func (t *UpdateTracker) Select(pageNumber uint64) ([]data.Book, error) {
-	cutQ := t.db.Books().Page(pgdb.OffsetPageParams{
-		Limit:      t.capacity,
+	cutQ := t.database.Books().Page(pgdb.OffsetPageParams{
+		Limit:      t.cfg.Capacity,
 		PageNumber: pageNumber})
 
 	return cutQ.Select()
 }
 
 func (t *UpdateTracker) FormList() ([]data.Book, error) {
-	pageNumberKV, err := t.db.KeyValue().Get(updateTrackerKVPage)
+	pageNumberKV, err := t.database.KeyValue().Get(updateTrackerKVPage)
 	if pageNumberKV == nil {
 		pageNumberKV = &data.KeyValue{
 			Key:   updateTrackerKVPage,
@@ -183,7 +175,7 @@ func (t *UpdateTracker) FormList() ([]data.Book, error) {
 	}
 
 	if len(contracts) == 0 {
-		if err = t.db.KeyValue().Upsert(data.KeyValue{
+		if err = t.database.KeyValue().Upsert(data.KeyValue{
 			Key:   updateTrackerKVPage,
 			Value: "0",
 		}); err != nil {
@@ -193,7 +185,7 @@ func (t *UpdateTracker) FormList() ([]data.Book, error) {
 		return t.FormList()
 	}
 
-	if err = t.db.KeyValue().Upsert(data.KeyValue{
+	if err = t.database.KeyValue().Upsert(data.KeyValue{
 		Key:   updateTrackerKVPage,
 		Value: strconv.FormatInt(pageNumber+1, 10),
 	}); err != nil {

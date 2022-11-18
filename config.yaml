@@ -36,7 +36,6 @@ deploy_tracker:
   iteration_size: 10000
 
 deploy_signature:
-  initial_offset: 5
   eth_signer:
   token_factory_address:
   token_factory_name:

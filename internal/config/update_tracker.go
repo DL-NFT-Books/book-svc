@@ -10,7 +10,7 @@ const updateTrackerYamlKey = "update_tracker"
 
 type UpdateTracker struct {
 	Name          string `fig:"name"`
-	Capacity      int64  `fig:"capacity"`
+	Capacity      uint64 `fig:"capacity"`
 	IterationSize uint64 `fig:"iteration_size"`
 	Runner        Runner `fig:"runner"`
 }
