@@ -23,8 +23,10 @@ func (s *service) router(cfg config.Config) chi.Router {
 			helpers.CtxKeyValueQ(postgres.NewKeyValueQ(s.db)),
 			helpers.CtxMimeTypes(s.mimeTypes),
 			helpers.CtxDeploySignature(s.deploySignatureConf),
+
 			helpers.CtxDoormanConnector(cfg.DoormanConnector()),
 			helpers.CtxDocumenterConnector(*cfg.DocumenterConnector()),
+			helpers.CtxNetworkerConnector(*cfg.NetworkConnector()),
 		),
 	)
 

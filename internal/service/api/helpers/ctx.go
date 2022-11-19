@@ -11,6 +11,7 @@ import (
 
 	"gitlab.com/distributed_lab/logan/v3"
 	s3connector "gitlab.com/tokend/nft-books/blob-svc/connector/api"
+	networkerConnector "gitlab.com/tokend/nft-books/network-svc/connector/api"
 )
 
 type ctxKey int
@@ -23,6 +24,7 @@ const (
 	deploySignatureCtxKey
 	doormanConnectorCtxKey
 	documenterConnectorCtxKey
+	networkerConnectorCtxKey
 )
 
 func CtxLog(entry *logan.Entry) func(context.Context) context.Context {
@@ -80,6 +82,17 @@ func CtxDoormanConnector(entry connector.ConnectorI) func(context.Context) conte
 		return context.WithValue(ctx, doormanConnectorCtxKey, entry)
 	}
 }
+
+func CtxNetworkerConnector(entry networkerConnector.Connector) func(context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, networkerConnectorCtxKey, entry)
+	}
+}
+
+func NetworkerConnector(r *http.Request) networkerConnector.Connector {
+	return r.Context().Value(networkerConnectorCtxKey).(networkerConnector.Connector)
+}
+
 func DoormanConnector(r *http.Request) connector.ConnectorI {
 	return r.Context().Value(doormanConnectorCtxKey).(connector.ConnectorI)
 }

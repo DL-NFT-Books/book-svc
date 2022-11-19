@@ -56,3 +56,6 @@ cop:
 doorman:
   service_url: http://localhost:8054/integrations/doorman
 
+networker:
+  url:
+  token:

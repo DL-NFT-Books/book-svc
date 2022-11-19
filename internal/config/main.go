@@ -8,6 +8,7 @@ import (
 	"gitlab.com/distributed_lab/kit/pgdb"
 	s3Cfg "gitlab.com/tokend/nft-books/blob-svc/connector/config"
 	doormanCfg "gitlab.com/tokend/nft-books/doorman/connector/config"
+	networkerCfg "gitlab.com/tokend/nft-books/network-svc/connector/config"
 )
 
 type Config interface {
@@ -15,10 +16,13 @@ type Config interface {
 	pgdb.Databaser
 	types.Copuser
 	comfig.Listenerer
-	MimeTypesConfigurator
-	DeploySignatureConfigurator
+
 	doormanCfg.DoormanConfiger
 	s3Cfg.Documenter
+	networkerCfg.NetworkConfigurator
+
+	MimeTypesConfigurator
+	DeploySignatureConfigurator
 
 	UpdateTracker() UpdateTracker
 	DeployTracker() DeployTracker
@@ -30,9 +34,12 @@ type config struct {
 	pgdb.Databaser
 	types.Copuser
 	comfig.Listenerer
-	MimeTypesConfigurator
+
 	doormanCfg.DoormanConfiger
 	s3Cfg.Documenter
+	networkerCfg.NetworkConfigurator
+
+	MimeTypesConfigurator
 	DeploySignatureConfigurator
 
 	getter            kv.Getter
@@ -52,5 +59,6 @@ func New(getter kv.Getter) Config {
 		DoormanConfiger:             doormanCfg.NewDoormanConfiger(getter),
 		Documenter:                  s3Cfg.NewDocumenter(getter),
 		DeploySignatureConfigurator: NewDeploySignatureConfigurator(getter),
+		NetworkConfigurator:         networkerCfg.NewNetworkConfigurator(getter),
 	}
 }
