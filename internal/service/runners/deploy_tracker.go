@@ -4,10 +4,6 @@ import (
 	"context"
 	"strconv"
 
-	"gitlab.com/tokend/nft-books/book-svc/internal/data/ethereum"
-	"gitlab.com/tokend/nft-books/book-svc/internal/reader"
-	"gitlab.com/tokend/nft-books/book-svc/internal/reader/ethreader"
-
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -15,8 +11,13 @@ import (
 	"gitlab.com/distributed_lab/running"
 	"gitlab.com/tokend/nft-books/book-svc/internal/config"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
+	"gitlab.com/tokend/nft-books/book-svc/internal/data/ethereum"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
+	"gitlab.com/tokend/nft-books/book-svc/internal/reader"
+	"gitlab.com/tokend/nft-books/book-svc/internal/reader/ethreader"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
+	network_connector "gitlab.com/tokend/nft-books/network-svc/connector/api"
+	network_resources "gitlab.com/tokend/nft-books/network-svc/resources"
 )
 
 const deployTrackerCursor = "deploy_tracker_last_block"
@@ -32,6 +33,8 @@ type DeployTracker struct {
 	rpc      *ethclient.Client
 	reader   reader.FactoryReader
 	cfg      config.DeployTracker
+
+	networker *network_connector.Connector
 }
 
 func NewDeployTracker(cfg config.Config) *DeployTracker {
@@ -41,6 +44,8 @@ func NewDeployTracker(cfg config.Config) *DeployTracker {
 		rpc:      cfg.EtherClient().Rpc,
 		reader:   ethreader.NewFactoryContractReader(cfg).WithAddress(cfg.DeployTracker().Address),
 		cfg:      cfg.DeployTracker(),
+
+		networker: cfg.NetworkConnector(),
 	}
 }
 
@@ -57,6 +62,28 @@ func (t *DeployTracker) Run(ctx context.Context) {
 }
 
 func (t *DeployTracker) Track(ctx context.Context) error {
+	// getting networks
+	networksResponse, err := t.networker.GetNetworks()
+	if err != nil {
+		return errors.Wrap(err, "failed to form a list of available networks")
+	}
+
+	networks := networksResponse.Data
+	for _, network := range networks {
+		if err = t.ProcessNetwork(network.Attributes); err != nil {
+			return errors.Wrap(err, "failed to process specified network", logan.F{
+				"network_name": network.Attributes.Name,
+				"chain_id":     network.Attributes.ChainId,
+			})
+		}
+	}
+
+	return nil
+}
+
+func (t *DeployTracker) ProcessNetwork(network network_resources.NetworkDetailedAttributes) error {
+	// TODO: IMPLEMENT SPECIFIC NETWORK TRACKING
+
 	startBlock, err := t.GetStartBlock()
 	if err != nil {
 		return errors.Wrap(err, "failed to get start block")
@@ -118,6 +145,8 @@ func (t *DeployTracker) MustNotExceedLastBlock(block uint64) (bool, error) {
 }
 
 func (t *DeployTracker) GetStartBlock() (uint64, error) {
+	//TODO: CHANGE IMPLEMENTATION FOR VARIOUS NETWORKS
+
 	cursorKV, err := t.database.KeyValue().Get(deployTrackerCursor)
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to get cursor value")
