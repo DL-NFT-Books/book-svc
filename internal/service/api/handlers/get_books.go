@@ -12,6 +12,8 @@ import (
 )
 
 func GetBooks(w http.ResponseWriter, r *http.Request) {
+	logger := helpers.Log(r)
+
 	req, err := requests.NewGetBooksRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
@@ -20,6 +22,7 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 
 	books, err := helpers.GetBookListByRequest(r, &req)
 	if err != nil {
+		logger.WithError(err).Error("failed to get books")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
@@ -32,6 +35,7 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 
 	data, err := helpers.NewBooksList(books)
 	if err != nil {
+		logger.WithError(err).Error("failed to form up book list response")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}

@@ -5,7 +5,7 @@ import (
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-	helpers2 "gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
+	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
 )
 
@@ -18,7 +18,7 @@ func DeleteBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	book, err := helpers2.GetBookByID(r, req.ID)
+	book, err := helpers.GetBookByID(r, req.ID)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
@@ -28,7 +28,7 @@ func DeleteBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = helpers2.BooksQ(r).DeleteByID(req.ID)
+	err = helpers.BooksQ(r).DeleteByID(req.ID)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

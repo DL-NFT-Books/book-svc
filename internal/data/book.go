@@ -17,13 +17,9 @@ type BookQ interface {
 
 	Insert(data Book) (int64, error)
 	DeleteByID(id int64) error
+	Update(updater BookUpdateParams, id int64) error
 
 	UpdateContractParams(name, symbol, price string, id int64) error
-
-	UpdateBanner(banner string, id int64) error
-	UpdateFile(file string, id int64) error
-	UpdateTitle(tilte string, id int64) error
-	UpdateDescription(description string, id int64) error
 
 	UpdatePrice(price string, id int64) error
 	UpdateContractName(name string, id int64) error
@@ -40,6 +36,14 @@ type BookQ interface {
 	FilterByChainID(chainID int64) BookQ
 
 	Page(params pgdb.OffsetPageParams) BookQ
+}
+
+// BookUpdateParams is a structure for applicable update params on bookQ `Update`
+type BookUpdateParams struct {
+	Banner      *string
+	File        *string
+	Title       *string
+	Description *string
 }
 
 type Book struct {

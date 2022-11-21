@@ -135,44 +135,29 @@ func (b *BooksQ) DeleteByID(id int64) error {
 	return b.db.Exec(stmt)
 }
 
-func (b *BooksQ) UpdateFile(file string, id int64) error {
+func (b *BooksQ) Update(updater data.BookUpdateParams, id int64) error {
 	return b.db.Exec(
-		b.updateBuilder.
-			Set(fileColumn, file).
+		b.applyUpdateParams(b.updateBuilder, updater).
 			Where(squirrel.Eq{
 				idColumn: id,
-			}),
-	)
+			}))
 }
 
-func (b *BooksQ) UpdateBanner(banner string, id int64) error {
-	return b.db.Exec(
-		b.updateBuilder.
-			Set(bannerColumn, banner).
-			Where(squirrel.Eq{
-				idColumn: id,
-			}),
-	)
-}
+func (b *BooksQ) applyUpdateParams(sql squirrel.UpdateBuilder, updater data.BookUpdateParams) squirrel.UpdateBuilder {
+	if updater.File != nil {
+		sql = sql.Set(fileColumn, *updater.File)
+	}
+	if updater.Banner != nil {
+		sql = sql.Set(bannerColumn, *updater.Banner)
+	}
+	if updater.Title != nil {
+		sql = sql.Set(titleColumn, *updater.Title)
+	}
+	if updater.Description != nil {
+		sql = sql.Set(descriptionColumn, *updater.Description)
+	}
 
-func (b *BooksQ) UpdateTitle(title string, id int64) error {
-	return b.db.Exec(
-		b.updateBuilder.
-			Set(titleColumn, title).
-			Where(squirrel.Eq{
-				idColumn: id,
-			}),
-	)
-}
-
-func (b *BooksQ) UpdateDescription(desc string, id int64) error {
-	return b.db.Exec(
-		b.updateBuilder.
-			Set(descriptionColumn, desc).
-			Where(squirrel.Eq{
-				idColumn: id,
-			}),
-	)
+	return sql
 }
 
 func (b *BooksQ) UpdatePrice(price string, id int64) error {

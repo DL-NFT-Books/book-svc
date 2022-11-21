@@ -28,8 +28,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// validating info
-
+	// <validating info region>
 	banner := req.Data.Attributes.Banner
 	file := req.Data.Attributes.File
 
@@ -40,12 +39,14 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// setting banner link
 	if err = helpers.SetMediaLink(r, &banner); err != nil {
+		logger.WithError(err).Error("failed to set banner link")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
 	// setting file link
 	if err = helpers.SetMediaLink(r, &file); err != nil {
+		logger.WithError(err).Error("failed to set file link")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
@@ -75,6 +76,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
+	// </validating info region>
 
 	lastTokenContractID, err := helpers.GenerateTokenID(r)
 	if err != nil {
@@ -139,7 +141,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		Key:   tokenIdIncrementKey,
 		Value: strconv.FormatInt(createInfo.TokenContractId, 10),
 	}); err != nil {
-		logger.WithError(err).Debug("failed to update last created token id")
+		logger.WithError(err).Error("failed to update last created token id")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
