@@ -28,7 +28,7 @@ func DeleteBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = helpers.BooksQ(r).DeleteByID(req.ID)
+	err = helpers.DB(r).Books().DeleteByID(req.ID)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

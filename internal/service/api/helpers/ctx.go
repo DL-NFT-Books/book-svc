@@ -18,30 +18,27 @@ type ctxKey int
 
 const (
 	logCtxKey ctxKey = iota
-	booksQCtxKey
-	keyValueQCtxKey
 	mimeTypesCtxKey
 	deploySignatureCtxKey
 	doormanConnectorCtxKey
 	documenterConnectorCtxKey
 	networkerConnectorCtxKey
+	dbKey
 )
+
+func SetDB(db data.DB) func(context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, dbKey, db)
+	}
+}
+
+func DB(r *http.Request) data.DB {
+	return r.Context().Value(dbKey).(data.DB).New()
+}
 
 func CtxLog(entry *logan.Entry) func(context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, logCtxKey, entry)
-	}
-}
-
-func CtxBooksQ(entry data.BookQ) func(context.Context) context.Context {
-	return func(ctx context.Context) context.Context {
-		return context.WithValue(ctx, booksQCtxKey, entry)
-	}
-}
-
-func CtxKeyValueQ(entry data.KeyValueQ) func(context.Context) context.Context {
-	return func(ctx context.Context) context.Context {
-		return context.WithValue(ctx, keyValueQCtxKey, entry)
 	}
 }
 
@@ -67,14 +64,6 @@ func MimeTypes(r *http.Request) *config.MimeTypes {
 
 func Log(r *http.Request) *logan.Entry {
 	return r.Context().Value(logCtxKey).(*logan.Entry)
-}
-
-func BooksQ(r *http.Request) data.BookQ {
-	return r.Context().Value(booksQCtxKey).(data.BookQ).New()
-}
-
-func KeyValueQ(r *http.Request) data.KeyValueQ {
-	return r.Context().Value(keyValueQCtxKey).(data.KeyValueQ).New()
 }
 
 func CtxDoormanConnector(entry connector.ConnectorI) func(context.Context) context.Context {

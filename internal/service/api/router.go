@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/ape"
-	handlers2 "gitlab.com/tokend/nft-books/book-svc/internal/service/api/handlers"
+	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/handlers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/middlewares"
 
@@ -19,11 +19,15 @@ func (s *service) router(cfg config.Config) chi.Router {
 		ape.LoganMiddleware(s.log),
 		ape.CtxMiddleware(
 			helpers.CtxLog(s.log),
-			helpers.CtxBooksQ(postgres.NewBooksQ(s.db)),
-			helpers.CtxKeyValueQ(postgres.NewKeyValueQ(s.db)),
+
+			// db
+			helpers.SetDB(postgres.NewDB(s.db)),
+
+			// configs
 			helpers.CtxMimeTypes(s.mimeTypes),
 			helpers.CtxDeploySignature(s.deploySignatureConf),
 
+			// connectors
 			helpers.CtxDoormanConnector(cfg.DoormanConnector()),
 			helpers.CtxDocumenterConnector(*cfg.DocumenterConnector()),
 			helpers.CtxNetworkerConnector(*cfg.NetworkConnector()),
@@ -32,15 +36,16 @@ func (s *service) router(cfg config.Config) chi.Router {
 
 	r.Route("/integrations/books", func(r chi.Router) {
 		r.With(middlewares.CheckAccessToken).
-			Post("/", handlers2.CreateBook)
+			Post("/", handlers.CreateBook)
 
-		r.Get("/", handlers2.GetBooks)
+		r.Get("/", handlers.GetBooks)
 
 		r.Route("/{id}", func(r chi.Router) {
-			r.Get("/", handlers2.GetBookByID)
+			r.Get("/", handlers.GetBookByID)
 
 			r.With(middlewares.CheckAccessToken).
-				Patch("/", handlers2.UpdateBookByID)
+				Patch("/", handlers.UpdateBookByID)
+
 			// TODO investigate
 			//r.With(middlewares.CheckAccessToken).
 			//	Delete("/", handlers.DeleteBookByID)

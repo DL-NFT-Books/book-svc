@@ -95,7 +95,7 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// updating collected params
-	if err = helpers.BooksQ(r).Update(updateParams, req.ID); err != nil {
+	if err = helpers.DB(r).Books().Update(updateParams, req.ID); err != nil {
 		logger.WithError(err).Error("failed to update book params")
 		ape.RenderErr(w, problems.InternalError())
 		return

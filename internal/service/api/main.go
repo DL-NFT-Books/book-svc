@@ -2,11 +2,12 @@ package api
 
 import (
 	"context"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"net"
 	"net/http"
 	"strconv"
+
+	"gitlab.com/tokend/nft-books/book-svc/internal/data"
+	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/runners"
 

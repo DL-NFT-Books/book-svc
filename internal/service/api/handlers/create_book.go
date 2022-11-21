@@ -129,19 +129,29 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		LastBlock:       0,
 	}
 
-	bookId, err := helpers.BooksQ(r).Insert(book)
-	if err != nil {
-		logger.WithError(err).Debug("failed to save book")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
+	db := helpers.DB(r)
+	var bookId int64
 
-	// update kv if operation was ended successfully
-	if err = helpers.KeyValueQ(r).Upsert(data.KeyValue{
-		Key:   tokenIdIncrementKey,
-		Value: strconv.FormatInt(createInfo.TokenContractId, 10),
-	}); err != nil {
-		logger.WithError(err).Error("failed to update last created token id")
+	if err = db.Transaction(
+		func() error {
+			// inserting book
+			bookId, err = db.Books().Insert(book)
+			if err != nil {
+				return errors.Wrap(err, "failed to save book")
+			}
+
+			// updating last token id
+			if err = db.KeyValue().Upsert(data.KeyValue{
+				Key:   tokenIdIncrementKey,
+				Value: strconv.FormatInt(createInfo.TokenContractId, 10),
+			}); err != nil {
+				return errors.Wrap(err, "failed to update last created token id")
+			}
+
+			return nil
+		},
+	); err != nil {
+		logger.WithError(err).Error("failed to execute insertion tx")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}

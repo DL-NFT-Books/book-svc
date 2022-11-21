@@ -13,11 +13,11 @@ import (
 const tokenIdIncrementKey = "token_id_increment"
 
 func GetBookByID(r *http.Request, id int64) (*data.Book, error) {
-	return BooksQ(r).FilterActual().FilterByID(id).Get()
+	return DB(r).Books().FilterActual().FilterByID(id).Get()
 }
 
 func GetBookListByRequest(r *http.Request, request *requests.GetBooksRequest) ([]data.Book, error) {
-	return applyQBooksFilters(BooksQ(r), request).Select()
+	return applyQBooksFilters(DB(r).Books(), request).Select()
 }
 
 func NewBooksList(books []data.Book) ([]resources.Book, error) {
@@ -71,7 +71,7 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 }
 
 func GenerateTokenID(r *http.Request) (int64, error) {
-	tokenKV, err := KeyValueQ(r).Get(tokenIdIncrementKey)
+	tokenKV, err := DB(r).KeyValue().Get(tokenIdIncrementKey)
 	if err != nil {
 		return 0, err
 	}
