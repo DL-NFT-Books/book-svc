@@ -65,22 +65,8 @@ get:
     - $ref: '#/components/parameters/pageLimitParam'
     - $ref: '#/components/parameters/pageNumberParam'
     - $ref: '#/components/parameters/sortingParam'
-    - name: 'filter[deploy_status]'
-      in: query
-      description: deploy status of books to be included in the response
-      explode: false
-      required: false
-      schema:
-        type: array
-        items:
-          type: integer
-          enum:
-            - name: pending
-              value: 1
-            - name: successful
-              value: 2
-            - name: failed
-              value: 3
+    - $ref: '#/components/parameters/DeployStatusFilterParam'
+    - $ref: '#/components/parameters/NetworkFilterParam'
   responses:
     '200':
       description: Success

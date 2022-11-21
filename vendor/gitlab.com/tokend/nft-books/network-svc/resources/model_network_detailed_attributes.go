@@ -9,6 +9,10 @@ type NetworkDetailedAttributes struct {
 	ChainId int32 `json:"chain_id"`
 	// Address of token factory on current network
 	FactoryAddress string `json:"factory_address"`
+	// Token factory name
+	FactoryName string `json:"factory_name"`
+	// Token factory version
+	FactoryVersion string `json:"factory_version"`
 	// Network name
 	Name string `json:"name"`
 	// RPC url to listen events

@@ -7,6 +7,7 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
+	"gitlab.com/tokend/nft-books/network-svc/connector/models"
 )
 
 const tokenIdIncrementKey = "token_id_increment"
@@ -58,6 +59,7 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 			ContractName:    book.ContractName,
 			ContractSymbol:  book.ContractSymbol,
 			ContractVersion: book.ContractVersion,
+			ChainId:         int32(book.ChainID),
 			TokenId:         int32(book.TokenId),
 			DeployStatus:    book.DeployStatus,
 			File:            media[1],
@@ -84,9 +86,18 @@ func GenerateTokenID(r *http.Request) (int64, error) {
 	return strconv.ParseInt(tokenKV.Value, 10, 64)
 }
 
+func GetNetworkInfo(chainID int64, r *http.Request) (*models.NetworkResponse, error) {
+	networker := NetworkerConnector(r)
+	return networker.GetNetworkByChainID(chainID)
+}
+
 func applyQBooksFilters(q data.BookQ, request *requests.GetBooksRequest) data.BookQ {
 	if request.Status != nil {
 		q = q.FilterByDeployStatus(*request.Status)
+	}
+
+	if request.ChainID != nil {
+		q = q.FilterByChainID(*request.ChainID)
 	}
 
 	q = q.Page(request.OffsetPageParams)

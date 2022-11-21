@@ -13,6 +13,7 @@ allOf:
           - file
           - token_name
           - token_symbol
+          - chain_id
           - price
         properties:
           title:
@@ -35,6 +36,10 @@ allOf:
           token_symbol:
             type: string
             description: Token symbol
+          chain_id:
+            type: integer
+            description: Chain ID
+            example: 137
           price:
             type: string
             description: Price per one token ($)

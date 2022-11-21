@@ -11,7 +11,8 @@ import (
 type GetBooksRequest struct {
 	pgdb.OffsetPageParams
 
-	Status *resources.DeployStatus `filter:"deploy_status"`
+	Status  *resources.DeployStatus `filter:"deploy_status"`
+	ChainID *int64                  `filter:"chain_id"`
 }
 
 func NewGetBooksRequest(r *http.Request) (GetBooksRequest, error) {

@@ -37,6 +37,7 @@ type BookQ interface {
 	FilterByID(id int64) BookQ
 	FilterByTokenId(tokenId int64) BookQ
 	FilterByDeployStatus(status resources.DeployStatus) BookQ
+	FilterByChainID(chainID int64) BookQ
 
 	Page(params pgdb.OffsetPageParams) BookQ
 }
@@ -51,6 +52,7 @@ type Book struct {
 	ContractName    string                 `db:"contract_name" structs:"contract_name"`
 	ContractSymbol  string                 `db:"contract_symbol" structs:"contract_symbol"`
 	ContractVersion string                 `db:"contract_version" structs:"contract_version"`
+	ChainID         int64                  `db:"chain_id" structs:"chain_id"`
 	Banner          string                 `db:"banner" structs:"banner"`
 	File            string                 `db:"file" structs:"file"`
 	Deleted         bool                   `db:"deleted" structs:"-"`

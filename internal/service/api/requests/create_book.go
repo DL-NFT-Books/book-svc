@@ -42,6 +42,7 @@ func (r CreateBookRequest) validate() error {
 		"/data/attributes/token_name":   validation.Validate(&r.Data.Attributes.TokenName, validation.Required),
 		"/data/attributes/token_symbol": validation.Validate(&r.Data.Attributes.TokenSymbol, validation.Required),
 		"/data/attributes/price":        validation.Validate(&r.Data.Attributes.Price, validation.Required),
+		"/data/attributes/chain_id":     validation.Validate(&r.Data.Attributes.ChainId, validation.Required, validation.Min(0)),
 
 		"/included/banner/attributes/name":      validation.Validate(&r.Data.Attributes.Banner.Attributes.Name, validation.Required),
 		"/included/banner/attributes/mime_type": validation.Validate(&r.Data.Attributes.Banner.Attributes.MimeType, validation.Required),
