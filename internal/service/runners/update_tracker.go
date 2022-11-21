@@ -2,10 +2,11 @@ package runners
 
 import (
 	"context"
+	"strconv"
+
 	"gitlab.com/tokend/nft-books/book-svc/internal/data/ethereum"
 	"gitlab.com/tokend/nft-books/book-svc/internal/reader"
 	"gitlab.com/tokend/nft-books/book-svc/internal/reader/ethreader"
-	"strconv"
 
 	"github.com/ethereum/go-ethereum/ethclient"
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -102,12 +103,7 @@ func (t *UpdateTracker) ProcessBook(book data.Book) error {
 		}
 	}
 
-	nextBlock, err := t.GetNextBlock(book.LastBlock, t.cfg.IterationSize, lastBlock)
-	if err != nil {
-		return errors.Wrap(err, "failed to get new block", logan.F{
-			"current_block": book.LastBlock,
-		})
-	}
+	nextBlock := t.GetNextBlock(book.LastBlock, t.cfg.IterationSize, lastBlock)
 
 	if err = t.database.Books().UpdateLastBlock(nextBlock, book.ID); err != nil {
 		return errors.Wrap(err, "failed to update last block")
@@ -116,14 +112,14 @@ func (t *UpdateTracker) ProcessBook(book data.Book) error {
 	return nil
 }
 
-func (t *UpdateTracker) GetNextBlock(startBlock, iterationSize, lastBlock uint64) (uint64, error) {
+func (t *UpdateTracker) GetNextBlock(startBlock, iterationSize, lastBlock uint64) uint64 {
 	t.log.Debugf("Last blockchain block has id of %d", lastBlock)
 
 	if startBlock+iterationSize+1 > lastBlock {
-		return lastBlock + 1, nil
+		return lastBlock + 1
 	}
 
-	return startBlock + iterationSize + 1, nil
+	return startBlock + iterationSize + 1
 }
 
 func (t *UpdateTracker) ProcessEvent(event ethereum.UpdateEvent, id int64) error {

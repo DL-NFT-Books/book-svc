@@ -17,12 +17,8 @@ type DeploySignatureConfigurator interface {
 }
 
 type DeploySignatureConfig struct {
-	PrivateKey          *ecdsa.PrivateKey `fig:"eth_signer,required"`
-	InitialOffset       int64             `fig:"initial_offset,required"`
-	TokenFactoryAddress string            `fig:"token_factory_address,required"`
-	TokenFactoryName    string            `fig:"token_factory_name,required"`
-	TokenFactoryVersion string            `fig:"token_factory_version,required"`
-	ChainId             int64             `fig:"chain_id,required"`
+	PrivateKey    *ecdsa.PrivateKey `fig:"eth_signer,required"`
+	InitialOffset int64             `fig:"initial_offset,required"`
 }
 
 type deploySignatureConfigurator struct {

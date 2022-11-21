@@ -2,10 +2,11 @@ package runners
 
 import (
 	"context"
+	"strconv"
+
 	"gitlab.com/tokend/nft-books/book-svc/internal/data/ethereum"
 	"gitlab.com/tokend/nft-books/book-svc/internal/reader"
 	"gitlab.com/tokend/nft-books/book-svc/internal/reader/ethreader"
-	"strconv"
 
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -94,10 +95,7 @@ func (t *DeployTracker) Track(ctx context.Context) error {
 		t.log.Info("Successfully inserted contract into the database")
 	}
 
-	nextBlock, err := t.GetNextBlock(startBlock, t.cfg.IterationSize, lastBlock)
-	if err != nil {
-		return errors.Wrap(err, "failed to get new block")
-	}
+	nextBlock := t.GetNextBlock(startBlock, t.cfg.IterationSize, lastBlock)
 
 	if err = t.database.KeyValue().Upsert(data.KeyValue{
 		Key:   deployTrackerCursor,
@@ -145,12 +143,12 @@ func (t *DeployTracker) GetStartBlock() (uint64, error) {
 	return t.cfg.FirstBlock, nil
 }
 
-func (t *DeployTracker) GetNextBlock(startBlock, iterationSize, lastBlock uint64) (int64, error) {
+func (t *DeployTracker) GetNextBlock(startBlock, iterationSize, lastBlock uint64) int64 {
 	if startBlock+iterationSize+1 > lastBlock {
-		return int64(lastBlock + 1), nil
+		return int64(lastBlock + 1)
 	}
 
-	return int64(startBlock + iterationSize + 1), nil
+	return int64(startBlock + iterationSize + 1)
 }
 
 func (t *DeployTracker) ProcessEvent(event ethereum.DeployEvent) error {

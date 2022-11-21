@@ -37,10 +37,7 @@ deploy_tracker:
 
 deploy_signature:
   eth_signer:
-  token_factory_address:
-  token_factory_name:
-  token_factory_version:
-  chain_id: 5
+  initial_offset:
 
 ethereum_client: # Rpc and WS addresses
   rpc: https://eth-goerli.g.alchemy.com/v2/DTb8jEsvO6jtXEwUM9Ri3k3cufBIJX-R
