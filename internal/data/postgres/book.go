@@ -79,7 +79,7 @@ func (b *BooksQ) Select() ([]data.Book, error) {
 	return result, err
 }
 
-func (b *BooksQ) FilterByID(id int64) data.BookQ {
+func (b *BooksQ) FilterByID(id ...int64) data.BookQ {
 	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{
 		idColumn: id,
 	})
