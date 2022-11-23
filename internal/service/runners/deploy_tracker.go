@@ -114,6 +114,7 @@ func (t *DeployTracker) ProcessNetwork(ctx context.Context, chainID int64) error
 
 	if startBlock > lastBlock {
 		t.log.Debugf("Start block is greater than the last blockchain block, omitting")
+		return nil
 	}
 
 	t.log.Debugf("Trying to iterate from block %d to %d...", startBlock, startBlock+t.cfg.IterationSize)
@@ -128,6 +129,7 @@ func (t *DeployTracker) ProcessNetwork(ctx context.Context, chainID int64) error
 
 	if len(events) == 0 {
 		t.log.Debug("No deploy events found")
+		return nil
 	}
 
 	for _, event := range events {
