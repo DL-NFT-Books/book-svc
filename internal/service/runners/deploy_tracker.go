@@ -2,8 +2,10 @@ package runners
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -16,8 +18,7 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/reader"
 	"gitlab.com/tokend/nft-books/book-svc/internal/reader/ethreader"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
-	network_connector "gitlab.com/tokend/nft-books/network-svc/connector/api"
-	network_resources "gitlab.com/tokend/nft-books/network-svc/resources"
+	networkConnector "gitlab.com/tokend/nft-books/network-svc/connector/api"
 )
 
 const deployTrackerCursor = "deploy_tracker_last_block"
@@ -34,15 +35,14 @@ type DeployTracker struct {
 	reader   reader.FactoryReader
 	cfg      config.DeployTracker
 
-	networker *network_connector.Connector
+	networker *networkConnector.Connector
 }
 
 func NewDeployTracker(cfg config.Config) *DeployTracker {
 	return &DeployTracker{
 		log:      cfg.Log(),
 		database: postgres.NewDB(cfg.DB()),
-		rpc:      cfg.EtherClient().Rpc,
-		reader:   ethreader.NewFactoryContractReader(cfg).WithAddress(cfg.DeployTracker().Address),
+		reader:   ethreader.NewFactoryContractReader(), //empty reader, set params when process specified network
 		cfg:      cfg.DeployTracker(),
 
 		networker: cfg.NetworkConnector(),
@@ -62,15 +62,34 @@ func (t *DeployTracker) Run(ctx context.Context) {
 }
 
 func (t *DeployTracker) Track(ctx context.Context) error {
-	// getting networks
+	// getting list of available networks
+	// it will get newly uploaded networks as well as old
 	networksResponse, err := t.networker.GetNetworks()
 	if err != nil {
-		return errors.Wrap(err, "failed to form a list of available networks")
+		return errors.Wrap(err, "failed to form a list of available networks to track")
 	}
 
-	networks := networksResponse.Data
-	for _, network := range networks {
-		if err = t.ProcessNetwork(network.Attributes); err != nil {
+	// processing each network from list
+	for _, network := range networksResponse.Data {
+
+		// setting new rpc connection according to network params
+		rpc, err := t.reader.GetRPCInstance(network.Attributes.RpcUrl)
+		if err != nil {
+			return errors.Wrap(err, "failed to get rpc connection", logan.F{
+				"network_name": network.Attributes.Name,
+				"chain_id":     network.Attributes.ChainId,
+			})
+		}
+		t.rpc = rpc
+
+		// setting new reader according to new rpc and factory address
+		t.reader = t.reader.
+			WithAddress(
+				common.HexToAddress(network.Attributes.FactoryAddress)).
+			WithRPC(t.rpc)
+
+		// processing specified network
+		if err = t.ProcessNetwork(ctx, int64(network.Attributes.ChainId)); err != nil {
 			return errors.Wrap(err, "failed to process specified network", logan.F{
 				"network_name": network.Attributes.Name,
 				"chain_id":     network.Attributes.ChainId,
@@ -81,15 +100,14 @@ func (t *DeployTracker) Track(ctx context.Context) error {
 	return nil
 }
 
-func (t *DeployTracker) ProcessNetwork(network network_resources.NetworkDetailedAttributes) error {
-	// TODO: IMPLEMENT SPECIFIC NETWORK TRACKING
-
-	startBlock, err := t.GetStartBlock()
+func (t *DeployTracker) ProcessNetwork(ctx context.Context, chainID int64) error {
+	// start block for every chain will differ
+	startBlock, err := t.GetStartBlock(chainID)
 	if err != nil {
 		return errors.Wrap(err, "failed to get start block")
 	}
 
-	lastBlock, err := t.rpc.BlockNumber(context.Background())
+	lastBlock, err := t.rpc.BlockNumber(ctx)
 	if err != nil {
 		return errors.Wrap(err, "failed to get the last block in the blockchain")
 	}
@@ -125,7 +143,7 @@ func (t *DeployTracker) ProcessNetwork(network network_resources.NetworkDetailed
 	nextBlock := t.GetNextBlock(startBlock, t.cfg.IterationSize, lastBlock)
 
 	if err = t.database.KeyValue().Upsert(data.KeyValue{
-		Key:   deployTrackerCursor,
+		Key:   fmt.Sprintf("%s_%v", deployTrackerCursor, chainID),
 		Value: strconv.FormatInt(nextBlock, 10),
 	}); err != nil {
 		return errors.Wrap(err, "failed to upsert new value")
@@ -144,17 +162,15 @@ func (t *DeployTracker) MustNotExceedLastBlock(block uint64) (bool, error) {
 	return block <= lastBlockchainBlock, nil
 }
 
-func (t *DeployTracker) GetStartBlock() (uint64, error) {
-	//TODO: CHANGE IMPLEMENTATION FOR VARIOUS NETWORKS
-
-	cursorKV, err := t.database.KeyValue().Get(deployTrackerCursor)
+func (t *DeployTracker) GetStartBlock(chainID int64) (uint64, error) {
+	cursorKV, err := t.database.KeyValue().Get(fmt.Sprintf("%s_%v", deployTrackerCursor, chainID))
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to get cursor value")
 	}
 	if cursorKV == nil {
 		t.log.Debug("Empty key value cursor, setting 0")
 		cursorKV = &data.KeyValue{
-			Key:   deployTrackerCursor,
+			Key:   fmt.Sprintf("%s_%v", deployTrackerCursor, chainID),
 			Value: "0",
 		}
 	}
@@ -165,11 +181,14 @@ func (t *DeployTracker) GetStartBlock() (uint64, error) {
 	}
 
 	cursorUInt64 := uint64(cursor)
-	if cursorUInt64 > t.cfg.FirstBlock {
-		return cursorUInt64, nil
-	}
+	return cursorUInt64, nil
 
-	return t.cfg.FirstBlock, nil
+	// TODO: CONFIGURE FIRST_BLOCK FOR EACH NETWORK
+	//if cursorUInt64 > t.cfg.FirstBlock {
+	//	return cursorUInt64, nil
+	//}
+	//
+	//return t.cfg.FirstBlock, nil
 }
 
 func (t *DeployTracker) GetNextBlock(startBlock, iterationSize, lastBlock uint64) int64 {
@@ -181,7 +200,13 @@ func (t *DeployTracker) GetNextBlock(startBlock, iterationSize, lastBlock uint64
 }
 
 func (t *DeployTracker) ProcessEvent(event ethereum.DeployEvent) error {
-	book, err := t.database.Books().New().FilterByTokenId(int64(event.TokenId)).Get()
+	// TokenID is unique regardless of networks,
+	// so we can skip filter by chainID
+	book, err := t.database.Books().
+		New().
+		//FilterByChainID(chainID).
+		FilterByTokenId(int64(event.TokenId)).
+		Get()
 	if err != nil {
 		return errors.Wrap(err, "failed to get book by token id")
 	}
@@ -192,13 +217,16 @@ func (t *DeployTracker) ProcessEvent(event ethereum.DeployEvent) error {
 
 	switch event.Status {
 	case types.ReceiptStatusSuccessful:
-		if err = t.database.Books().UpdateContractAddress(event.Address.String(), book.ID); err != nil {
-			return errors.Wrap(err, "failed to update contract address", logan.F{
-				"contract_address": event.Address.String(),
-			})
-		}
+		return t.database.Transaction(
+			func() error {
+				if err = t.database.Books().UpdateContractAddress(event.Address.String(), book.ID); err != nil {
+					return errors.Wrap(err, "failed to update contract address", logan.F{
+						"contract_address": event.Address.String(),
+					})
+				}
 
-		return t.database.Books().UpdateDeployStatus(resources.DeploySuccessful, book.ID)
+				return t.database.Books().UpdateDeployStatus(resources.DeploySuccessful, book.ID)
+			})
 	case types.ReceiptStatusFailed:
 		return t.database.Books().UpdateDeployStatus(resources.DeployFailed, book.ID)
 	}

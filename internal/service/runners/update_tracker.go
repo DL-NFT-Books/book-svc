@@ -4,10 +4,6 @@ import (
 	"context"
 	"strconv"
 
-	"gitlab.com/tokend/nft-books/book-svc/internal/data/ethereum"
-	"gitlab.com/tokend/nft-books/book-svc/internal/reader"
-	"gitlab.com/tokend/nft-books/book-svc/internal/reader/ethreader"
-
 	"github.com/ethereum/go-ethereum/ethclient"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -15,7 +11,10 @@ import (
 	"gitlab.com/distributed_lab/running"
 	"gitlab.com/tokend/nft-books/book-svc/internal/config"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
+	"gitlab.com/tokend/nft-books/book-svc/internal/data/ethereum"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
+	"gitlab.com/tokend/nft-books/book-svc/internal/reader"
+	"gitlab.com/tokend/nft-books/book-svc/internal/reader/ethreader"
 )
 
 const updateTrackerKVPage = "update_tracker_page"
@@ -31,9 +30,8 @@ type UpdateTracker struct {
 func NewUpdateTracker(cfg config.Config) *UpdateTracker {
 	return &UpdateTracker{
 		log:      cfg.Log(),
-		rpc:      cfg.EtherClient().Rpc,
 		cfg:      cfg.UpdateTracker(),
-		reader:   ethreader.NewTokenContractReader(cfg),
+		reader:   ethreader.NewTokenContractReader(cfg), //empty reader, set params when process specified network
 		database: postgres.NewDB(cfg.DB()),
 	}
 }
@@ -57,7 +55,24 @@ func (t *UpdateTracker) Track(ctx context.Context) error {
 	}
 
 	for _, book := range books {
-		if err = t.ProcessBook(book); err != nil {
+		// setting specific network params before processing book
+
+		// setting new rpc connection according to network params
+		rpc, err := t.reader.GetRPCInstance(book.ChainID)
+		if err != nil {
+			return errors.Wrap(err, "failed to get rpc connection", logan.F{
+				"book_id":  book.ID,
+				"chain_id": book.ChainID,
+			})
+		}
+		t.rpc = rpc
+
+		// setting new reader according to new rpc and token address
+		t.reader = t.reader.
+			WithAddress(book.Address()).
+			WithRPC(t.rpc)
+
+		if err = t.ProcessBook(book, ctx); err != nil {
 			return errors.Wrap(err, "failed to process specified book", logan.F{
 				"book_id": book.ID,
 			})
@@ -67,10 +82,10 @@ func (t *UpdateTracker) Track(ctx context.Context) error {
 	return nil
 }
 
-func (t *UpdateTracker) ProcessBook(book data.Book) error {
+func (t *UpdateTracker) ProcessBook(book data.Book, ctx context.Context) error {
 	t.log.Debugf("Processing book with id of %d", book.ID)
 
-	lastBlock, err := t.rpc.BlockNumber(context.Background())
+	lastBlock, err := t.rpc.BlockNumber(ctx)
 	if err != nil {
 		return errors.Wrap(err, "failed to get last block number")
 	}

@@ -26,7 +26,6 @@ type Config interface {
 
 	UpdateTracker() UpdateTracker
 	DeployTracker() DeployTracker
-	EtherClient() EtherClient
 }
 
 type config struct {
@@ -45,7 +44,6 @@ type config struct {
 	getter            kv.Getter
 	updateTrackerOnce comfig.Once
 	deployTrackerOnce comfig.Once
-	ethererOnce       comfig.Once
 }
 
 func New(getter kv.Getter) Config {
