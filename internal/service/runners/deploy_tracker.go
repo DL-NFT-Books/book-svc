@@ -129,7 +129,6 @@ func (t *DeployTracker) ProcessNetwork(ctx context.Context, chainID int64) error
 
 	if len(events) == 0 {
 		t.log.Debug("No deploy events found")
-		return nil
 	}
 
 	for _, event := range events {
