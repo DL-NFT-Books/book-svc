@@ -541,8 +541,8 @@ gitlab.com/tokend/nft-books/doorman v0.1.0-rc.1.0.20221024153252-83b51d5f1691 h1
 gitlab.com/tokend/nft-books/doorman v0.1.0-rc.1.0.20221024153252-83b51d5f1691/go.mod h1:OP0gfs3KcgJcCAdEadNUT2pMxwBqgEq32bmX9HItFTs=
 gitlab.com/tokend/nft-books/go-sdk v0.1.2 h1:w0+cHanVfAW951iJ4cE/BGy/T/DlukBgf+O7QQjLXkc=
 gitlab.com/tokend/nft-books/go-sdk v0.1.2/go.mod h1:GtEYT+rHPUb5pT8+0PULSnkqkcksmOz7vlfqPxCwhas=
-gitlab.com/tokend/nft-books/network-svc v0.0.0-20221121130554-cb4656562f8f h1:Czzo8kn3eIYiVsa3uyb4ppPpVdFybHvtzxQeO8G8sgI=
-gitlab.com/tokend/nft-books/network-svc v0.0.0-20221121130554-cb4656562f8f/go.mod h1:bdkmHRcDz78p8T7sZSNy5Pvk8z4MlhoVj9ftShzsswY=
+gitlab.com/tokend/nft-books/network-svc v0.0.0-20221128140430-36aff79cbc1f h1:JO+4xON0bCck6F2hb0sK5BYZoyGs1zEazFHdl3qE0t0=
+gitlab.com/tokend/nft-books/network-svc v0.0.0-20221128140430-36aff79cbc1f/go.mod h1:bdkmHRcDz78p8T7sZSNy5Pvk8z4MlhoVj9ftShzsswY=
 go.etcd.io/etcd/api/v3 v3.5.0/go.mod h1:cbVKeC6lCfl7j/8jBhAK6aIYO9XOjdptoxU/nLQcPvs=
 go.etcd.io/etcd/client/pkg/v3 v3.5.0/go.mod h1:IJHfcCEKxYu1Os13ZdwCwIUTUVGYTSAM3YSwc9/Ac1g=
 go.etcd.io/etcd/client/v2 v2.305.0/go.mod h1:h9puh54ZTgAKtEbut2oe9P4L/oqKCVB6xsXlzd7alYQ=

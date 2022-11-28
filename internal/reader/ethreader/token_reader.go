@@ -48,7 +48,7 @@ func (r *TokenContractReader) GetRPCInstance(chainID int64) (*ethclient.Client, 
 	}
 
 	// if specific chain is not cached yet -- getting network from connector
-	// getting from connector moved here for reducing the great amount
+	// it was moved here for reducing the great amount
 	// of requests to network-svc
 	// unlike FactoryReader, we can do requests to network-svc
 	// only if chain was not found in cache; in FactoryReader we should always
@@ -117,8 +117,6 @@ func (r *TokenContractReader) WithRPC(rpc *ethclient.Client) reader.TokenReader 
 }
 
 func (r *TokenContractReader) validateParameters() error {
-	//TODO: SHOULD WE VALIDATE `TO` PARAM?
-
 	if r.from == nil {
 		return reader.FromNotSpecifiedErr
 	}

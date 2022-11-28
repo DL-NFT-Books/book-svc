@@ -68,6 +68,10 @@ func (t *DeployTracker) Track(ctx context.Context) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to form a list of available networks to track")
 	}
+	if networksResponse.Data == nil {
+		t.log.Info("no networks were found")
+		return nil
+	}
 
 	// processing each network from list
 	for _, network := range networksResponse.Data {
@@ -89,7 +93,11 @@ func (t *DeployTracker) Track(ctx context.Context) error {
 			WithRPC(t.rpc)
 
 		// processing specified network
-		if err = t.ProcessNetwork(ctx, int64(network.Attributes.ChainId)); err != nil {
+		if err = t.ProcessNetwork(
+			ctx,
+			network.Attributes.ChainId,
+			network.Attributes.FirstBlock,
+		); err != nil {
 			return errors.Wrap(err, "failed to process specified network", logan.F{
 				"network_name": network.Attributes.Name,
 				"chain_id":     network.Attributes.ChainId,
@@ -100,9 +108,9 @@ func (t *DeployTracker) Track(ctx context.Context) error {
 	return nil
 }
 
-func (t *DeployTracker) ProcessNetwork(ctx context.Context, chainID int64) error {
+func (t *DeployTracker) ProcessNetwork(ctx context.Context, chainID, firstBlock int64) error {
 	// start block for every chain will differ
-	startBlock, err := t.GetStartBlock(chainID)
+	startBlock, err := t.GetStartBlock(chainID, firstBlock)
 	if err != nil {
 		return errors.Wrap(err, "failed to get start block")
 	}
@@ -163,7 +171,7 @@ func (t *DeployTracker) MustNotExceedLastBlock(block uint64) (bool, error) {
 	return block <= lastBlockchainBlock, nil
 }
 
-func (t *DeployTracker) GetStartBlock(chainID int64) (uint64, error) {
+func (t *DeployTracker) GetStartBlock(chainID, firstBlock int64) (uint64, error) {
 	cursorKV, err := t.database.KeyValue().Get(fmt.Sprintf("%s_%v", deployTrackerCursor, chainID))
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to get cursor value")
@@ -181,15 +189,11 @@ func (t *DeployTracker) GetStartBlock(chainID int64) (uint64, error) {
 		return 0, errors.Wrap(err, "failed to convert cursor value from string to integer")
 	}
 
-	cursorUInt64 := uint64(cursor)
-	return cursorUInt64, nil
+	if cursor > firstBlock {
+		return uint64(cursor), nil
+	}
 
-	// TODO: CONFIGURE FIRST_BLOCK FOR EACH NETWORK
-	//if cursorUInt64 > t.cfg.FirstBlock {
-	//	return cursorUInt64, nil
-	//}
-	//
-	//return t.cfg.FirstBlock, nil
+	return uint64(firstBlock), nil
 }
 
 func (t *DeployTracker) GetNextBlock(startBlock, iterationSize, lastBlock uint64) int64 {

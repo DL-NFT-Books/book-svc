@@ -92,8 +92,6 @@ func (r *FactoryContractReader) WithRPC(rpc *ethclient.Client) reader.FactoryRea
 }
 
 func (r *FactoryContractReader) validateParameters() error {
-	//TODO: SHOULD WE VALIDATE `TO` PARAM?
-
 	if r.from == nil {
 		return reader.FromNotSpecifiedErr
 	}
