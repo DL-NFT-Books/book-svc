@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/urlval"
@@ -38,7 +39,7 @@ func (c *Connector) UpdateBook(request resources.UpdateBook) error {
 	return c.update(endpoint, requestAsBytes, nil)
 }
 
-func (c *Connector) ListTasks(request requests.GetBooksRequest) (*resources.BookListResponse, error) {
+func (c *Connector) ListBooks(request requests.GetBooksRequest) (*resources.BookListResponse, error) {
 	var result resources.BookListResponse
 
 	// setting full endpoint
@@ -53,7 +54,7 @@ func (c *Connector) ListTasks(request requests.GetBooksRequest) (*resources.Book
 	return &result, nil
 }
 
-func (c *Connector) GetTaskById(id int64) (*resources.BookResponse, error) {
+func (c *Connector) GetBookById(id int64) (*resources.BookResponse, error) {
 	var result resources.BookResponse
 
 	// setting full endpoint
