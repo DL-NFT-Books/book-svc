@@ -30,7 +30,7 @@ func (c *booksConnectorConfigurator) BooksConnector() *api.Connector {
 	return c.once.Do(func() interface{} {
 		config := BooksConnectorConfig{}
 
-		raw := kv.MustGetStringMap(c.getter, "generator")
+		raw := kv.MustGetStringMap(c.getter, "booker")
 
 		if err := figure.
 			Out(&config).
