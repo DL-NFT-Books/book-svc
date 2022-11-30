@@ -27,7 +27,7 @@ func (s *service) router(cfg config.Config) chi.Router {
 			helpers.CtxMimeTypes(s.mimeTypes),
 			helpers.CtxDeploySignature(s.deploySignatureConf),
 
-			// connectors
+			// connector
 			helpers.CtxDoormanConnector(cfg.DoormanConnector()),
 			helpers.CtxDocumenterConnector(*cfg.DocumenterConnector()),
 			helpers.CtxNetworkerConnector(*cfg.NetworkConnector()),
