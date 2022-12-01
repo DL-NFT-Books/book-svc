@@ -13,29 +13,19 @@ mime_types:
   file:
     - application/pdf
 
-listener:
-  addr: :8732
+doorman:
+  service_url: http://localhost:8054/integrations/doorman
 
-update_tracker:
-  name: update_tracker # Name to be displayed in logs
-  capacity: 1
-  iteration_size: 10000
-  runner: # Periods settings
-    normal_period: 10s
-    min_abnormal_period: 10s
-    max_abnormal_period: 10s
-
-deploy_tracker:
-  name: deploy_tracker # Name to be displayed in logs
-  runner: # Periods settings
-    normal_period: 10s
-    min_abnormal_period: 10s
-    max_abnormal_period: 10s
-  iteration_size: 10000
+documenter:
+  url:
+  token:
 
 deploy_signature:
   eth_signer:
   initial_offset:
+
+listener:
+  addr: :8732
 
 cop:
   disabled: true
@@ -44,9 +34,4 @@ cop:
   service_name: book-svc
   service_port: 80
 
-doorman:
-  service_url: http://localhost:8054/integrations/doorman
 
-networker:
-  url:
-  token:

@@ -3,6 +3,7 @@ package connector
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/spf13/cast"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -18,7 +19,6 @@ func (c *Connector) CreateBook(params models.CreateBookParams) (createdId int64,
 		Key: resources.NewKeyInt64(0, resources.BOOKS),
 		Attributes: resources.CreateBookAttributes{
 			Banner:      params.Banner,
-			ChainId:     params.ChainId,
 			Description: params.Description,
 			File:        params.File,
 			Price:       params.Price,

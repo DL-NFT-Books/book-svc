@@ -16,8 +16,8 @@ func NewSignCreateResponse(bookId, tokenId int64, signature resources.SignatureA
 		Data: resources.CreateSignature{
 			Key: createSignatureKey,
 			Attributes: resources.CreateSignatureAttributes{
-				TokenId: int32(tokenId),
-				BookId:  int32(bookId),
+				TokenId: tokenId,
+				BookId:  bookId,
 			},
 			Relationships: resources.CreateSignatureRelationships{
 				Signature: resources.Relation{

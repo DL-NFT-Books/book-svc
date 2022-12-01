@@ -17,4 +17,5 @@ allOf:
             type: string
           v:
             type: integer
+            format: int8
             example: 0

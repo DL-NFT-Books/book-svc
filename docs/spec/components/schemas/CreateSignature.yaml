@@ -13,9 +13,11 @@ allOf:
         properties:
           token_id:
             type: integer
+            format: int64
             description: ID of new token contract
           book_id:
             type: integer
+            format: int64
             description: ID of new book
       relationships:
         type: object

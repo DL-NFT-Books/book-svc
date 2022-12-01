@@ -20,11 +20,11 @@ func (db *db) New() data.DB {
 }
 
 func (db *db) KeyValue() data.KeyValueQ {
-	return NewKeyValueQ(db.raw)
+	return NewKeyValueQ(db.raw).New()
 }
 
 func (db *db) Books() data.BookQ {
-	return NewBooksQ(db.raw)
+	return NewBooksQ(db.raw).New()
 }
 
 func (db *db) Transaction(fn func() error) error {

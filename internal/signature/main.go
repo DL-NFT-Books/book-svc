@@ -48,6 +48,7 @@ func signCreateInfoByEIP712(
 	[]byte,
 	error,
 ) {
+	// logging info
 	spew.Dump(createInfo)
 
 	data := &eip712.TypedData{
@@ -92,7 +93,7 @@ func parseSignatureParameters(signature []byte) (*resources.SignatureAttributes,
 
 	params.R = hexutil.Encode(signature[:32])
 	params.S = hexutil.Encode(signature[32:64])
-	params.V = int32(signature[64])
+	params.V = int8(signature[64])
 
 	return &params, nil
 }

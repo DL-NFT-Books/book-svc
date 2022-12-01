@@ -7,5 +7,5 @@ package resources
 type SignatureAttributes struct {
 	R string `json:"r"`
 	S string `json:"s"`
-	V int32  `json:"v"`
+	V int8   `json:"v"`
 }

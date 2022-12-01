@@ -6,7 +6,7 @@ package resources
 
 type CreateSignatureAttributes struct {
 	// ID of new book
-	BookId int32 `json:"book_id"`
+	BookId int64 `json:"book_id"`
 	// ID of new token contract
-	TokenId int32 `json:"token_id"`
+	TokenId int64 `json:"token_id"`
 }

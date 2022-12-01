@@ -1,15 +1,12 @@
 package api
 
 import (
-	"context"
 	"net"
 	"net/http"
 	"strconv"
 
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
-
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/runners"
 
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -46,9 +43,6 @@ func (s *service) run(cfg config.Config) error {
 	if err := s.copus.RegisterChi(r); err != nil {
 		return errors.Wrap(err, "cop failed")
 	}
-
-	ctx := context.Background()
-	runners.Run(s.cfg, ctx)
 
 	return http.Serve(s.listener, r)
 }

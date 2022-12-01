@@ -1,5 +1,0 @@
-name: 'filter[chain_id]'
-in: query
-description: books on specified network to be included in the response
-schema:
-  type: integer

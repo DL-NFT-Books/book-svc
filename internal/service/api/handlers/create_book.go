@@ -10,14 +10,13 @@ import (
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
+	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/responses"
 	"gitlab.com/tokend/nft-books/book-svc/internal/signature"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
 )
-
-const tokenIdIncrementKey = "token_id_increment"
 
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	logger := helpers.Log(r)
@@ -64,35 +63,23 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse token price"))...)
 		return
 	}
-
-	network, err := helpers.GetNetworkInfo(int64(req.Data.Attributes.ChainId), r)
-	if err != nil {
-		logger.WithError(err).Error("failed to retrieve network info")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-	if network == nil {
-		logger.Error(errors.New("got nil network"))
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
 	// </validating info region>
 
-	lastTokenContractID, err := helpers.GenerateTokenID(r)
+	lastTokenContractID, err := helpers.GetLastTokenID(r)
 	if err != nil {
-		logger.WithError(err).Error("failed to generate token id")
+		logger.WithError(err).Error("failed to get last token id")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
 	// forming signature createInfo
-	config := helpers.DeploySignatureConfig(r)
+	signatureConfig := helpers.DeploySignatureConfig(r)
 
 	domainData := signature.EIP712DomainData{
-		VerifyingAddress: network.Data.Attributes.FactoryAddress,
-		ContractName:     network.Data.Attributes.FactoryName,
-		ContractVersion:  network.Data.Attributes.FactoryVersion,
-		ChainID:          int64(network.Data.Attributes.ChainId),
+		VerifyingAddress: signatureConfig.TokenFactoryAddress,
+		ContractName:     signatureConfig.TokenFactoryName,
+		ContractVersion:  signatureConfig.TokenFactoryVersion,
+		ChainID:          signatureConfig.ChainId,
 	}
 
 	createInfo := signature.CreateInfo{
@@ -103,7 +90,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// signing
-	signature, err := signature.SignCreateInfo(&createInfo, &domainData, config)
+	signature, err := signature.SignCreateInfo(&createInfo, &domainData, signatureConfig)
 	if err != nil {
 		logger.WithError(err).Error("failed to generate eip712 create signature")
 		ape.RenderErr(w, problems.InternalError())
@@ -119,8 +106,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ContractAddress: "mocked",
 		ContractName:    req.Data.Attributes.TokenName,
 		ContractSymbol:  req.Data.Attributes.TokenSymbol,
-		ContractVersion: network.Data.Attributes.FactoryVersion,
-		ChainID:         network.Data.Attributes.ChainId,
+		ContractVersion: signatureConfig.TokenFactoryVersion,
 		Banner:          media[0],
 		File:            media[1],
 		Deleted:         false,
@@ -142,7 +128,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 			// updating last token id
 			if err = db.KeyValue().Upsert(data.KeyValue{
-				Key:   tokenIdIncrementKey,
+				Key:   postgres.TokenIdIncrementKey,
 				Value: strconv.FormatInt(createInfo.TokenContractId, 10),
 			}); err != nil {
 				return errors.Wrap(err, "failed to update last created token id")

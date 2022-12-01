@@ -1,12 +1,11 @@
 package cli
 
 import (
+	"github.com/alecthomas/kingpin"
+	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/tokend/nft-books/book-svc/internal/config"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api"
-
-	"github.com/alecthomas/kingpin"
-	"gitlab.com/distributed_lab/kit/kv"
 )
 
 func Run(args []string) bool {

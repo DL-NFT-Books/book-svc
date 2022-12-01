@@ -5,12 +5,10 @@ import (
 	"strconv"
 
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
+	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
-	"gitlab.com/tokend/nft-books/network-svc/connector/models"
 )
-
-const tokenIdIncrementKey = "token_id_increment"
 
 func GetBookByID(r *http.Request, id int64) (*data.Book, error) {
 	return DB(r).Books().FilterActual().FilterByID(id).Get()
@@ -59,8 +57,7 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 			ContractName:    book.ContractName,
 			ContractSymbol:  book.ContractSymbol,
 			ContractVersion: book.ContractVersion,
-			ChainId:         int32(book.ChainID),
-			TokenId:         int32(book.TokenId),
+			TokenId:         book.TokenId,
 			DeployStatus:    book.DeployStatus,
 			File:            media[1],
 			Banner:          media[0],
@@ -70,15 +67,15 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 	return &res, nil
 }
 
-func GenerateTokenID(r *http.Request) (int64, error) {
-	tokenKV, err := DB(r).KeyValue().Get(tokenIdIncrementKey)
+func GetLastTokenID(r *http.Request) (int64, error) {
+	tokenKV, err := DB(r).KeyValue().Get(postgres.TokenIdIncrementKey)
 	if err != nil {
 		return 0, err
 	}
 
 	if tokenKV == nil {
 		tokenKV = &data.KeyValue{
-			Key:   tokenIdIncrementKey,
+			Key:   postgres.TokenIdIncrementKey,
 			Value: "0",
 		}
 	}
@@ -86,18 +83,9 @@ func GenerateTokenID(r *http.Request) (int64, error) {
 	return strconv.ParseInt(tokenKV.Value, 10, 64)
 }
 
-func GetNetworkInfo(chainID int64, r *http.Request) (*models.NetworkResponse, error) {
-	networker := NetworkerConnector(r)
-	return networker.GetNetworkByChainID(chainID)
-}
-
 func applyQBooksFilters(q data.BookQ, request *requests.GetBooksRequest) data.BookQ {
 	if request.Status != nil {
 		q = q.FilterByDeployStatus(*request.Status)
-	}
-
-	if request.ChainID != nil {
-		q = q.FilterByChainID(*request.ChainID)
 	}
 
 	if len(request.IDs) > 0 {

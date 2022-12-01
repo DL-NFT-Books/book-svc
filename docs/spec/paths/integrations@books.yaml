@@ -66,7 +66,6 @@ get:
     - $ref: '#/components/parameters/pageNumberParam'
     - $ref: '#/components/parameters/sortingParam'
     - $ref: '#/components/parameters/DeployStatusFilterParam'
-    - $ref: '#/components/parameters/NetworkFilterParam'
   responses:
     '200':
       description: Success

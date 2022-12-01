@@ -6,44 +6,42 @@ import (
 	"gitlab.com/distributed_lab/kit/copus/types"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/kit/pgdb"
-	s3Cfg "gitlab.com/tokend/nft-books/blob-svc/connector/config"
-	doormanCfg "gitlab.com/tokend/nft-books/doorman/connector/config"
-	networkerCfg "gitlab.com/tokend/nft-books/network-svc/connector/config"
+	documenter "gitlab.com/tokend/nft-books/blob-svc/connector/config"
+	doormaner "gitlab.com/tokend/nft-books/doorman/connector/config"
 )
 
 type Config interface {
+	// base
 	comfig.Logger
 	pgdb.Databaser
 	types.Copuser
 	comfig.Listenerer
 
-	doormanCfg.DoormanConfiger
-	s3Cfg.Documenter
-	networkerCfg.NetworkConfigurator
+	// connectors
+	doormaner.DoormanConfiger
+	documenter.Documenter
 
+	// additional configs
 	MimeTypesConfigurator
 	DeploySignatureConfigurator
-
-	UpdateTracker() UpdateTracker
-	DeployTracker() DeployTracker
 }
 
 type config struct {
+	// base
 	comfig.Logger
 	pgdb.Databaser
 	types.Copuser
 	comfig.Listenerer
 
-	doormanCfg.DoormanConfiger
-	s3Cfg.Documenter
-	networkerCfg.NetworkConfigurator
+	// connectors
+	doormaner.DoormanConfiger
+	documenter.Documenter
 
+	// additional configs
 	MimeTypesConfigurator
 	DeploySignatureConfigurator
 
-	getter            kv.Getter
-	updateTrackerOnce comfig.Once
-	deployTrackerOnce comfig.Once
+	getter kv.Getter
 }
 
 func New(getter kv.Getter) Config {
@@ -54,9 +52,8 @@ func New(getter kv.Getter) Config {
 		Listenerer:                  comfig.NewListenerer(getter),
 		Logger:                      comfig.NewLogger(getter, comfig.LoggerOpts{}),
 		MimeTypesConfigurator:       NewMimeTypesConfigurator(getter),
-		DoormanConfiger:             doormanCfg.NewDoormanConfiger(getter),
-		Documenter:                  s3Cfg.NewDocumenter(getter),
+		DoormanConfiger:             doormaner.NewDoormanConfiger(getter),
+		Documenter:                  documenter.NewDocumenter(getter),
 		DeploySignatureConfigurator: NewDeploySignatureConfigurator(getter),
-		NetworkConfigurator:         networkerCfg.NewNetworkConfigurator(getter),
 	}
 }

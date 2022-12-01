@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 
 	sq "github.com/Masterminds/squirrel"
@@ -9,11 +10,14 @@ import (
 	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
-const keyValueTable = "key_value"
+const (
+	TokenIdIncrementKey = "token_id_increment"
+)
 
 const (
-	keyColumn   = "key"
-	valueColumn = "value"
+	keyValueTable = "key_value"
+	keyColumn     = "key"
+	valueColumn   = "value"
 )
 
 var (
