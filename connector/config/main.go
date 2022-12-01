@@ -8,37 +8,39 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/connector/api"
 )
 
-type BooksConnectorConfigurator interface {
-	BooksConnector() *api.Connector
+const bookerYamlKey = "booker"
+
+type Booker interface {
+	Connector() *api.Connector
 }
 
-type booksConnectorConfigurator struct {
+type booker struct {
 	once   comfig.Once
 	getter kv.Getter
 }
 
-type BooksConnectorConfig struct {
+type bookerCfg struct {
 	URL   string `fig:"url,required"`
 	Token string `fig:"token,required"`
 }
 
-func NewBooksConfigurator(getter kv.Getter) BooksConnectorConfigurator {
-	return &booksConnectorConfigurator{getter: getter}
+func NewBooker(getter kv.Getter) Booker {
+	return &booker{getter: getter}
 }
 
-func (c *booksConnectorConfigurator) BooksConnector() *api.Connector {
+func (c *booker) Connector() *api.Connector {
 	return c.once.Do(func() interface{} {
-		config := BooksConnectorConfig{}
+		var cfg bookerCfg
 
-		raw := kv.MustGetStringMap(c.getter, "booker")
+		raw := kv.MustGetStringMap(c.getter, bookerYamlKey)
 
 		if err := figure.
-			Out(&config).
+			Out(&cfg).
 			From(raw).
 			Please(); err != nil {
 			panic(errors.Wrap(err, "failed to figure out"))
 		}
 
-		return api.NewConnector(config.Token, config.URL)
+		return api.NewConnector(cfg.Token, cfg.URL)
 	}).(*api.Connector)
 }

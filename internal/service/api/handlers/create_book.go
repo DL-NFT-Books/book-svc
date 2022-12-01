@@ -120,7 +120,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ContractName:    req.Data.Attributes.TokenName,
 		ContractSymbol:  req.Data.Attributes.TokenSymbol,
 		ContractVersion: network.Data.Attributes.FactoryVersion,
-		ChainID:         int64(network.Data.Attributes.ChainId),
+		ChainID:         network.Data.Attributes.ChainId,
 		Banner:          media[0],
 		File:            media[1],
 		Deleted:         false,
