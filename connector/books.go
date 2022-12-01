@@ -1,14 +1,13 @@
-package api
+package connector
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cast"
-	"gitlab.com/tokend/nft-books/book-svc/connector/models"
-
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/urlval"
+	"gitlab.com/tokend/nft-books/book-svc/connector/models"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
 )
 
@@ -72,7 +71,7 @@ func (c *Connector) ListBooks(request models.ListBooksParams) (*models.ListBooks
 	fullEndpoint := fmt.Sprintf("%s/%s?%s", c.baseUrl, booksEndpoint, urlval.MustEncode(request))
 
 	// getting response
-	if err := c.get(fullEndpoint, &result); err != nil {
+	if _, err := c.get(fullEndpoint, &result); err != nil {
 		// errors are already wrapped
 		return nil, err
 	}
@@ -87,9 +86,13 @@ func (c *Connector) GetBookById(id int64) (*models.GetBookResponse, error) {
 	fullEndpoint := fmt.Sprintf("%s/%s/%d", c.baseUrl, booksEndpoint, id)
 
 	// getting response
-	if err := c.get(fullEndpoint, &result); err != nil {
+	found, err := c.get(fullEndpoint, &result)
+	if err != nil {
 		// errors are already wrapped
 		return nil, errors.From(err, logan.F{"id": id})
+	}
+	if !found {
+		return nil, nil
 	}
 
 	return &result, nil

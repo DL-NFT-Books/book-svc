@@ -1,17 +1,16 @@
-package config
+package connector
 
 import (
 	"gitlab.com/distributed_lab/figure"
 	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/nft-books/book-svc/connector/api"
 )
 
 const bookerYamlKey = "booker"
 
 type Booker interface {
-	Connector() *api.Connector
+	BookerConnector() *Connector
 }
 
 type booker struct {
@@ -28,7 +27,7 @@ func NewBooker(getter kv.Getter) Booker {
 	return &booker{getter: getter}
 }
 
-func (c *booker) Connector() *api.Connector {
+func (c *booker) BookerConnector() *Connector {
 	return c.once.Do(func() interface{} {
 		var cfg bookerCfg
 
@@ -41,6 +40,6 @@ func (c *booker) Connector() *api.Connector {
 			panic(errors.Wrap(err, "failed to figure out"))
 		}
 
-		return api.NewConnector(cfg.Token, cfg.URL)
-	}).(*api.Connector)
+		return NewConnector(cfg.Token, cfg.URL)
+	}).(*Connector)
 }

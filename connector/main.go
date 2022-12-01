@@ -1,4 +1,4 @@
-package api
+package connector
 
 import (
 	"bytes"
@@ -24,11 +24,11 @@ func NewConnector(authToken, serviceUrl string) *Connector {
 	}
 }
 
-func (c *Connector) get(endpoint string, dst interface{}) (err error) {
+func (c *Connector) get(endpoint string, dst interface{}) (found bool, err error) {
 	// creating request
 	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
-		return errors.Wrap(err, "failed to create connector request")
+		return false, errors.Wrap(err, "failed to create connector request")
 	}
 
 	// setting headers
@@ -37,10 +37,11 @@ func (c *Connector) get(endpoint string, dst interface{}) (err error) {
 	// sending request
 	response, err := c.client.Do(request)
 	if err != nil {
-		return errors.Wrap(err, "failed to process request")
+		return false, errors.Wrap(err, "failed to process request")
 	}
-	if response == nil {
-		return errors.New("failed to process request: response is nil")
+
+	if response.StatusCode == http.StatusNotFound {
+		return false, nil
 	}
 
 	defer func(Body io.ReadCloser) {
@@ -52,10 +53,10 @@ func (c *Connector) get(endpoint string, dst interface{}) (err error) {
 	// parsing response
 	raw, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return errors.Wrap(err, "failed to read response body")
+		return false, errors.Wrap(err, "failed to read response body")
 	}
 
-	return json.Unmarshal(raw, &dst)
+	return json.Unmarshal(raw, &dst) == nil, err
 }
 
 func (c *Connector) update(endpoint string, data []byte, dst interface{}) error {
