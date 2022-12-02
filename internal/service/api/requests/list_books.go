@@ -11,9 +11,10 @@ import (
 type ListBooksRequest struct {
 	pgdb.OffsetPageParams
 
-	Status   *resources.DeployStatus `filter:"deploy_status"`
-	Contract []string                `filter:"contract"`
-	IDs      []int64                 `filter:"id"`
+	Status   []resources.DeployStatus `filter:"deploy_status"`
+	Contract []string                 `filter:"contract"`
+	Id       []int64                  `filter:"id"`
+	TokenId  []int64                  `filter:"token_id"`
 }
 
 func NewListBooksRequest(r *http.Request) (ListBooksRequest, error) {

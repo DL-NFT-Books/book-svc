@@ -27,7 +27,7 @@ type BookQ interface {
 	UpdateSymbol(newSymbol string, id int64) error
 	UpdateDeployStatus(newStatus resources.DeployStatus, id int64) error
 
-	// do not include deleted books
+	// FilterActual does not include deleted books
 	FilterActual() BookQ
 	FilterByID(id ...int64) BookQ
 	FilterByTokenId(tokenId ...int64) BookQ
