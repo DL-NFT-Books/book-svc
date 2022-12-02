@@ -1,16 +1,13 @@
 package helpers
 
 import (
+	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"net/http"
 	"strconv"
 
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
-)
-
-const (
-	TokenIdIncrementKey = "token_id_increment"
 )
 
 func GetBookByID(r *http.Request, id int64) (*data.Book, error) {
@@ -71,14 +68,14 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 }
 
 func GetLastTokenID(r *http.Request) (int64, error) {
-	tokenKV, err := DB(r).KeyValue().Get(TokenIdIncrementKey)
+	tokenKV, err := DB(r).KeyValue().Get(postgres.TokenIdIncrementKey)
 	if err != nil {
 		return 0, err
 	}
 
 	if tokenKV == nil {
 		tokenKV = &data.KeyValue{
-			Key:   TokenIdIncrementKey,
+			Key:   postgres.TokenIdIncrementKey,
 			Value: "0",
 		}
 	}

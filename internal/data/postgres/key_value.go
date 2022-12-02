@@ -11,6 +11,10 @@ import (
 )
 
 const (
+	TokenIdIncrementKey = "token_id_increment"
+)
+
+const (
 	keyValueTable = "key_value"
 	keyColumn     = "key"
 	valueColumn   = "value"
