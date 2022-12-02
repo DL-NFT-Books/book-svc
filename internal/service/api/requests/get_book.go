@@ -14,13 +14,13 @@ type GetBookByIDRequest struct {
 }
 
 func NewGetBookByIDRequest(r *http.Request) (GetBookByIDRequest, error) {
-	var req GetBookByIDRequest
+	var request GetBookByIDRequest
 
 	id := chi.URLParam(r, "id")
 	if _, err := strconv.Atoi(id); err != nil {
-		return req, errors.New("id is not an integer")
+		return request, errors.New("id is not an integer")
 	}
 
-	req.ID = cast.ToInt64(id)
-	return req, nil
+	request.ID = cast.ToInt64(id)
+	return request, nil
 }

@@ -20,17 +20,18 @@ import (
 const tokenIdIncrementKey = "token_id_increment"
 
 type service struct {
-	cfg                 config.Config
-	log                 *logan.Entry
-	copus               types.Copus
-	listener            net.Listener
-	db                  *pgdb.DB
-	mimeTypes           *config.MimeTypes
-	deploySignatureConf *config.DeploySignatureConfig
+	cfg                config.Config
+	log                *logan.Entry
+	copus              types.Copus
+	listener           net.Listener
+	db                 *pgdb.DB
+	mimeTypes          *config.MimeTypes
+	deploySignatureCfg *config.DeploySignatureConfig
 }
 
 func (s *service) run(cfg config.Config) error {
 	s.log.Info("Service started")
+
 	// Update increment key
 	if err := s.setInitialSubscribeOffset(); err != nil {
 		return errors.Wrap(err, "failed to set initial offset", logan.F{
@@ -47,6 +48,8 @@ func (s *service) run(cfg config.Config) error {
 	return http.Serve(s.listener, r)
 }
 
+// setInitialSubscribeOffset is a function that setups the initial parameter of token id
+// in the KV table that is needed for a book deployment flow
 func (s *service) setInitialSubscribeOffset() error {
 	keyValueQ := postgres.NewKeyValueQ(s.db)
 
@@ -58,13 +61,13 @@ func (s *service) setInitialSubscribeOffset() error {
 
 func newService(cfg config.Config) *service {
 	return &service{
-		cfg:                 cfg,
-		log:                 cfg.Log(),
-		copus:               cfg.Copus(),
-		listener:            cfg.Listener(),
-		db:                  cfg.DB(),
-		mimeTypes:           cfg.MimeTypes(),
-		deploySignatureConf: cfg.DeploySignatureConfig(),
+		cfg:                cfg,
+		log:                cfg.Log(),
+		copus:              cfg.Copus(),
+		listener:           cfg.Listener(),
+		db:                 cfg.DB(),
+		mimeTypes:          cfg.MimeTypes(),
+		deploySignatureCfg: cfg.DeploySignatureConfig(),
 	}
 }
 

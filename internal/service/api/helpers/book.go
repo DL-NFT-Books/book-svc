@@ -5,16 +5,19 @@ import (
 	"strconv"
 
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
+)
+
+const (
+	TokenIdIncrementKey = "token_id_increment"
 )
 
 func GetBookByID(r *http.Request, id int64) (*data.Book, error) {
 	return DB(r).Books().FilterActual().FilterByID(id).Get()
 }
 
-func GetBookListByRequest(r *http.Request, request *requests.GetBooksRequest) ([]data.Book, error) {
+func GetBookListByRequest(r *http.Request, request *requests.ListBooksRequest) ([]data.Book, error) {
 	return applyQBooksFilters(DB(r).Books(), request).Select()
 }
 
@@ -68,14 +71,14 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 }
 
 func GetLastTokenID(r *http.Request) (int64, error) {
-	tokenKV, err := DB(r).KeyValue().Get(postgres.TokenIdIncrementKey)
+	tokenKV, err := DB(r).KeyValue().Get(TokenIdIncrementKey)
 	if err != nil {
 		return 0, err
 	}
 
 	if tokenKV == nil {
 		tokenKV = &data.KeyValue{
-			Key:   postgres.TokenIdIncrementKey,
+			Key:   TokenIdIncrementKey,
 			Value: "0",
 		}
 	}
@@ -83,13 +86,15 @@ func GetLastTokenID(r *http.Request) (int64, error) {
 	return strconv.ParseInt(tokenKV.Value, 10, 64)
 }
 
-func applyQBooksFilters(q data.BookQ, request *requests.GetBooksRequest) data.BookQ {
+func applyQBooksFilters(q data.BookQ, request *requests.ListBooksRequest) data.BookQ {
 	if request.Status != nil {
 		q = q.FilterByDeployStatus(*request.Status)
 	}
-
 	if len(request.IDs) > 0 {
 		q = q.FilterByID(request.IDs...)
+	}
+	if len(request.Contract) > 0 {
+		q = q.FilterByContractAddress(request.Contract...)
 	}
 
 	q = q.Page(request.OffsetPageParams)

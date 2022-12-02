@@ -30,8 +30,9 @@ type BookQ interface {
 	// do not include deleted books
 	FilterActual() BookQ
 	FilterByID(id ...int64) BookQ
-	FilterByTokenId(tokenId int64) BookQ
-	FilterByDeployStatus(status resources.DeployStatus) BookQ
+	FilterByTokenId(tokenId ...int64) BookQ
+	FilterByDeployStatus(status ...resources.DeployStatus) BookQ
+	FilterByContractAddress(address ...string) BookQ
 
 	Page(params pgdb.OffsetPageParams) BookQ
 }

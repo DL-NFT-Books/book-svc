@@ -11,16 +11,16 @@ import (
 	"gitlab.com/distributed_lab/ape/problems"
 )
 
-func GetBooks(w http.ResponseWriter, r *http.Request) {
+func ListBooks(w http.ResponseWriter, r *http.Request) {
 	logger := helpers.Log(r)
 
-	req, err := requests.NewGetBooksRequest(r)
+	request, err := requests.NewListBooksRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	books, err := helpers.GetBookListByRequest(r, &req)
+	books, err := helpers.GetBookListByRequest(r, &request)
 	if err != nil {
 		logger.WithError(err).Error("failed to get books")
 		ape.RenderErr(w, problems.InternalError())

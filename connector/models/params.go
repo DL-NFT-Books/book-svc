@@ -27,5 +27,5 @@ type (
 	}
 
 	// ListBooksParams is a helper struct to be included when calling ListBooks request
-	ListBooksParams requests.GetBooksRequest
+	ListBooksParams requests.ListBooksRequest
 )

@@ -20,13 +20,13 @@ type CreateBookRequest struct {
 }
 
 func NewCreateBookRequest(r *http.Request) (CreateBookRequest, error) {
-	var req CreateBookRequest
+	var request CreateBookRequest
 
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return CreateBookRequest{}, errors.Wrap(err, "failed to decode request")
 	}
 
-	return req, req.validate()
+	return request, request.validate()
 }
 
 func (r CreateBookRequest) validate() error {

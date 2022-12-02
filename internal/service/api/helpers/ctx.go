@@ -24,7 +24,7 @@ const (
 	dbKey
 )
 
-func SetDB(db data.DB) func(context.Context) context.Context {
+func CtxDB(db data.DB) func(context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, dbKey, db)
 	}

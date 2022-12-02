@@ -18,36 +18,28 @@ func (s *service) router(cfg config.Config) chi.Router {
 		ape.RecoverMiddleware(s.log),
 		ape.LoganMiddleware(s.log),
 		ape.CtxMiddleware(
+			// Base configuration
 			helpers.CtxLog(s.log),
+			helpers.CtxDB(postgres.NewDB(s.db)),
 
-			// db
-			helpers.SetDB(postgres.NewDB(s.db)),
-
-			// configs
+			// Service configs
 			helpers.CtxMimeTypes(s.mimeTypes),
-			helpers.CtxDeploySignature(s.deploySignatureConf),
+			helpers.CtxDeploySignature(s.deploySignatureCfg),
 
-			// connectors
+			// Connectors
 			helpers.CtxDoormanConnector(cfg.DoormanConnector()),
 			helpers.CtxDocumenterConnector(*cfg.DocumenterConnector()),
 		),
 	)
 
 	r.Route("/integrations/books", func(r chi.Router) {
-		r.With(middlewares.CheckAccessToken).
-			Post("/", handlers.CreateBook)
-
-		r.Get("/", handlers.GetBooks)
+		r.With(middlewares.CheckAccessToken).Post("/", handlers.CreateBook)
+		r.Get("/", handlers.ListBooks)
 
 		r.Route("/{id}", func(r chi.Router) {
 			r.Get("/", handlers.GetBookByID)
-
-			r.With(middlewares.CheckAccessToken).
-				Patch("/", handlers.UpdateBookByID)
-
-			// TODO investigate
-			//r.With(middlewares.CheckAccessToken).
-			//	Delete("/", handlers.DeleteBookByID)
+			r.With(middlewares.CheckAccessToken).Patch("/", handlers.UpdateBookByID)
+			r.With(middlewares.CheckAccessToken).Delete("/", handlers.DeleteBookByID)
 		})
 	})
 
