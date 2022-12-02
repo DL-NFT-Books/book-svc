@@ -7,8 +7,6 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-const bookerYamlKey = "booker"
-
 type Booker interface {
 	BookerConnector() *Connector
 }
@@ -31,7 +29,7 @@ func (c *booker) BookerConnector() *Connector {
 	return c.once.Do(func() interface{} {
 		var cfg bookerCfg
 
-		raw := kv.MustGetStringMap(c.getter, bookerYamlKey)
+		raw := kv.MustGetStringMap(c.getter, "connector")
 
 		if err := figure.
 			Out(&cfg).
