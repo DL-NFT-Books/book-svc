@@ -95,6 +95,7 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updateParams.Contract = request.Data.Attributes.ContractAddress
+	updateParams.DeployStatus = request.Data.Attributes.DeployStatus
 
 	// updating collected params
 	if err = helpers.DB(r).Books().Update(updateParams, request.ID); err != nil {

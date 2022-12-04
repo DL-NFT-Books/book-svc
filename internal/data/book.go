@@ -39,11 +39,12 @@ type BookQ interface {
 
 // BookUpdateParams is a structure for applicable update params on bookQ `Update`
 type BookUpdateParams struct {
-	Banner      *string
-	File        *string
-	Title       *string
-	Description *string
-	Contract    *string
+	Banner       *string
+	File         *string
+	Title        *string
+	Description  *string
+	Contract     *string
+	DeployStatus *resources.DeployStatus
 }
 
 type Book struct {
