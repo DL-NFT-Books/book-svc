@@ -15,13 +15,13 @@ import (
 func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	logger := helpers.Log(r)
 
-	req, err := requests.NewUpdateBookRequest(r)
+	request, err := requests.NewUpdateBookRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	book, err := helpers.GetBookByID(r, req.ID)
+	book, err := helpers.GetBookByID(r, request.ID)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
@@ -31,10 +31,10 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updateParams := data.BookUpdateParams{}
+	var updateParams data.BookUpdateParams
 
 	// collecting update params
-	banner := req.Data.Attributes.Banner
+	banner := request.Data.Attributes.Banner
 	if banner != nil {
 		if err = helpers.CheckBannerMimeType(banner.Attributes.MimeType, r); err != nil {
 			logger.WithError(err).Error("failed to validate banner mime type")
@@ -52,7 +52,7 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		updateParams.Banner = &bannerMediaRaw[0]
 	}
 
-	file := req.Data.Attributes.File
+	file := request.Data.Attributes.File
 	if file != nil {
 		if err = helpers.CheckFileMimeType(file.Attributes.MimeType, r); err != nil {
 			logger.WithError(err).Error("failed to validate file mime type")
@@ -70,7 +70,7 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		updateParams.File = &fileMediaRaw[0]
 	}
 
-	title := req.Data.Attributes.Title
+	title := request.Data.Attributes.Title
 	if title != nil {
 		if len(*title) > requests.MaxTitleLength {
 			err = errors.New(fmt.Sprintf("invalid title length (max len is %v)", requests.MaxTitleLength))
@@ -82,7 +82,7 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		updateParams.Title = title
 	}
 
-	description := req.Data.Attributes.Description
+	description := request.Data.Attributes.Description
 	if description != nil {
 		if len(*description) > requests.MaxDescriptionLength {
 			err = errors.New(fmt.Sprintf("invalid description length (max len is %v)", requests.MaxDescriptionLength))
@@ -94,8 +94,10 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		updateParams.Description = description
 	}
 
+	updateParams.Contract = request.Data.Attributes.ContractAddress
+
 	// updating collected params
-	if err = helpers.DB(r).Books().Update(updateParams, req.ID); err != nil {
+	if err = helpers.DB(r).Books().Update(updateParams, request.ID); err != nil {
 		logger.WithError(err).Error("failed to update book params")
 		ape.RenderErr(w, problems.InternalError())
 		return

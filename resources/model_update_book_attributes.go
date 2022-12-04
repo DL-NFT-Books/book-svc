@@ -10,5 +10,6 @@ type UpdateBookAttributes struct {
 	Description *string `json:"description,omitempty"`
 	File        *Media  `json:"file,omitempty"`
 	// Book title
-	Title *string `json:"title,omitempty"`
+	Title           *string `json:"title,omitempty"`
+	ContractAddress *string `json:"contract_address,omitempty"`
 }

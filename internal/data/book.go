@@ -43,6 +43,7 @@ type BookUpdateParams struct {
 	File        *string
 	Title       *string
 	Description *string
+	Contract    *string
 }
 
 type Book struct {

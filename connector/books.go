@@ -48,10 +48,11 @@ func (c *Connector) UpdateBook(params models.UpdateBookParams) error {
 	request := resources.UpdateBook{
 		Key: resources.NewKeyInt64(params.Id, resources.BOOKS),
 		Attributes: resources.UpdateBookAttributes{
-			Banner:      params.Banner,
-			Description: params.Description,
-			File:        params.File,
-			Title:       params.Title,
+			Banner:          params.Banner,
+			Description:     params.Description,
+			File:            params.File,
+			Title:           params.Title,
+			ContractAddress: params.ContractAddress,
 		},
 	}
 

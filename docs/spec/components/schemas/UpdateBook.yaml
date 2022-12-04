@@ -21,3 +21,7 @@ allOf:
           file:
             description: File info
             $ref: '#/components/schemas/Media'
+          contract_address:
+            description: Address of a contract corresponding to this book
+            type: string
+            example: "0xff04b6fBd9FEcbcac666cc0FFfEed58488c73c7B"
