@@ -36,3 +36,9 @@ allOf:
               - name: failed
                 value: 3
             example: 2
+          token_symbol:
+            type: string
+            description: Token symbol
+          price:
+            type: string
+            description: Price per one token ($)

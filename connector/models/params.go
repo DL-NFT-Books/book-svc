@@ -26,6 +26,8 @@ type (
 		Title           *string                 `json:"title,omitempty"`
 		ContractAddress *string                 `json:"contract_address,omitempty"`
 		DeployStatus    *resources.DeployStatus `json:"deploy_status,omitempty"`
+		Symbol          *string                 `json:"symbol,omitempty"`
+		Price           *string                 `json:"price,omitempty"`
 	}
 
 	// ListBooksParams is a helper struct to be included when calling ListBooks request

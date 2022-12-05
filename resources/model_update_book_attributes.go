@@ -13,4 +13,7 @@ type UpdateBookAttributes struct {
 	Title           *string       `json:"title,omitempty"`
 	ContractAddress *string       `json:"contract_address,omitempty"`
 	DeployStatus    *DeployStatus `json:"deploy_status,omitempty"`
+	// Price per one token ($)
+	Price       *string `json:"price"`
+	TokenSymbol *string `json:"token_symbol"`
 }
