@@ -1,14 +1,10 @@
 package config
 
 import (
-	"net/http"
-	"net/url"
-
 	"gitlab.com/distributed_lab/figure"
 	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/connectors/signed"
 	"gitlab.com/tokend/nft-books/blob-svc/connector/api"
 )
 
@@ -28,8 +24,8 @@ func NewDocumenter(getter kv.Getter) Documenter {
 }
 
 type documenterConfig struct {
-	URL   *url.URL `fig:"url,required"`
-	Token string   `fig:"token,required"`
+	URL   string `fig:"url,required"`
+	Token string `fig:"token,required"`
 }
 
 func (c *documenter) DocumenterConnector() *api.Connector {
@@ -39,13 +35,11 @@ func (c *documenter) DocumenterConnector() *api.Connector {
 		if err := figure.
 			Out(&conf).
 			With(figure.BaseHooks).
-			From(kv.MustGetStringMap(c.getter, "documenter")).
+			From(kv.MustGetStringMap(c.getter, "connector")).
 			Please(); err != nil {
 			panic(errors.Wrap(err, "failed to figure out documenter"))
 		}
 
-		cli := signed.NewClient(http.DefaultClient, conf.URL)
-
-		return api.NewConnector(cli, conf.Token)
+		return api.NewConnector(conf.URL, conf.Token)
 	}).(*api.Connector)
 }

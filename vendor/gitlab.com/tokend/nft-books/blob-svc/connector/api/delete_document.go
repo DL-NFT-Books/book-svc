@@ -3,25 +3,16 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 func (c *Connector) DeleteDocument(key string) (int, error) {
 	// forming endpoint
-	parsedUrl, err := url.Parse(fmt.Sprintf("%s/%s", DocumentEndpoint, key))
-	if err != nil {
-		return http.StatusBadRequest, errors.Wrap(err, "failed to parse document url")
-	}
-
-	fullEndpoint, err := c.client.Resolve(parsedUrl)
-	if err != nil {
-		return http.StatusBadRequest, err
-	}
+	endpoint := fmt.Sprintf("%s/%s/%s", c.baseUrl, DocumentEndpoint, key)
 
 	// creating request
-	req, err := http.NewRequest(http.MethodDelete, fullEndpoint, nil)
+	req, err := http.NewRequest(http.MethodDelete, endpoint, nil)
 	if err != nil {
 		return http.StatusBadRequest, errors.Wrap(err, "failed to build request")
 	}
@@ -30,8 +21,7 @@ func (c *Connector) DeleteDocument(key string) (int, error) {
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.token))
 
 	// creating new client (!) and sending request
-	newCli := http.Client{}
-	resp, err := newCli.Do(req)
+	resp, err := c.client.Do(req)
 	if err != nil {
 		if resp != nil {
 			return resp.StatusCode, err

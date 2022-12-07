@@ -2,39 +2,55 @@ package api
 
 import (
 	"encoding/json"
-	"net/url"
+	"io"
+	"io/ioutil"
+	"net/http"
 
-	"gitlab.com/distributed_lab/json-api-connector/base"
-	"gitlab.com/distributed_lab/json-api-connector/client"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 const (
-	DocumentEndpoint = "/integrations/documents"
+	DocumentEndpoint = "documents"
 )
 
 type Connector struct {
-	base   *base.Connector
-	client client.Client
-	token  string
+	baseUrl string
+	client  *http.Client
+	token   string
 }
 
-func NewConnector(client client.Client, token string) *Connector {
+func NewConnector(url, token string) *Connector {
 	return &Connector{
-		client: client,
-		base:   base.NewConnector(client),
-		token:  token,
+		client:  http.DefaultClient,
+		baseUrl: url,
+		token:   token,
 	}
 }
 
-func (c *Connector) Get(endpoint *url.URL, dst interface{}) (err error) {
-	response, err := c.base.Get(endpoint)
+func (c *Connector) Get(endpoint string, dst interface{}) (err error) {
+	// creating request
+	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to create connector request")
 	}
 
-	if response == nil || dst == nil {
-		return nil
+	// sending request
+	response, err := c.client.Do(request)
+	if err != nil {
+		return errors.Wrap(err, "failed to process request")
 	}
 
-	return json.Unmarshal(response, dst)
+	defer func(Body io.ReadCloser) {
+		if tempErr := Body.Close(); tempErr != nil {
+			err = tempErr
+		}
+	}(response.Body)
+
+	// parsing response
+	raw, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return errors.Wrap(err, "failed to read response body")
+	}
+
+	return json.Unmarshal(raw, dst)
 }

@@ -7,7 +7,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
-	"net/url"
 	"strings"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
@@ -15,15 +14,7 @@ import (
 
 func (c *Connector) UploadDocument(raw []byte, key string) (int, error) {
 	// forming endpoint
-	parsedUrl, err := url.Parse(DocumentEndpoint)
-	if err != nil {
-		return http.StatusBadRequest, errors.Wrap(err, "failed to parse document url")
-	}
-
-	fullEndpoint, err := c.client.Resolve(parsedUrl)
-	if err != nil {
-		return http.StatusBadRequest, err
-	}
+	endpoint := fmt.Sprintf("%s/%s", c.baseUrl, DocumentEndpoint)
 
 	// forming multipart/form-data request : setting headers
 	h := make(textproto.MIMEHeader)
@@ -57,18 +48,17 @@ func (c *Connector) UploadDocument(raw []byte, key string) (int, error) {
 	writer.Close()
 
 	// creating request
-	req, err := http.NewRequest(http.MethodPost, fullEndpoint, body)
+	req, err := http.NewRequest(http.MethodPost, endpoint, body)
 	if err != nil {
 		return http.StatusBadRequest, errors.Wrap(err, "failed to build request")
 	}
 
-	//  setting headers
+	// setting headers
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.token))
 
-	// creating new client (!) and sending request
-	newCli := http.Client{}
-	resp, err := newCli.Do(req)
+	// sending request
+	resp, err := c.client.Do(req)
 	if err != nil {
 		if resp != nil {
 			return resp.StatusCode, err

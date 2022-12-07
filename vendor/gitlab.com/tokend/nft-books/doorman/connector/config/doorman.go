@@ -14,7 +14,7 @@ type DoormanConfiger interface {
 }
 
 type DoormanConfig struct {
-	ServiceUrl string `fig:"service_url,required"`
+	ServiceUrl string `fig:"url,required"`
 }
 
 func NewDoormanConfiger(getter kv.Getter) DoormanConfiger {
@@ -30,7 +30,7 @@ type doormanConfig struct {
 
 func (c *doormanConfig) DoormanConfig() *DoormanConfig {
 	return c.once.Do(func() interface{} {
-		raw := kv.MustGetStringMap(c.getter, "doorman")
+		raw := kv.MustGetStringMap(c.getter, "connector")
 		config := DoormanConfig{}
 		err := figure.Out(&config).From(raw).Please()
 		if err != nil {
