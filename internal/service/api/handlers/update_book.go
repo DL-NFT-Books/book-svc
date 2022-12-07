@@ -30,8 +30,12 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
-
-	var updateParams data.BookUpdateParams
+	updateParams := data.BookUpdateParams{
+		Contract:     request.Data.Attributes.ContractAddress,
+		DeployStatus: request.Data.Attributes.DeployStatus,
+		Price:        request.Data.Attributes.Price,
+		Symbol:       request.Data.Attributes.TokenSymbol,
+	}
 
 	// collecting update params
 	banner := request.Data.Attributes.Banner
@@ -93,9 +97,6 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 
 		updateParams.Description = description
 	}
-
-	updateParams.Contract = request.Data.Attributes.ContractAddress
-	updateParams.DeployStatus = request.Data.Attributes.DeployStatus
 
 	// updating collected params
 	if err = helpers.DB(r).Books().Update(updateParams, request.ID); err != nil {

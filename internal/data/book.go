@@ -45,6 +45,8 @@ type BookUpdateParams struct {
 	Description  *string
 	Contract     *string
 	DeployStatus *resources.DeployStatus
+	Symbol       *string
+	Price        *string
 }
 
 type Book struct {

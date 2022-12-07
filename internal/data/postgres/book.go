@@ -141,6 +141,12 @@ func (b *BooksQ) applyUpdateParams(sql squirrel.UpdateBuilder, updater data.Book
 	if updater.DeployStatus != nil {
 		sql = sql.Set(deployStatusColumn, *updater.DeployStatus)
 	}
+	if updater.Symbol != nil {
+		sql = sql.Set(contractSymbolColumn, *updater.Symbol)
+	}
+	if updater.Price != nil {
+		sql = sql.Set(priceColumn, *updater.Price)
+	}
 
 	return sql
 }
