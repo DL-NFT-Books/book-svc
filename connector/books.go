@@ -65,7 +65,7 @@ func (c *Connector) UpdateBook(params models.UpdateBookParams) error {
 		},
 	}
 
-	endpoint := fmt.Sprintf("%s/%s/%s", c.baseUrl, booksEndpoint, request.ID)
+	endpoint := fmt.Sprintf("%s/%s/%d", c.baseUrl, booksEndpoint, request.ID)
 	requestAsBytes, err := json.Marshal(request)
 	if err != nil {
 		return errors.Wrap(err, "failed to marshal request")
