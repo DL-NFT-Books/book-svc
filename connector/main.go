@@ -56,7 +56,8 @@ func (c *Connector) get(endpoint string, dst interface{}) (found bool, err error
 		return false, errors.Wrap(err, "failed to read response body")
 	}
 
-	return json.Unmarshal(raw, &dst) == nil, err
+	err = json.Unmarshal(raw, &dst)
+	return err == nil, err
 }
 
 func (c *Connector) update(endpoint string, data []byte, dst interface{}) error {
