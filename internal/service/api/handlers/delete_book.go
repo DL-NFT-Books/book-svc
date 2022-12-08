@@ -9,8 +9,6 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
 )
 
-// TODO: INVESTIGATE
-
 func DeleteBookByID(w http.ResponseWriter, r *http.Request) {
 	req, err := requests.NewGetBookByIDRequest(r)
 	if err != nil {

@@ -71,8 +71,10 @@ func newService(cfg config.Config) *service {
 	}
 }
 
-func Run(cfg config.Config) {
+func Run(cfg config.Config) error {
 	if err := newService(cfg).run(cfg); err != nil {
-		panic(errors.Wrap(err, "failed to initialize a service"))
+		return errors.Wrap(err, "failed to initialize a service")
 	}
+
+	return nil
 }

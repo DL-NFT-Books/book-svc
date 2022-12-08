@@ -13,8 +13,6 @@ import (
 )
 
 func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
-	logger := helpers.Log(r)
-
 	request, err := requests.NewUpdateBookRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
@@ -37,17 +35,17 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		Symbol:       request.Data.Attributes.TokenSymbol,
 	}
 
-	// collecting update params
+	// Collecting update params
 	banner := request.Data.Attributes.Banner
 	if banner != nil {
 		if err = helpers.CheckBannerMimeType(banner.Attributes.MimeType, r); err != nil {
-			logger.WithError(err).Error("failed to validate banner mime type")
+			helpers.Log(r).WithError(err).Error("failed to validate banner mime type")
 			ape.RenderErr(w, problems.BadRequest(err)...)
 			return
 		}
 
 		if err = helpers.SetMediaLink(r, banner); err != nil {
-			logger.WithError(err).Error("failed to set banner link")
+			helpers.Log(r).WithError(err).Error("failed to set banner link")
 			ape.RenderErr(w, problems.BadRequest(err)...)
 			return
 		}
@@ -59,13 +57,13 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	file := request.Data.Attributes.File
 	if file != nil {
 		if err = helpers.CheckFileMimeType(file.Attributes.MimeType, r); err != nil {
-			logger.WithError(err).Error("failed to validate file mime type")
+			helpers.Log(r).WithError(err).Error("failed to validate file mime type")
 			ape.RenderErr(w, problems.BadRequest(err)...)
 			return
 		}
 
 		if err = helpers.SetMediaLink(r, file); err != nil {
-			logger.WithError(err).Error("failed to set file link")
+			helpers.Log(r).WithError(err).Error("failed to set file link")
 			ape.RenderErr(w, problems.BadRequest(err)...)
 			return
 		}
@@ -78,7 +76,7 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	if title != nil {
 		if len(*title) > requests.MaxTitleLength {
 			err = errors.New(fmt.Sprintf("invalid title length (max len is %v)", requests.MaxTitleLength))
-			logger.WithError(err).Error("failed to validate book title")
+			helpers.Log(r).WithError(err).Error("failed to validate book title")
 			ape.RenderErr(w, problems.BadRequest(err)...)
 			return
 		}
@@ -90,7 +88,7 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	if description != nil {
 		if len(*description) > requests.MaxDescriptionLength {
 			err = errors.New(fmt.Sprintf("invalid description length (max len is %v)", requests.MaxDescriptionLength))
-			logger.WithError(err).Error("failed to validate book description")
+			helpers.Log(r).WithError(err).Error("failed to validate book description")
 			ape.RenderErr(w, problems.BadRequest(err)...)
 			return
 		}
@@ -98,9 +96,9 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		updateParams.Description = description
 	}
 
-	// updating collected params
+	// Updating collected params
 	if err = helpers.DB(r).Books().Update(updateParams, request.ID); err != nil {
-		logger.WithError(err).Error("failed to update book params")
+		helpers.Log(r).WithError(err).Error("failed to update book params")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}

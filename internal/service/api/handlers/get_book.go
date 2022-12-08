@@ -14,13 +14,13 @@ import (
 func GetBookByID(w http.ResponseWriter, r *http.Request) {
 	logger := helpers.Log(r)
 
-	req, err := requests.NewGetBookByIDRequest(r)
+	request, err := requests.NewGetBookByIDRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
 
-	book, err := helpers.GetBookByID(r, req.ID)
+	book, err := helpers.GetBookByID(r, request.ID)
 	if err != nil {
 		logger.WithError(err).Error("failed to get book by id")
 		ape.RenderErr(w, problems.InternalError())

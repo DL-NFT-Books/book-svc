@@ -12,6 +12,8 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
+const deploySignatureYamlKey = "deploy_signature"
+
 type DeploySignatureConfigurator interface {
 	DeploySignatureConfig() *DeploySignatureConfig
 }
@@ -43,7 +45,7 @@ func (c *deploySignatureConfigurator) DeploySignatureConfig() *DeploySignatureCo
 		if err := figure.
 			Out(&conf).
 			With(figure.BaseHooks, hooks).
-			From(kv.MustGetStringMap(c.getter, "deploy_signature")).
+			From(kv.MustGetStringMap(c.getter, deploySignatureYamlKey)).
 			Please(); err != nil {
 			panic(err)
 		}

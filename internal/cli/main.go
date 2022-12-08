@@ -8,6 +8,19 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api"
 )
 
+var (
+	app = kingpin.New("book-svc", "service responsible for storing and managing books, subscribing book deploy and update transactions")
+
+	// Run commands
+	runCmd     = app.Command("run", "run command")
+	serviceCmd = runCmd.Command("service", "run service")
+
+	// Migrations commands
+	migrateCmd     = app.Command("migrate", "migrate command")
+	migrateUpCmd   = migrateCmd.Command("up", "migrate database up")
+	migrateDownCmd = migrateCmd.Command("down", "migrate database down")
+)
+
 func Run(args []string) bool {
 	log := logan.New()
 
@@ -20,17 +33,6 @@ func Run(args []string) bool {
 	cfg := config.New(kv.MustFromEnv())
 	log = cfg.Log()
 
-	app := kingpin.New("book-svc", "")
-
-	runCmd := app.Command("run", "run command")
-	serviceCmd := runCmd.Command("service", "run service") // you can insert custom help
-
-	migrateCmd := app.Command("migrate", "migrate command")
-	migrateUpCmd := migrateCmd.Command("up", "migrate db up")
-	migrateDownCmd := migrateCmd.Command("down", "migrate db down")
-
-	// custom commands go here...
-
 	cmd, err := app.Parse(args[1:])
 	if err != nil {
 		log.WithError(err).Error("failed to parse arguments")
@@ -39,12 +41,11 @@ func Run(args []string) bool {
 
 	switch cmd {
 	case serviceCmd.FullCommand():
-		api.Run(cfg)
+		err = api.Run(cfg)
 	case migrateUpCmd.FullCommand():
 		err = MigrateUp(cfg)
 	case migrateDownCmd.FullCommand():
 		err = MigrateDown(cfg)
-	// handle any custom commands here in the same way
 	default:
 		log.Errorf("unknown command %s", cmd)
 		return false
@@ -53,5 +54,6 @@ func Run(args []string) bool {
 		log.WithError(err).Error("failed to exec cmd")
 		return false
 	}
+
 	return true
 }

@@ -11,33 +11,33 @@ import (
 )
 
 type Config interface {
-	// base
+	// Base configs
 	comfig.Logger
 	pgdb.Databaser
 	types.Copuser
 	comfig.Listenerer
 
-	// connectors
+	// Connectors
 	doormaner.DoormanConfiger
 	documenter.Documenter
 
-	// additional configs
+	// Custom configs
 	MimeTypesConfigurator
 	DeploySignatureConfigurator
 }
 
 type config struct {
-	// base
+	// Base configs
 	comfig.Logger
 	pgdb.Databaser
 	types.Copuser
 	comfig.Listenerer
 
-	// connectors
+	// Connectors
 	doormaner.DoormanConfiger
 	documenter.Documenter
 
-	// additional configs
+	// Custom configs
 	MimeTypesConfigurator
 	DeploySignatureConfigurator
 
@@ -46,14 +46,20 @@ type config struct {
 
 func New(getter kv.Getter) Config {
 	return &config{
-		getter:                      getter,
-		Databaser:                   pgdb.NewDatabaser(getter),
-		Copuser:                     copus.NewCopuser(getter),
-		Listenerer:                  comfig.NewListenerer(getter),
-		Logger:                      comfig.NewLogger(getter, comfig.LoggerOpts{}),
+		// Base configs
+		Databaser:  pgdb.NewDatabaser(getter),
+		Copuser:    copus.NewCopuser(getter),
+		Listenerer: comfig.NewListenerer(getter),
+		Logger:     comfig.NewLogger(getter, comfig.LoggerOpts{}),
+
+		// Custom configs
 		MimeTypesConfigurator:       NewMimeTypesConfigurator(getter),
-		DoormanConfiger:             doormaner.NewDoormanConfiger(getter),
-		Documenter:                  documenter.NewDocumenter(getter),
 		DeploySignatureConfigurator: NewDeploySignatureConfigurator(getter),
+
+		// Connectors
+		Documenter:      documenter.NewDocumenter(getter),
+		DoormanConfiger: doormaner.NewDoormanConfiger(getter),
+
+		getter: getter,
 	}
 }

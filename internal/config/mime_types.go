@@ -6,6 +6,8 @@ import (
 	"gitlab.com/distributed_lab/kit/kv"
 )
 
+const mimeTypesYamlKey = "mime_types"
+
 type MimeTypesConfigurator interface {
 	MimeTypes() *MimeTypes
 }
@@ -30,7 +32,9 @@ func (c *mimeTypesConfigurator) MimeTypes() *MimeTypes {
 	return c.once.Do(func() interface{} {
 		config := MimeTypes{}
 
-		if err := figure.Out(&config).From(kv.MustGetStringMap(c.getter, "mime_types")).Please(); err != nil {
+		if err := figure.Out(&config).
+			From(kv.MustGetStringMap(c.getter, mimeTypesYamlKey)).
+			Please(); err != nil {
 			panic(err)
 		}
 
