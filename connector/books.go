@@ -3,6 +3,7 @@ package connector
 import (
 	"encoding/json"
 	"fmt"
+	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
 
 	"github.com/spf13/cast"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -15,16 +16,18 @@ import (
 const booksEndpoint = "books"
 
 func (c *Connector) CreateBook(params models.CreateBookParams) (createdId int64, err error) {
-	request := resources.CreateBook{
-		Key: resources.NewKeyInt64(0, resources.BOOKS),
-		Attributes: resources.CreateBookAttributes{
-			Banner:      params.Banner,
-			Description: params.Description,
-			File:        params.File,
-			Price:       params.Price,
-			Title:       params.Title,
-			TokenName:   params.TokenName,
-			TokenSymbol: params.TokenSymbol,
+	request := requests.CreateBookRequest{
+		Data: resources.CreateBook{
+			Key: resources.NewKeyInt64(0, resources.BOOKS),
+			Attributes: resources.CreateBookAttributes{
+				Banner:      params.Banner,
+				Description: params.Description,
+				File:        params.File,
+				Price:       params.Price,
+				Title:       params.Title,
+				TokenName:   params.TokenName,
+				TokenSymbol: params.TokenSymbol,
+			},
 		},
 	}
 
@@ -45,17 +48,20 @@ func (c *Connector) CreateBook(params models.CreateBookParams) (createdId int64,
 }
 
 func (c *Connector) UpdateBook(params models.UpdateBookParams) error {
-	request := resources.UpdateBook{
-		Key: resources.NewKeyInt64(params.Id, resources.BOOKS),
-		Attributes: resources.UpdateBookAttributes{
-			Banner:          params.Banner,
-			Description:     params.Description,
-			File:            params.File,
-			Title:           params.Title,
-			ContractAddress: params.ContractAddress,
-			DeployStatus:    params.DeployStatus,
-			TokenSymbol:     params.Symbol,
-			Price:           params.Price,
+	request := requests.UpdateBookRequest{
+		ID: params.Id,
+		Data: resources.UpdateBook{
+			Key: resources.NewKeyInt64(params.Id, resources.BOOKS),
+			Attributes: resources.UpdateBookAttributes{
+				Banner:          params.Banner,
+				Description:     params.Description,
+				File:            params.File,
+				Title:           params.Title,
+				ContractAddress: params.ContractAddress,
+				DeployStatus:    params.DeployStatus,
+				TokenSymbol:     params.Symbol,
+				Price:           params.Price,
+			},
 		},
 	}
 

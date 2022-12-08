@@ -118,24 +118,23 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	db := helpers.DB(r)
 	var bookId int64
 
-	if err = db.Transaction(
-		func() error {
-			// inserting book
-			bookId, err = db.Books().Insert(book)
-			if err != nil {
-				return errors.Wrap(err, "failed to save book")
-			}
+	if err = db.Transaction(func() error {
+		// inserting book
+		bookId, err = db.Books().Insert(book)
+		if err != nil {
+			return errors.Wrap(err, "failed to save book")
+		}
 
-			// updating last token id
-			if err = db.KeyValue().Upsert(data.KeyValue{
-				Key:   postgres.TokenIdIncrementKey,
-				Value: strconv.FormatInt(createInfo.TokenContractId, 10),
-			}); err != nil {
-				return errors.Wrap(err, "failed to update last created token id")
-			}
+		// updating last token id
+		if err = db.KeyValue().Upsert(data.KeyValue{
+			Key:   postgres.TokenIdIncrementKey,
+			Value: strconv.FormatInt(createInfo.TokenContractId, 10),
+		}); err != nil {
+			return errors.Wrap(err, "failed to update last created token id")
+		}
 
-			return nil
-		},
+		return nil
+	},
 	); err != nil {
 		logger.WithError(err).Error("failed to execute insertion tx")
 		ape.RenderErr(w, problems.InternalError())
