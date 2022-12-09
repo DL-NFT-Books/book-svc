@@ -44,17 +44,17 @@ func (c *deploySignatureConfigurator) DeploySignatureConfig() *DeploySignatureCo
 
 		if err := figure.
 			Out(&conf).
-			With(figure.BaseHooks, hooks).
+			With(figure.BaseHooks, ecdsaHook).
 			From(kv.MustGetStringMap(c.getter, deploySignatureYamlKey)).
 			Please(); err != nil {
-			panic(err)
+			panic(errors.Wrap(err, "failed to figure out deploy signature config"))
 		}
 
 		return &conf
 	}).(*DeploySignatureConfig)
 }
 
-var hooks = figure.Hooks{
+var ecdsaHook = figure.Hooks{
 	"*ecdsa.PrivateKey": func(value interface{}) (reflect.Value, error) {
 		switch v := value.(type) {
 		case string:

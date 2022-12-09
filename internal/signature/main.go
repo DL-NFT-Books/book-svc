@@ -25,7 +25,7 @@ func SignCreateInfo(
 ) {
 	privateKey := config.PrivateKey
 
-	// hashing token params
+	// Hashing token params
 	tokenNameRaw := sha3.String(createInfo.TokenName)
 	createInfo.HashedTokenName = sha3.SoliditySHA3(tokenNameRaw)
 

@@ -1,32 +1,36 @@
 package api
 
 import (
+	"gitlab.com/distributed_lab/kit/copus/types"
+	"gitlab.com/distributed_lab/kit/pgdb"
+	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
+	documenter "gitlab.com/tokend/nft-books/blob-svc/connector/api"
+	"gitlab.com/tokend/nft-books/book-svc/internal/config"
+	"gitlab.com/tokend/nft-books/book-svc/internal/data"
+	keyValue "gitlab.com/tokend/nft-books/book-svc/internal/data/key_value"
+	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
+	doorman "gitlab.com/tokend/nft-books/doorman/connector"
 	"net"
 	"net/http"
 	"strconv"
-
-	"gitlab.com/tokend/nft-books/book-svc/internal/data"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
-
-	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/distributed_lab/logan/v3"
-
-	"gitlab.com/tokend/nft-books/book-svc/internal/config"
-
-	"gitlab.com/distributed_lab/kit/copus/types"
-	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-const tokenIdIncrementKey = "token_id_increment"
-
 type service struct {
-	cfg                config.Config
-	log                *logan.Entry
-	copus              types.Copus
-	listener           net.Listener
-	db                 *pgdb.DB
+	// Base configs
+	cfg      config.Config
+	log      *logan.Entry
+	copus    types.Copus
+	listener net.Listener
+	db       *pgdb.DB
+
+	// Custom configs
 	mimeTypes          *config.MimeTypes
 	deploySignatureCfg *config.DeploySignatureConfig
+
+	// Connectors
+	doorman    doorman.ConnectorI
+	documenter *documenter.Connector
 }
 
 func (s *service) run(cfg config.Config) error {
@@ -39,8 +43,7 @@ func (s *service) run(cfg config.Config) error {
 		})
 	}
 
-	r := s.router(cfg)
-
+	r := s.router()
 	if err := s.copus.RegisterChi(r); err != nil {
 		return errors.Wrap(err, "cop failed")
 	}
@@ -54,7 +57,7 @@ func (s *service) setInitialSubscribeOffset() error {
 	keyValueQ := postgres.NewKeyValueQ(s.db)
 
 	return keyValueQ.Upsert(data.KeyValue{
-		Key:   tokenIdIncrementKey,
+		Key:   keyValue.TokenIdIncrementKey,
 		Value: strconv.FormatInt(s.cfg.DeploySignatureConfig().InitialOffset, 10),
 	})
 }
@@ -68,6 +71,9 @@ func newService(cfg config.Config) *service {
 		db:                 cfg.DB(),
 		mimeTypes:          cfg.MimeTypes(),
 		deploySignatureCfg: cfg.DeploySignatureConfig(),
+
+		doorman:    cfg.DoormanConnector(),
+		documenter: cfg.DocumenterConnector(),
 	}
 }
 

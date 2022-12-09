@@ -5,7 +5,6 @@ type KeyValue struct {
 	Value string `db:"value" structs:"value"`
 }
 
-//go:generate mockery --case=underscore --name=KeyValueQ
 type KeyValueQ interface {
 	New() KeyValueQ
 

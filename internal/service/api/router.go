@@ -7,11 +7,10 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/middlewares"
 
-	"gitlab.com/tokend/nft-books/book-svc/internal/config"
 	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 )
 
-func (s *service) router(cfg config.Config) chi.Router {
+func (s *service) router() chi.Router {
 	r := chi.NewRouter()
 
 	r.Use(
@@ -27,8 +26,8 @@ func (s *service) router(cfg config.Config) chi.Router {
 			helpers.CtxDeploySignature(s.deploySignatureCfg),
 
 			// Connectors
-			helpers.CtxDoormanConnector(cfg.DoormanConnector()),
-			helpers.CtxDocumenterConnector(*cfg.DocumenterConnector()),
+			helpers.CtxDoormanConnector(s.doorman),
+			helpers.CtxDocumenterConnector(*s.documenter),
 		),
 	)
 
