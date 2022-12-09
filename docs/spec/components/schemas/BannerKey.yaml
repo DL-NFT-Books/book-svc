@@ -1,12 +1,8 @@
 type: object
 required:
   - type
-  - id
 properties:
   type:
     type: string
     enum:
       - banners
-  id:
-    type: string
-    example: "1"

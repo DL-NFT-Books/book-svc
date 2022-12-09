@@ -2,7 +2,8 @@ package postgres
 
 import (
 	"database/sql"
-	"fmt"
+
+	"gitlab.com/tokend/nft-books/book-svc/resources"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
@@ -10,38 +11,51 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 )
 
-const booksTableName = "book"
+const (
+	booksTableName        = "book"
+	idColumn              = "id"
+	tokenIdColumn         = "token_id"
+	priceColumn           = "price"
+	deletedColumn         = "deleted"
+	contractNameColumn    = "contract_name"
+	contractAddressColumn = "contract_address"
+	deployStatusColumn    = "deploy_status"
+	contractSymbolColumn  = "contract_symbol"
+	bannerColumn          = "banner"
+	fileColumn            = "file"
+	titleColumn           = "title"
+	lastBlockColumn       = "last_block"
+	descriptionColumn     = "description"
+)
 
 func NewBooksQ(db *pgdb.DB) data.BookQ {
 	return &BooksQ{
-		db:  db.Clone(),
-		sql: squirrel.Select("b.*").From(fmt.Sprintf("%s as b", booksTableName)),
+		db:            db.Clone(),
+		selectBuilder: squirrel.Select("*").From(booksTableName),
+		updateBuilder: squirrel.Update(booksTableName),
 	}
 }
 
 type BooksQ struct {
-	db  *pgdb.DB
-	sql squirrel.SelectBuilder
+	db            *pgdb.DB
+	selectBuilder squirrel.SelectBuilder
+	updateBuilder squirrel.UpdateBuilder
 }
 
 func (b *BooksQ) New() data.BookQ {
 	return NewBooksQ(b.db)
 }
 
-func (b *BooksQ) Insert(data data.Book) (int64, error) {
-	clauses := structs.Map(data)
-	var id int64
-
-	stmt := squirrel.Insert(booksTableName).SetMap(clauses).Suffix("returning id")
-	err := b.db.Get(&id, stmt)
-
-	return id, err
+func (b *BooksQ) Insert(data data.Book) (id int64, err error) {
+	statement := squirrel.Insert(booksTableName).SetMap(structs.Map(data)).Suffix("returning id")
+	err = b.db.Get(&id, statement)
+	return
 }
 
 func (b *BooksQ) Get() (*data.Book, error) {
 	var result data.Book
 
-	err := b.db.Get(&result, b.sql)
+	err := b.db.Get(&result, b.selectBuilder)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -52,41 +66,122 @@ func (b *BooksQ) Get() (*data.Book, error) {
 func (b *BooksQ) Select() ([]data.Book, error) {
 	var result []data.Book
 
-	err := b.db.Select(&result, b.sql)
-
+	err := b.db.Select(&result, b.selectBuilder)
 	return result, err
 }
 
-func (b *BooksQ) FilterByID(id int64) data.BookQ {
-	b.sql = b.sql.Where(squirrel.Eq{"b.id": id})
+func (b *BooksQ) FilterByID(id ...int64) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{idColumn: id})
+	return b
+}
+
+func (b *BooksQ) FilterByTokenId(tokenId ...int64) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{tokenIdColumn: tokenId})
+	return b
+}
+
+func (b *BooksQ) FilterByDeployStatus(status ...resources.DeployStatus) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{deployStatusColumn: status})
+	return b
+}
+
+func (b *BooksQ) FilterByContractAddress(address ...string) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{contractAddressColumn: address})
 	return b
 }
 
 func (b *BooksQ) Page(params pgdb.OffsetPageParams) data.BookQ {
-	b.sql = params.ApplyTo(b.sql, "id")
+	b.selectBuilder = params.ApplyTo(b.selectBuilder, idColumn)
+
 	return b
 }
 
 func (b *BooksQ) FilterActual() data.BookQ {
-	b.sql = b.sql.Where(squirrel.Eq{"b.deleted": "f"})
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{
+		deletedColumn: "f",
+	})
+
 	return b
 }
 
 func (b *BooksQ) DeleteByID(id int64) error {
-	stmt := squirrel.
-		Update(booksTableName).
-		Set("deleted", "t").
-		Where(squirrel.Eq{"id": id})
+	stmt := b.updateBuilder.
+		Set(deletedColumn, "t").
+		Where(squirrel.Eq{
+			idColumn: id,
+		})
 
 	return b.db.Exec(stmt)
 }
 
-func (b *BooksQ) Update(data data.Book) error {
-	clauses := structs.Map(data)
-	stmt := squirrel.
-		Update(booksTableName).
-		SetMap(clauses).
-		Where(squirrel.Eq{"id": data.ID})
+func (b *BooksQ) Update(updater data.BookUpdateParams, id int64) error {
+	return b.db.Exec(
+		b.applyUpdateParams(b.updateBuilder, updater).
+			Where(squirrel.Eq{
+				idColumn: id,
+			}))
+}
 
-	return b.db.Exec(stmt)
+func (b *BooksQ) applyUpdateParams(sql squirrel.UpdateBuilder, updater data.BookUpdateParams) squirrel.UpdateBuilder {
+	if updater.File != nil {
+		sql = sql.Set(fileColumn, *updater.File)
+	}
+	if updater.Banner != nil {
+		sql = sql.Set(bannerColumn, *updater.Banner)
+	}
+	if updater.Title != nil {
+		sql = sql.Set(titleColumn, *updater.Title)
+	}
+	if updater.Description != nil {
+		sql = sql.Set(descriptionColumn, *updater.Description)
+	}
+	if updater.Contract != nil {
+		sql = sql.Set(contractAddressColumn, *updater.Contract)
+	}
+	if updater.DeployStatus != nil {
+		sql = sql.Set(deployStatusColumn, *updater.DeployStatus)
+	}
+	if updater.Symbol != nil {
+		sql = sql.Set(contractSymbolColumn, *updater.Symbol)
+	}
+	if updater.Price != nil {
+		sql = sql.Set(priceColumn, *updater.Price)
+	}
+
+	return sql
+}
+
+func (b *BooksQ) UpdatePrice(price string, id int64) error {
+	return b.db.Exec(b.updateBuilder.Set(priceColumn, price).Where(squirrel.Eq{idColumn: id}))
+}
+
+func (b *BooksQ) UpdateContractName(name string, id int64) error {
+	return b.db.Exec(b.updateBuilder.Set(contractNameColumn, name).Where(squirrel.Eq{idColumn: id}))
+}
+
+func (b *BooksQ) UpdateDeployStatus(newStatus resources.DeployStatus, id int64) error {
+	return b.db.Exec(b.updateBuilder.Set(deployStatusColumn, newStatus).Where(squirrel.Eq{idColumn: id}))
+}
+
+func (b *BooksQ) UpdateContractAddress(newAddress string, id int64) error {
+	return b.db.Exec(b.updateBuilder.Set(contractAddressColumn, newAddress).Where(squirrel.Eq{idColumn: id}))
+}
+
+func (b *BooksQ) UpdateLastBlock(newLastBlock uint64, id int64) error {
+	return b.db.Exec(b.updateBuilder.Set(lastBlockColumn, newLastBlock).Where(squirrel.Eq{idColumn: id}))
+}
+
+func (b *BooksQ) UpdateSymbol(newSymbol string, id int64) error {
+	return b.db.Exec(b.updateBuilder.Set(contractSymbolColumn, newSymbol).Where(squirrel.Eq{idColumn: id}))
+}
+
+func (b *BooksQ) UpdateContractParams(name, symbol, price string, id int64) error {
+	return b.db.Exec(b.updateBuilder.
+		Set(contractNameColumn, name).
+		Set(contractSymbolColumn, symbol).
+		Set(priceColumn, price).
+		Where(squirrel.Eq{
+			idColumn: id,
+		}),
+	)
 }

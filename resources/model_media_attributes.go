@@ -11,4 +11,6 @@ type MediaAttributes struct {
 	MimeType string `json:"mime_type"`
 	// Media title
 	Name string `json:"name"`
+	// S3 document url
+	Url *string `json:"url,omitempty"`
 }

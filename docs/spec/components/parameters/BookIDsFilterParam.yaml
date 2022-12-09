@@ -1,0 +1,9 @@
+name: 'filter[id]'
+in: query
+description: Array of book IDs to be filtered with
+explode: false
+required: false
+schema:
+  type: array
+  items:
+    type: integer

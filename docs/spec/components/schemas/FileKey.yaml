@@ -1,12 +1,8 @@
 type: object
 required:
   - type
-  - id
 properties:
   type:
     type: string
     enum:
       - files
-  id:
-    type: string
-    example: "1"

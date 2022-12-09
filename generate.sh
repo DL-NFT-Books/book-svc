@@ -4,7 +4,7 @@ GENERATOR_IMAGE=registry.gitlab.com/tokend/openapi-go-generator:69f004b58152c83f
 
 
 GENERATED="${GOPATH}/src/gitlab.com/tokend/nft-books/book-svc/resources"
-OPENAPI_DIR="${GOPATH}/src/gitlab.com/tokend/nft-books/book-svc/docs/web_deploy"
+OPENAPI_DIR="${GOPATH}/src/gitlab.com/tokend/nft-books/book-svc/docs/web_deploy/"
 PACKAGE_NAME=resources
 
 function printHelp {
@@ -49,6 +49,9 @@ function parseArgs {
 }
 
 function generate {
+    cd docs
+    npm run build
+    cd ..
     docker run -v "${OPENAPI_DIR}":/openapi -v "${GENERATED}":/generated "${GENERATOR_IMAGE}" generate -pkg "${PACKAGE_NAME}" --raw-formats-as-types
 }
 

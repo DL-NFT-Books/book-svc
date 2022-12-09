@@ -1,10 +1,13 @@
 package config
 
 import (
+	"github.com/pkg/errors"
 	"gitlab.com/distributed_lab/figure"
 	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/kit/kv"
 )
+
+const mimeTypesYamlKey = "mime_types"
 
 type MimeTypesConfigurator interface {
 	MimeTypes() *MimeTypes
@@ -30,8 +33,10 @@ func (c *mimeTypesConfigurator) MimeTypes() *MimeTypes {
 	return c.once.Do(func() interface{} {
 		config := MimeTypes{}
 
-		if err := figure.Out(&config).From(kv.MustGetStringMap(c.getter, "mime_types")).Please(); err != nil {
-			panic(err)
+		if err := figure.Out(&config).
+			From(kv.MustGetStringMap(c.getter, mimeTypesYamlKey)).
+			Please(); err != nil {
+			panic(errors.Wrap(err, "failed to figure out mime types config"))
 		}
 
 		return &config

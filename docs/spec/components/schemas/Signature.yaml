@@ -1,0 +1,21 @@
+allOf:
+  - $ref: '#/components/schemas/SignatureKey'
+  - type: object
+    required:
+      - attributes
+    properties:
+      attributes:
+        type: object
+        required:
+          - r
+          - s
+          - v
+        properties:
+          r:
+            type: string
+          s:
+            type: string
+          v:
+            type: integer
+            format: int8
+            example: 0

@@ -3,17 +3,22 @@ allOf:
   - type: object
     required:
       - attributes
-      - relationships
     properties:
       attributes:
         type: object
         required:
           - title
           - description
-          - price
+          - created_at
           - contract_address
           - contract_name
+          - contract_symbol
           - contract_version
+          - price
+          - file
+          - banner
+          - token_id
+          - deploy_status
         properties:
           title:
             type: string
@@ -23,35 +28,50 @@ allOf:
             type: string
             description: Book description
             example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+          created_at:
+            type: time.Time
+            description: Book creation time
+            example: "2022-11-03T21:36:21.022589Z"
           price:
             type: string
             description: Book price ($)
             example: "10050"
           contract_address:
             type: string
-            description: ERC-20 token contract address
+            description: Token contract address
             example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
           contract_name:
             type: string
-            description: ERC-20 token contract name
+            description: Token contract name
+            example: "Blockchain and decentralized systems volume 1"
+          contract_symbol:
+            type: string
+            description: Token contract symbol
             example: "BDS1"
           contract_version:
             type: string
-            description: ERC-20 token contract version
-            example: "v1"
-      relationships:
-        type: object
-        required:
-          - banner
-          - file
-        properties:
+            description: Token contract version
+            example: "1"
           banner:
-            type: object
-            properties:
-              data:
-                $ref: '#/components/schemas/BannerKey'
+            description: Banner info
+            $ref: '#/components/schemas/Media'
           file:
-            type: object
-            properties:
-              data:
-                $ref: '#/components/schemas/FileKey'
+            description: File info
+            $ref: '#/components/schemas/Media'
+          token_id:
+            type: integer
+            format: int64
+            description: id from the contract that corresponds to the given book
+            example: 5
+          deploy_status:
+            type: DeployStatus
+            description: status of a book deployment
+            enum:
+              - name: pending
+                value: 1
+              - name: successful
+                value: 2
+              - name: failed
+                value: 3
+            example: 2
+

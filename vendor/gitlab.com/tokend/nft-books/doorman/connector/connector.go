@@ -17,10 +17,12 @@ type Connector struct {
 	Client     *http.Client
 }
 
+const DoormanEndpoint = "doorman"
+
 // TODO Kill me plz
 func NewConnector(serviceUrl string) ConnectorI {
 	return Connector{
-		ServiceUrl: serviceUrl,
+		ServiceUrl: serviceUrl + "/" + DoormanEndpoint,
 		Client: &http.Client{
 			Timeout: time.Second * 15,
 		},

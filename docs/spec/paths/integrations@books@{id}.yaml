@@ -42,45 +42,6 @@ get:
       $ref: '#/components/responses/NotFound'
     '500':
       $ref: '#/components/responses/InternalError'
-delete:
-  tags:
-    - Books
-  summary: Delete Book
-  operationId: deleteBook
-  parameters:
-    - in: header
-      name: Authorization
-      schema:
-        type: string
-        format: Bearer {token}
-        example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
-  responses:
-    '204':
-      description: Success
-    '400':
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - errors
-            properties:
-              errors:
-                type: array
-                items:
-                  $ref: '#/components/schemas/GetBookError'
-    '401':
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            type: object
-            $ref: "#/components/schemas/UnauthorizedError"
-    '404':
-      $ref: '#/components/responses/NotFound'
-    '500':
-      $ref: '#/components/responses/InternalError'
 patch:
   tags:
     - Books
@@ -89,6 +50,7 @@ patch:
   parameters:
     - in: header
       name: Authorization
+      required: true
       schema:
         type: string
         format: Bearer {token}
@@ -101,7 +63,7 @@ patch:
           properties:
             data:
               type: object
-              $ref: '#/components/schemas/Book'
+              $ref: '#/components/schemas/UpdateBook'
             included:
               type: array
               items:
@@ -131,7 +93,5 @@ patch:
             $ref: "#/components/schemas/UnauthorizedError"
     '404':
       $ref: '#/components/responses/NotFound'
-    '409':
-      description: Conflict, cannot change token contract address or name
     '500':
       $ref: '#/components/responses/InternalError'

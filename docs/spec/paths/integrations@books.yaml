@@ -6,6 +6,7 @@ post:
   parameters:
     - in: header
       name: Authorization
+      required: true
       schema:
         type: string
         format: Bearer {token}
@@ -18,11 +19,7 @@ post:
           properties:
             data:
               type: object
-              $ref: '#/components/schemas/Book'
-            included:
-              type: array
-              items:
-                $ref: '#/components/schemas/Media'
+              $ref: '#/components/schemas/CreateBook'
   responses:
     '200':
       description: Success
@@ -32,12 +29,11 @@ post:
             type: object
             properties:
               data:
-                type: object
-                $ref: '#/components/schemas/Book'
+                $ref: '#/components/schemas/CreateSignature'
               included:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Media'
+                  $ref: '#/components/schemas/Signature'
     '400':
       description: Bad Request
       content:
@@ -63,8 +59,13 @@ post:
 get:
   tags:
     - Books
-  summary: Get books list
+  summary: List Books
   operationId: getBooksList
+  parameters:
+    - $ref: '#/components/parameters/pageLimitParam'
+    - $ref: '#/components/parameters/pageNumberParam'
+    - $ref: '#/components/parameters/sortingParam'
+    - $ref: '#/components/parameters/DeployStatusFilterParam'
   responses:
     '200':
       description: Success
@@ -77,10 +78,6 @@ get:
                 type: array
                 items:
                   $ref: '#/components/schemas/Book'
-              included:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Media'
     '404':
       $ref: '#/components/responses/NotFound'
     '500':
