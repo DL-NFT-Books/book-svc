@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"strings"
 
 	"gitlab.com/tokend/nft-books/book-svc/resources"
 
@@ -72,6 +73,11 @@ func (b *BooksQ) Select() ([]data.Book, error) {
 
 func (b *BooksQ) FilterByID(id ...int64) data.BookQ {
 	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{idColumn: id})
+	return b
+}
+
+func (b *BooksQ) FilterByTitle(title string) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Like{`LOWER(title)`: "%" + strings.ToLower(title) + "%"})
 	return b
 }
 

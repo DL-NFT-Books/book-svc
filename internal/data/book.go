@@ -30,6 +30,7 @@ type BookQ interface {
 	// FilterActual does not include deleted books
 	FilterActual() BookQ
 	FilterByID(id ...int64) BookQ
+	FilterByTitle(title string) BookQ
 	FilterByTokenId(tokenId ...int64) BookQ
 	FilterByDeployStatus(status ...resources.DeployStatus) BookQ
 	FilterByContractAddress(address ...string) BookQ
