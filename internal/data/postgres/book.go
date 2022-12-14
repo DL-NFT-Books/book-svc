@@ -53,6 +53,18 @@ func (b *BooksQ) Insert(data data.Book) (id int64, err error) {
 	return
 }
 
+func (b *BooksQ) Count() (*uint64, error) {
+	var res uint64
+	selStmt := squirrel.Select("COUNT(id)").
+		From(booksTableName)
+
+	err := b.db.Get(&res, selStmt)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	return &res, err
+}
+
 func (b *BooksQ) Get() (*data.Book, error) {
 	var result data.Book
 

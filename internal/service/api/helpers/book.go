@@ -14,6 +14,10 @@ func GetBookByID(r *http.Request, id int64) (*data.Book, error) {
 	return DB(r).Books().FilterActual().FilterByID(id).Get()
 }
 
+func GetBooksCount(r *http.Request) (*uint64, error) {
+	return DB(r).Books().Count()
+}
+
 func GetBookListByRequest(r *http.Request, request *requests.ListBooksRequest) ([]data.Book, error) {
 	return applyQBooksFilters(DB(r).Books(), request).Select()
 }

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/responses"
 	"net/http"
 
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
@@ -37,8 +38,20 @@ func ListBooks(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
+	links := responses.CreateLinks(
+		r.URL, request.OffsetPageParams)
 
+	count, err := helpers.GetBooksCount(r)
+	if err != nil {
+		helpers.Log(r).WithError(err).Error("failed to form up book list response")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	if *count <= (request.OffsetPageParams.PageNumber+1)*request.OffsetPageParams.Limit {
+		links.Next = ""
+	}
 	ape.Render(w, resources.BookListResponse{
-		Data: data,
+		Data:  data,
+		Links: links,
 	})
 }
