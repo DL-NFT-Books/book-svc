@@ -3,6 +3,7 @@ post:
     - Books
   summary: Upload Book
   operationId: uploadBook
+  parameters:
     - in: header
       name: Authorization
       required: true
