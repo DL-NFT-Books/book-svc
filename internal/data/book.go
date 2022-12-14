@@ -13,7 +13,7 @@ type BookQ interface {
 
 	Get() (*Book, error)
 	Select() ([]Book, error)
-	Count() (*uint64, error)
+	Count(title *string) (*uint64, error)
 
 	Insert(data Book) (int64, error)
 	DeleteByID(id int64) error

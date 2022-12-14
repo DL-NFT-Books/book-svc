@@ -41,7 +41,7 @@ func ListBooks(w http.ResponseWriter, r *http.Request) {
 	links := responses.CreateLinks(
 		r.URL, request.OffsetPageParams)
 
-	count, err := helpers.GetBooksCount(r)
+	count, err := helpers.GetBooksCount(r, request.Title)
 	if err != nil {
 		helpers.Log(r).WithError(err).Error("failed to form up book list response")
 		ape.RenderErr(w, problems.InternalError())
