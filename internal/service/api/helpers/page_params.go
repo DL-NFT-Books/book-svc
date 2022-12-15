@@ -20,7 +20,8 @@ func SetPageParams(u url.URL, params pgdb.OffsetPageParams) *url.URL {
 	}
 	if params.PageNumber != 0 {
 		query.Set(pageNumberParam, strconv.Itoa(int(params.PageNumber)))
-	} else {
+	}
+	if params.PageNumber == 0 {
 		query.Del(pageNumberParam)
 	}
 	if len(params.Order) != 0 {

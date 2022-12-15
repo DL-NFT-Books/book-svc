@@ -14,7 +14,7 @@ func GetBookByID(r *http.Request, id int64) (*data.Book, error) {
 	return DB(r).Books().FilterActual().FilterByID(id).Get()
 }
 
-func GetBooksCount(r *http.Request, title *string) (*uint64, error) {
+func GetBooksCount(r *http.Request, title *string) (uint64, error) {
 	return DB(r).Books().Count(title)
 }
 
