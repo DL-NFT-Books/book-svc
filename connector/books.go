@@ -58,6 +58,7 @@ func (c *Connector) UpdateBook(params models.UpdateBookParams) error {
 				File:            params.File,
 				Title:           params.Title,
 				ContractAddress: params.ContractAddress,
+				ContractName:    params.ContractName,
 				DeployStatus:    params.DeployStatus,
 				TokenSymbol:     params.Symbol,
 				Price:           params.Price,
