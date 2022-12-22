@@ -19,6 +19,7 @@ allOf:
           - banner
           - token_id
           - deploy_status
+          - network
         properties:
           title:
             type: string
@@ -74,4 +75,5 @@ allOf:
               - name: failed
                 value: 3
             example: 2
-
+          network:
+            type: string
