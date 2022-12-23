@@ -73,12 +73,24 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// Forming signature createInfo
 	signatureConfig := helpers.DeploySignatureConfig(r)
+	netConnector := helpers.NetworkerConnector(r)
+	net, err := netConnector.GetNetworkByChainID(request.Data.Attributes.ChainId)
 
+	if err != nil {
+		logger.WithError(err).Error("failed to check if network exists")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	if net == nil {
+		logger.WithError(err).Error("network doesn't exist exist")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
 	domainData := signature.EIP712DomainData{
-		VerifyingAddress: signatureConfig.TokenFactoryAddress,
-		ContractName:     signatureConfig.TokenFactoryName,
-		ContractVersion:  signatureConfig.TokenFactoryVersion,
-		ChainID:          signatureConfig.ChainId,
+		VerifyingAddress: net.FactoryAddress,
+		ContractName:     net.FactoryName,
+		ContractVersion:  net.FactoryVersion,
+		ChainID:          net.ChainId,
 	}
 
 	createInfo := signature.CreateInfo{
@@ -96,20 +108,6 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	netConnector := helpers.NetworkerConnector(r)
-	net, err := netConnector.GetNetworkByChainID(request.Data.Attributes.ChainId)
-
-	if err != nil {
-		logger.WithError(err).Error("failed to check if network exists")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-	if net == nil {
-		logger.WithError(err).Error("network doesn't exist exist")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-
 	// Saving book to the database
 	book := data.Book{
 		Title:           request.Data.Attributes.Title,
@@ -119,7 +117,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ContractAddress: "mocked",
 		ContractName:    request.Data.Attributes.TokenName,
 		ContractSymbol:  request.Data.Attributes.TokenSymbol,
-		ContractVersion: signatureConfig.TokenFactoryVersion,
+		ContractVersion: net.FactoryVersion,
 		Banner:          media[0],
 		File:            media[1],
 		Deleted:         false,

@@ -20,10 +20,6 @@ connector:
 deploy_signature:
   eth_signer: cfc041596c8516237ca47ad13927f13e9be6ebd9442777bc4369b569cae8f887
   initial_offset: 7210
-  token_factory_address: 0x849f73BFE4a6dbeC0de25f3A856278d7ea0dE7b4
-  token_factory_name: TokenFactory
-  token_factory_version: 1
-  chain_id: 5
 
 listener:
   addr: :8732
