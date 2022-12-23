@@ -14,7 +14,7 @@ allOf:
           - token_name
           - token_symbol
           - price
-          - network
+          - chain_id
         properties:
           title:
             type: string
@@ -39,5 +39,6 @@ allOf:
           price:
             type: string
             description: Price per one token ($)
-          network:
-            type: string
+          chain_id:
+            type: integer
+            format: int64

@@ -96,6 +96,9 @@ func applyQBooksFilters(q data.BookQ, request *requests.ListBooksRequest) data.B
 	if len(request.TokenId) > 0 {
 		q = q.FilterByTokenId(request.TokenId...)
 	}
+	if len(request.ChainId) > 0 {
+		q = q.FilterByTokenId(request.ChainId...)
+	}
 
 	q = q.Page(request.OffsetPageParams)
 	q = q.FilterActual()

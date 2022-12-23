@@ -33,6 +33,7 @@ type BookQ interface {
 	FilterByTokenId(tokenId ...int64) BookQ
 	FilterByDeployStatus(status ...resources.DeployStatus) BookQ
 	FilterByContractAddress(address ...string) BookQ
+	FilterByChainId(chainId ...int64) BookQ
 
 	Page(params pgdb.OffsetPageParams) BookQ
 }
@@ -65,4 +66,5 @@ type Book struct {
 	TokenId         int64                  `db:"token_id" structs:"token_id"`
 	DeployStatus    resources.DeployStatus `db:"deploy_status" structs:"deploy_status"`
 	LastBlock       uint64                 `db:"last_block" structs:"last_block"`
+	ChainId         int64                  `db:"chain_id" structs:"chain_id"`
 }

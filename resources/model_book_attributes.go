@@ -9,7 +9,8 @@ import (
 )
 
 type BookAttributes struct {
-	Banner Media `json:"banner"`
+	Banner  Media `json:"banner"`
+	ChainId int64 `json:"chain_id"`
 	// Token contract address
 	ContractAddress string `json:"contract_address"`
 	// Token contract name
@@ -25,7 +26,6 @@ type BookAttributes struct {
 	// Book description
 	Description string `json:"description"`
 	File        Media  `json:"file"`
-	Network     string `json:"network"`
 	// Book price ($)
 	Price string `json:"price"`
 	// Book title

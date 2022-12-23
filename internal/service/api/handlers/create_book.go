@@ -96,6 +96,20 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	netConnector := helpers.NetworkerConnector(r)
+	net, err := netConnector.GetNetworkByChainID(request.Data.Attributes.ChainId)
+
+	if err != nil {
+		logger.WithError(err).Error("failed to check if network exists")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	if net == nil {
+		logger.WithError(err).Error("network doesn't exist exist")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+
 	// Saving book to the database
 	book := data.Book{
 		Title:           request.Data.Attributes.Title,
@@ -112,6 +126,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		TokenId:         createInfo.TokenContractId,
 		DeployStatus:    resources.DeployPending,
 		LastBlock:       0,
+		ChainId:         request.Data.Attributes.ChainId,
 	}
 
 	db := helpers.DB(r)

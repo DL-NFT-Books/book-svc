@@ -26,6 +26,7 @@ const (
 	titleColumn           = "title"
 	lastBlockColumn       = "last_block"
 	descriptionColumn     = "description"
+	chainIdColumn         = "chain_id"
 )
 
 func NewBooksQ(db *pgdb.DB) data.BookQ {
@@ -77,6 +78,11 @@ func (b *BooksQ) FilterByID(id ...int64) data.BookQ {
 
 func (b *BooksQ) FilterByTokenId(tokenId ...int64) data.BookQ {
 	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{tokenIdColumn: tokenId})
+	return b
+}
+
+func (b *BooksQ) FilterByChainId(chainId ...int64) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{chainIdColumn: chainId})
 	return b
 }
 

@@ -19,7 +19,7 @@ allOf:
           - banner
           - token_id
           - deploy_status
-          - network
+          - chain_id
         properties:
           title:
             type: string
@@ -75,5 +75,6 @@ allOf:
               - name: failed
                 value: 3
             example: 2
-          network:
-            type: string
+          chain_id:
+            type: integer
+            format: int64
