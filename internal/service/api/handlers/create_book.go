@@ -81,11 +81,14 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ChainID:          signatureConfig.ChainId,
 	}
 
+	//hardcoded just for promocodes test
 	createInfo := signature.CreateInfo{
-		TokenContractId:  lastTokenContractID + 1,
-		TokenName:        request.Data.Attributes.TokenName,
-		TokenSymbol:      request.Data.Attributes.TokenSymbol,
-		PricePerOneToken: tokenPrice,
+		TokenContractId:      lastTokenContractID + 1,
+		TokenName:            request.Data.Attributes.TokenName,
+		TokenSymbol:          request.Data.Attributes.TokenSymbol,
+		PricePerOneToken:     tokenPrice,
+		VoucherTokenContract: "0x0000000000000000000000000000000000000000",
+		VoucherTokensAmount:  big.NewInt(0),
 	}
 
 	// Signing
