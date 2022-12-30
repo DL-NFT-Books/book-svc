@@ -55,8 +55,8 @@ func signCreateInfoByEIP712(
 		Types: apitypes.Types{
 			"Create": []apitypes.Type{
 				{Name: "tokenContractId", Type: "uint256"},
-				{Name: "tokenName", Type: "bytes32"},
-				{Name: "tokenSymbol", Type: "bytes32"},
+				{Name: "tokenName", Type: "string"},
+				{Name: "tokenSymbol", Type: "string"},
 				{Name: "pricePerOneToken", Type: "uint256"},
 				{Name: "voucherTokenContract", Type: "address"},
 				{Name: "voucherTokensAmount", Type: "uint256"},
