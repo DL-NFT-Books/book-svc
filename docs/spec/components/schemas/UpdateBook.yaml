@@ -11,6 +11,10 @@ allOf:
             type: string
             description: Book title
             example: "BDS volume 1"
+          contract_name:
+            type: string
+            description: Contract name (in most cases coincides with a title field)
+            example: "BDS volume 1"
           description:
             type: string
             description: Book description

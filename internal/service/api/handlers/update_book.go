@@ -76,12 +76,24 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	if title != nil {
 		if len(*title) > requests.MaxTitleLength {
 			err = errors.New(fmt.Sprintf("invalid title length (max len is %v)", requests.MaxTitleLength))
-			helpers.Log(r).WithError(err).Error("failed to validate book title")
+			helpers.Log(r).WithError(err).Error("failed to validate book's title")
 			ape.RenderErr(w, problems.BadRequest(err)...)
 			return
 		}
 
 		updateParams.Title = title
+	}
+
+	contractName := request.Data.Attributes.ContractName
+	if contractName != nil {
+		if len(*contractName) > requests.MaxTitleLength {
+			err = errors.New(fmt.Sprintf("invalid contract name length (max len is %v)", requests.MaxTitleLength))
+			helpers.Log(r).WithError(err).Error("failed to validate book's contract name")
+			ape.RenderErr(w, problems.BadRequest(err)...)
+			return
+		}
+
+		updateParams.ContractName = contractName
 	}
 
 	description := request.Data.Attributes.Description

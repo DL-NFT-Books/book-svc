@@ -43,6 +43,7 @@ type BookUpdateParams struct {
 	Banner       *string
 	File         *string
 	Title        *string
+	ContractName *string
 	Description  *string
 	Contract     *string
 	DeployStatus *resources.DeployStatus

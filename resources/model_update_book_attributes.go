@@ -8,6 +8,8 @@ type UpdateBookAttributes struct {
 	Banner *Media `json:"banner,omitempty"`
 	// Address of a contract corresponding to this book
 	ContractAddress *string `json:"contract_address,omitempty"`
+	// Contract name (in most cases coincides with a title field)
+	ContractName *string `json:"contract_name,omitempty"`
 	// status of a book deployment
 	DeployStatus *DeployStatus `json:"deploy_status,omitempty"`
 	// Book description
