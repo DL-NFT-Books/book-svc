@@ -1,9 +1,10 @@
 -- +migrate Up
 
 alter table book
-add column network varchar not null default '';
+add column chain_id varchar not null default 0;
 
 -- +migrate Down
 
-drop table key_value;
+alter table book
+delete column chain_id;
 

@@ -73,24 +73,24 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// Forming signature createInfo
 	signatureConfig := helpers.DeploySignatureConfig(r)
-	netConnector := helpers.NetworkerConnector(r)
-	net, err := netConnector.GetNetworkByChainID(request.Data.Attributes.ChainId)
+	networker := helpers.Networker(r)
+	network, err := networker.GetNetworkByChainID(request.Data.Attributes.ChainId)
 
 	if err != nil {
 		logger.WithError(err).Error("failed to check if network exists")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-	if net == nil {
-		logger.WithError(err).Error("network doesn't exist exist")
-		ape.RenderErr(w, problems.InternalError())
+	if network == nil {
+		logger.Error("network doesn't exist exist")
+		ape.RenderErr(w, problems.NotFound())
 		return
 	}
 	domainData := signature.EIP712DomainData{
-		VerifyingAddress: net.FactoryAddress,
-		ContractName:     net.FactoryName,
-		ContractVersion:  net.FactoryVersion,
-		ChainID:          net.ChainId,
+		VerifyingAddress: network.FactoryAddress,
+		ContractName:     network.FactoryName,
+		ContractVersion:  network.FactoryVersion,
+		ChainID:          network.ChainId,
 	}
 
 	createInfo := signature.CreateInfo{
@@ -117,7 +117,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ContractAddress: "mocked",
 		ContractName:    request.Data.Attributes.TokenName,
 		ContractSymbol:  request.Data.Attributes.TokenSymbol,
-		ContractVersion: net.FactoryVersion,
+		ContractVersion: network.FactoryVersion,
 		Banner:          media[0],
 		File:            media[1],
 		Deleted:         false,

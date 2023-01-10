@@ -21,6 +21,7 @@ const (
 	deploySignatureCtxKey
 	doormanConnectorCtxKey
 	documenterConnectorCtxKey
+	networkerConnectorCtxKey
 	dbKey
 )
 
@@ -84,6 +85,6 @@ func DocumenterConnector(r *http.Request) s3connector.Connector {
 	return r.Context().Value(documenterConnectorCtxKey).(s3connector.Connector)
 }
 
-func NetworkerConnector(r *http.Request) networker.Connector {
-	return r.Context().Value(documenterConnectorCtxKey).(networker.Connector)
+func Networker(r *http.Request) networker.Connector {
+	return r.Context().Value(networkerConnectorCtxKey).(networker.Connector)
 }
