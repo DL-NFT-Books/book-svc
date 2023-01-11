@@ -70,5 +70,5 @@ type Book struct {
 	DeployStatus       resources.DeployStatus `db:"deploy_status" structs:"deploy_status"`
 	LastBlock          uint64                 `db:"last_block" structs:"last_block"`
 	VoucherToken       string                 `db:"voucher_token" structs:"voucher_token"`
-	VoucherTokenAmount *big.Int               `db:"voucher_token_amount" structs:"voucher_token_amount"`
+	VoucherTokenAmount int64                  `db:"voucher_token_amount" structs:"voucher_token_amount"`
 }
