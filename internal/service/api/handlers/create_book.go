@@ -124,7 +124,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		DeployStatus:       resources.DeployPending,
 		LastBlock:          0,
 		VoucherToken:       createInfo.VoucherTokenContract,
-		VoucherTokenAmount: *request.Data.Attributes.VoucherTokenAmount,
+		VoucherTokenAmount: createInfo.VoucherTokensAmount.Int64(),
 	}
 
 	db := helpers.DB(r)
