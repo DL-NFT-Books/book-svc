@@ -38,3 +38,10 @@ allOf:
           price:
             type: string
             description: Price per one token ($)
+          voucher_token:
+            type: string
+            description: Voucher token contract address, that can be used to claim free book
+          voucher_token_amount:
+            type: integer
+            format: int64
+            description: How many times voucher can be used on that book

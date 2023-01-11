@@ -12,20 +12,22 @@ import (
 )
 
 const (
-	booksTableName        = "book"
-	idColumn              = "id"
-	tokenIdColumn         = "token_id"
-	priceColumn           = "price"
-	deletedColumn         = "deleted"
-	contractNameColumn    = "contract_name"
-	contractAddressColumn = "contract_address"
-	deployStatusColumn    = "deploy_status"
-	contractSymbolColumn  = "contract_symbol"
-	bannerColumn          = "banner"
-	fileColumn            = "file"
-	titleColumn           = "title"
-	lastBlockColumn       = "last_block"
-	descriptionColumn     = "description"
+	booksTableName           = "book"
+	idColumn                 = "id"
+	tokenIdColumn            = "token_id"
+	priceColumn              = "price"
+	deletedColumn            = "deleted"
+	contractNameColumn       = "contract_name"
+	contractAddressColumn    = "contract_address"
+	deployStatusColumn       = "deploy_status"
+	contractSymbolColumn     = "contract_symbol"
+	bannerColumn             = "banner"
+	fileColumn               = "file"
+	titleColumn              = "title"
+	lastBlockColumn          = "last_block"
+	descriptionColumn        = "description"
+	voucherTokenColumn       = "voucher_token"
+	voucherTokenAmountColumn = "voucher_token_amount"
 )
 
 func NewBooksQ(db *pgdb.DB) data.BookQ {
@@ -149,6 +151,12 @@ func (b *BooksQ) applyUpdateParams(sql squirrel.UpdateBuilder, updater data.Book
 	}
 	if updater.Price != nil {
 		sql = sql.Set(priceColumn, *updater.Price)
+	}
+	if updater.VoucherToken != nil {
+		sql = sql.Set(voucherTokenColumn, *updater.VoucherToken)
+	}
+	if updater.VoucherTokenAmount != nil {
+		sql = sql.Set(voucherTokenAmountColumn, *updater.VoucherTokenAmount)
 	}
 
 	return sql

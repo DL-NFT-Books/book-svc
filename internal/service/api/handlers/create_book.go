@@ -81,14 +81,22 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ChainID:          signatureConfig.ChainId,
 	}
 
-	//hardcoded just for promocodes test
+	// if there is no voucher then passing null address and 0 amount
+	voucher := "0x0000000000000000000000000000000000000000"
+	voucherAmount := big.NewInt(0)
+
+	if request.Data.Attributes.VoucherToken != nil && request.Data.Attributes.VoucherTokenAmount != nil {
+		voucher = *request.Data.Attributes.VoucherToken
+		voucherAmount = big.NewInt(*request.Data.Attributes.VoucherTokenAmount)
+	}
+
 	createInfo := signature.CreateInfo{
 		TokenContractId:      lastTokenContractID + 1,
 		TokenName:            request.Data.Attributes.TokenName,
 		TokenSymbol:          request.Data.Attributes.TokenSymbol,
 		PricePerOneToken:     tokenPrice,
-		VoucherTokenContract: "0x0000000000000000000000000000000000000000",
-		VoucherTokensAmount:  big.NewInt(0),
+		VoucherTokenContract: voucher,
+		VoucherTokensAmount:  voucherAmount,
 	}
 
 	// Signing
@@ -101,20 +109,22 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// Saving book to the database
 	book := data.Book{
-		Title:           request.Data.Attributes.Title,
-		Description:     request.Data.Attributes.Description,
-		CreatedAt:       time.Now(),
-		Price:           request.Data.Attributes.Price,
-		ContractAddress: "mocked",
-		ContractName:    request.Data.Attributes.TokenName,
-		ContractSymbol:  request.Data.Attributes.TokenSymbol,
-		ContractVersion: signatureConfig.TokenFactoryVersion,
-		Banner:          media[0],
-		File:            media[1],
-		Deleted:         false,
-		TokenId:         createInfo.TokenContractId,
-		DeployStatus:    resources.DeployPending,
-		LastBlock:       0,
+		Title:              request.Data.Attributes.Title,
+		Description:        request.Data.Attributes.Description,
+		CreatedAt:          time.Now(),
+		Price:              request.Data.Attributes.Price,
+		ContractAddress:    "mocked",
+		ContractName:       request.Data.Attributes.TokenName,
+		ContractSymbol:     request.Data.Attributes.TokenSymbol,
+		ContractVersion:    signatureConfig.TokenFactoryVersion,
+		Banner:             media[0],
+		File:               media[1],
+		Deleted:            false,
+		TokenId:            createInfo.TokenContractId,
+		DeployStatus:       resources.DeployPending,
+		LastBlock:          0,
+		VoucherToken:       createInfo.VoucherTokenContract,
+		VoucherTokenAmount: createInfo.VoucherTokensAmount,
 	}
 
 	db := helpers.DB(r)
