@@ -233,7 +233,7 @@ gitlab.com/tokend/nft-books/doorman/resources
 # gitlab.com/tokend/nft-books/go-sdk v0.1.2
 ## explicit; go 1.18
 gitlab.com/tokend/nft-books/go-sdk
-# gitlab.com/tokend/nft-books/network-svc v0.0.0-20230112170422-62408b0f24b4
+# gitlab.com/tokend/nft-books/network-svc v0.0.0-20230112171905-9b9fdc773d1b
 ## explicit; go 1.18
 gitlab.com/tokend/nft-books/network-svc/connector
 gitlab.com/tokend/nft-books/network-svc/connector/models

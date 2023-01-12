@@ -16,12 +16,13 @@ func (c *Connector) GetNetworkByChainID(chainID int64) (*models.NetworkResponse,
 
 	// setting full endpoint
 	fullEndpoint := fmt.Sprintf("%s/%s/%v", c.baseUrl, networksEndpoint, chainID)
-	log.Println("CHAIN ID", chainID)
+	log.Println("NETWORK CHAIN ID", chainID)
 	// getting response
 	if err := c.get(fullEndpoint, &result); err != nil {
 		// errors are already wrapped
 		return nil, err
 	}
+	log.Println("NET RES", result)
 
 	return result.ModelDetailed()
 }
