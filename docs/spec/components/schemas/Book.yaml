@@ -19,6 +19,8 @@ allOf:
           - banner
           - token_id
           - deploy_status
+          - voucher_token
+          - voucher_token_amount
         properties:
           title:
             type: string
@@ -74,4 +76,10 @@ allOf:
               - name: failed
                 value: 3
             example: 2
+          voucher_token:
+            type: string
+            description: Voucher token contract address, that can be used to claim free book
+          voucher_token_amount:
+            type: string
+            description: How many voucher tokens user have to pay that book
 

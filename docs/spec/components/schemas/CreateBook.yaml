@@ -43,4 +43,4 @@ allOf:
             description: Voucher token contract address, that can be used to claim free book
           voucher_token_amount:
             type: string
-            description: How many times voucher can be used on that book
+            description: How many voucher tokens user have to pay that book

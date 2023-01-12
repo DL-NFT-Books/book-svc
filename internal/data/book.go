@@ -1,7 +1,6 @@
 package data
 
 import (
-	"math/big"
 	"time"
 
 	"gitlab.com/tokend/nft-books/book-svc/resources"
@@ -50,7 +49,7 @@ type BookUpdateParams struct {
 	Symbol             *string
 	Price              *string
 	VoucherToken       *string
-	VoucherTokenAmount *big.Int
+	VoucherTokenAmount *string
 }
 
 type Book struct {
@@ -70,5 +69,5 @@ type Book struct {
 	DeployStatus       resources.DeployStatus `db:"deploy_status" structs:"deploy_status"`
 	LastBlock          uint64                 `db:"last_block" structs:"last_block"`
 	VoucherToken       string                 `db:"voucher_token" structs:"voucher_token"`
-	VoucherTokenAmount int64                  `db:"voucher_token_amount" structs:"voucher_token_amount"`
+	VoucherTokenAmount string                 `db:"voucher_token_amount" structs:"voucher_token_amount"`
 }
