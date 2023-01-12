@@ -44,7 +44,7 @@ func (r CreateBookRequest) validate() error {
 		"/data/attributes/token_symbol": validation.Validate(&r.Data.Attributes.TokenSymbol, validation.Required),
 		"/data/attributes/price":        validation.Validate(&r.Data.Attributes.Price, validation.Required),
 		//"/data/attributes/voucher_token":        validation.Validate(&r.Data.Attributes.VoucherToken, validation.Match(AddressRegexp)),
-		"/data/attributes/voucher_token_amount": validation.Validate(&r.Data.Attributes.VoucherTokenAmount, validation.Min(1)),
+		//"/data/attributes/voucher_token_amount": validation.Validate(&r.Data.Attributes.VoucherTokenAmount, validation.Min(1)),
 
 		"/included/banner/attributes/name":      validation.Validate(&r.Data.Attributes.Banner.Attributes.Name, validation.Required),
 		"/included/banner/attributes/mime_type": validation.Validate(&r.Data.Attributes.Banner.Attributes.MimeType, validation.Required),
