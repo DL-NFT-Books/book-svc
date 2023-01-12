@@ -22,7 +22,7 @@ require (
 	gitlab.com/distributed_lab/urlval v3.0.0+incompatible
 	gitlab.com/tokend/nft-books/blob-svc v0.0.4-0.20221207105353-c6d1df229e8d
 	gitlab.com/tokend/nft-books/doorman v0.1.0-rc.1.0.20221208122624-848d4fe0422f
-	gitlab.com/tokend/nft-books/network-svc v0.0.0-20230112171905-9b9fdc773d1b
+	gitlab.com/tokend/nft-books/network-svc v0.0.0-20230112173520-e7c891408f03
 )
 
 require (

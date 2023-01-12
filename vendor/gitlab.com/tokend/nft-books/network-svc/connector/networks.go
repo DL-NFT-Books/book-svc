@@ -20,6 +20,7 @@ func (c *Connector) GetNetworkByChainID(chainID int64) (*models.NetworkResponse,
 	// getting response
 	if err := c.get(fullEndpoint, &result); err != nil {
 		// errors are already wrapped
+		log.Println("NET ERR", err)
 		return nil, err
 	}
 	log.Println("NET RES", result)
