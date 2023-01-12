@@ -2,11 +2,9 @@ package requests
 
 import (
 	"encoding/json"
-	"net/http"
-	"regexp"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"net/http"
 
 	"gitlab.com/tokend/nft-books/book-svc/resources"
 )
@@ -16,7 +14,7 @@ const (
 	MaxDescriptionLength = 500
 )
 
-var AddressRegexp = regexp.MustCompile("^(0x)?[0-9a-fA-F]{40}$")
+//var AddressRegexp = regexp.MustCompile("^(0x)?[0-9a-fA-F]{40}$")
 
 type CreateBookRequest struct {
 	Data resources.CreateBook `json:"data"`
@@ -42,10 +40,10 @@ func (r CreateBookRequest) validate() error {
 			&r.Data.Attributes.Description,
 			validation.Required,
 			validation.Length(1, MaxDescriptionLength)),
-		"/data/attributes/token_name":           validation.Validate(&r.Data.Attributes.TokenName, validation.Required),
-		"/data/attributes/token_symbol":         validation.Validate(&r.Data.Attributes.TokenSymbol, validation.Required),
-		"/data/attributes/price":                validation.Validate(&r.Data.Attributes.Price, validation.Required),
-		"/data/attributes/voucher_token":        validation.Validate(&r.Data.Attributes.VoucherToken, validation.Match(AddressRegexp)),
+		"/data/attributes/token_name":   validation.Validate(&r.Data.Attributes.TokenName, validation.Required),
+		"/data/attributes/token_symbol": validation.Validate(&r.Data.Attributes.TokenSymbol, validation.Required),
+		"/data/attributes/price":        validation.Validate(&r.Data.Attributes.Price, validation.Required),
+		//"/data/attributes/voucher_token":        validation.Validate(&r.Data.Attributes.VoucherToken, validation.Match(AddressRegexp)),
 		"/data/attributes/voucher_token_amount": validation.Validate(&r.Data.Attributes.VoucherTokenAmount, validation.Min(1)),
 
 		"/included/banner/attributes/name":      validation.Validate(&r.Data.Attributes.Banner.Attributes.Name, validation.Required),
