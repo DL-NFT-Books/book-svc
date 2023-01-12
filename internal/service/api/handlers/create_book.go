@@ -87,7 +87,12 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	if request.Data.Attributes.VoucherToken != nil && request.Data.Attributes.VoucherTokenAmount != nil {
 		voucher = *request.Data.Attributes.VoucherToken
-		voucherAmount = big.NewInt(*request.Data.Attributes.VoucherTokenAmount)
+		voucherAmount, ok = big.NewInt(0).SetString(*request.Data.Attributes.VoucherTokenAmount, 10)
+		if !ok {
+			logger.Error("failed to cast price to big.Int")
+			ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse voucherTokenAmount"))...)
+			return
+		}
 	}
 
 	createInfo := signature.CreateInfo{

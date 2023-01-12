@@ -42,6 +42,5 @@ allOf:
             type: string
             description: Voucher token contract address, that can be used to claim free book
           voucher_token_amount:
-            type: integer
-            format: int64
+            type: string
             description: How many times voucher can be used on that book

@@ -20,5 +20,5 @@ type CreateBookAttributes struct {
 	// Voucher token contract address, that can be used to claim free book
 	VoucherToken *string `json:"voucher_token,omitempty"`
 	// How many times voucher can be used on that book
-	VoucherTokenAmount *int64 `json:"voucher_token_amount,omitempty"`
+	VoucherTokenAmount *string `json:"voucher_token_amount,omitempty"`
 }
