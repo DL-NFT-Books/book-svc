@@ -17,4 +17,6 @@ type NetworkResponse struct {
 	WsUrl          *ethclient.Client `json:"ws_url"`
 }
 
-type NetworkListResponse []NetworkResponse
+type NetworkListResponse struct {
+	Data []NetworkResponse `json:"data"`
+}

@@ -29,7 +29,7 @@ func (c *networkConfigurator) NetworkConnector() *Connector {
 	return c.once.Do(func() interface{} {
 		config := NetworkConnectorConfig{}
 
-		raw := kv.MustGetStringMap(c.getter, "networker")
+		raw := kv.MustGetStringMap(c.getter, "connector")
 
 		if err := figure.
 			Out(&config).
