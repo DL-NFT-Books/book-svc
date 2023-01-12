@@ -29,10 +29,12 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	updateParams := data.BookUpdateParams{
-		Contract:     request.Data.Attributes.ContractAddress,
-		DeployStatus: request.Data.Attributes.DeployStatus,
-		Price:        request.Data.Attributes.Price,
-		Symbol:       request.Data.Attributes.TokenSymbol,
+		Contract:           request.Data.Attributes.ContractAddress,
+		DeployStatus:       request.Data.Attributes.DeployStatus,
+		Price:              request.Data.Attributes.Price,
+		Symbol:             request.Data.Attributes.TokenSymbol,
+		VoucherToken:       request.Data.Attributes.VoucherToken,
+		VoucherTokenAmount: request.Data.Attributes.VoucherTokenAmount,
 	}
 
 	// Collecting update params
