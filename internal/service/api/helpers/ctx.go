@@ -85,6 +85,11 @@ func DocumenterConnector(r *http.Request) s3connector.Connector {
 	return r.Context().Value(documenterConnectorCtxKey).(s3connector.Connector)
 }
 
+func CtxNetworkerConnector(entry networker.Connector) func(context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, networkerConnectorCtxKey, entry)
+	}
+}
 func Networker(r *http.Request) networker.Connector {
 	return r.Context().Value(networkerConnectorCtxKey).(networker.Connector)
 }
