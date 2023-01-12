@@ -73,6 +73,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// Forming signature createInfo
 	signatureConfig := helpers.DeploySignatureConfig(r)
+	logger.Info("CHAIN ID", request.Data.Attributes.ChainId)
 	networker := helpers.Networker(r)
 	network, err := networker.GetNetworkByChainID(request.Data.Attributes.ChainId)
 	logger.Info("NETWOORK", network)
