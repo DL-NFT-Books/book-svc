@@ -21,4 +21,8 @@ type UpdateBookAttributes struct {
 	Title *string `json:"title,omitempty"`
 	// Token symbol
 	TokenSymbol *string `json:"token_symbol,omitempty"`
+	// Voucher token contract address, that can be used to claim free book
+	VoucherToken *string `json:"voucher_token,omitempty"`
+	// How many voucher tokens user have to pay that book
+	VoucherTokenAmount *string `json:"voucher_token_amount,omitempty"`
 }

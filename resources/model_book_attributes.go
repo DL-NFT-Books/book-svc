@@ -32,4 +32,8 @@ type BookAttributes struct {
 	Title string `json:"title"`
 	// id from the contract that corresponds to the given book
 	TokenId int64 `json:"token_id"`
+	// Voucher token contract address, that can be used to claim free book
+	VoucherToken string `json:"voucher_token"`
+	// How many voucher tokens user have to pay that book
+	VoucherTokenAmount string `json:"voucher_token_amount"`
 }

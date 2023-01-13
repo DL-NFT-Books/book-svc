@@ -40,15 +40,17 @@ type BookQ interface {
 
 // BookUpdateParams is a structure for applicable update params on bookQ `Update`
 type BookUpdateParams struct {
-	Banner       *string
-	File         *string
-	Title        *string
-	ContractName *string
-	Description  *string
-	Contract     *string
-	DeployStatus *resources.DeployStatus
-	Symbol       *string
-	Price        *string
+	Banner             *string
+	File               *string
+	Title              *string
+	ContractName       *string
+	Description        *string
+	Contract           *string
+	DeployStatus       *resources.DeployStatus
+	Symbol             *string
+	Price              *string
+	VoucherToken       *string
+	VoucherTokenAmount *string
 }
 
 type Book struct {
@@ -68,4 +70,6 @@ type Book struct {
 	DeployStatus    resources.DeployStatus `db:"deploy_status" structs:"deploy_status"`
 	LastBlock       uint64                 `db:"last_block" structs:"last_block"`
 	ChainId         int64                  `db:"chain_id" structs:"chain_id"`
+	VoucherToken       string                 `db:"voucher_token" structs:"voucher_token"`
+	VoucherTokenAmount string                 `db:"voucher_token_amount" structs:"voucher_token_amount"`
 }

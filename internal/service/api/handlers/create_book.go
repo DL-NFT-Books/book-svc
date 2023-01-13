@@ -103,11 +103,27 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ChainID:          network.ChainId,
 	}
 
+	// if there is no voucher then passing null address and 0 amount
+	voucher := "0x0000000000000000000000000000000000000000"
+	voucherAmount := big.NewInt(0)
+
+	if request.Data.Attributes.VoucherToken != nil && request.Data.Attributes.VoucherTokenAmount != nil {
+		voucher = *request.Data.Attributes.VoucherToken
+		voucherAmount, ok = big.NewInt(0).SetString(*request.Data.Attributes.VoucherTokenAmount, 10)
+		if !ok {
+			logger.Error("failed to cast price to big.Int")
+			ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse voucherTokenAmount"))...)
+			return
+		}
+	}
+
 	createInfo := signature.CreateInfo{
-		TokenContractId:  lastTokenContractID + 1,
-		TokenName:        request.Data.Attributes.TokenName,
-		TokenSymbol:      request.Data.Attributes.TokenSymbol,
-		PricePerOneToken: tokenPrice,
+		TokenContractId:      lastTokenContractID + 1,
+		TokenName:            request.Data.Attributes.TokenName,
+		TokenSymbol:          request.Data.Attributes.TokenSymbol,
+		PricePerOneToken:     tokenPrice,
+		VoucherTokenContract: voucher,
+		VoucherTokensAmount:  voucherAmount,
 	}
 
 	// Signing
@@ -135,6 +151,9 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		DeployStatus:    resources.DeployPending,
 		LastBlock:       0,
 		ChainId:         request.Data.Attributes.ChainId,
+		VoucherToken:       createInfo.VoucherTokenContract,
+		VoucherTokenAmount: createInfo.VoucherTokensAmount.String(),
+
 	}
 
 	db := helpers.DB(r)

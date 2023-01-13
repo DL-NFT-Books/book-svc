@@ -18,4 +18,8 @@ type CreateBookAttributes struct {
 	TokenName string `json:"token_name"`
 	// Token symbol
 	TokenSymbol string `json:"token_symbol"`
+	// Voucher token contract address, that can be used to claim free book
+	VoucherToken *string `json:"voucher_token,omitempty"`
+	// How many voucher tokens user have to pay that book
+	VoucherTokenAmount *string `json:"voucher_token_amount,omitempty"`
 }

@@ -10,10 +10,12 @@ type EIP712DomainData struct {
 }
 
 type CreateInfo struct {
-	TokenContractId  int64
-	TokenName        string
-	TokenSymbol      string
-	PricePerOneToken *big.Int
+	TokenContractId      int64
+	TokenName            string
+	TokenSymbol          string
+	PricePerOneToken     *big.Int
+	VoucherTokenContract string
+	VoucherTokensAmount  *big.Int
 
 	HashedTokenName   []byte
 	HashedTokenSymbol []byte
