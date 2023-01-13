@@ -62,7 +62,7 @@ func (n *Network) ResourceDetailed() resources.NetworkDetailed {
 	}
 }
 
-func (n *Network) ModelDetailed() (*models.NetworkResponse, error) {
+func (n *Network) ModelDetailed() (*models.NetworkDetailedResponse, error) {
 	rpc, err := ethclient.Dial(n.RpcUrl)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (n *Network) ModelDetailed() (*models.NetworkResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &models.NetworkResponse{
+	return &models.NetworkDetailedResponse{
 		Name:           n.Name,
 		ChainId:        n.ChainID,
 		RpcUrl:         rpc,
@@ -80,6 +80,15 @@ func (n *Network) ModelDetailed() (*models.NetworkResponse, error) {
 		FactoryName:    n.FactoryName,
 		FactoryVersion: n.FactoryVersion,
 		FirstBlock:     n.FirstBlock,
+		TokenName:      n.NativeTokenName,
+		TokenSymbol:    n.NativeTokenSymbol,
+	}, nil
+}
+func (n *Network) ModelDefault() (*models.NetworkResponse, error) {
+	return &models.NetworkResponse{
+		Name:           n.Name,
+		ChainId:        n.ChainID,
+		FactoryAddress: n.FactoryAddress,
 		TokenName:      n.NativeTokenName,
 		TokenSymbol:    n.NativeTokenSymbol,
 	}, nil

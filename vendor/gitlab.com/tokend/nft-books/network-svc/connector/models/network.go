@@ -4,7 +4,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-type NetworkResponse struct {
+type NetworkDetailedResponse struct {
 	ChainId        int64             `json:"chain_id"`
 	FactoryAddress string            `json:"factory_address"`
 	FactoryName    string            `json:"factory_name"`
@@ -17,6 +17,17 @@ type NetworkResponse struct {
 	WsUrl          *ethclient.Client `json:"ws_url"`
 }
 
+type NetworkResponse struct {
+	ChainId        int64  `json:"chain_id"`
+	FactoryAddress string `json:"factory_address"`
+	Name           string `json:"name"`
+	TokenName      string `json:"token_name"`
+	TokenSymbol    string `json:"token_symbol"`
+}
+
 type NetworkListResponse struct {
 	Data []NetworkResponse `json:"data"`
+}
+type NetworkDetailedListResponse struct {
+	Data []NetworkDetailedResponse `json:"data"`
 }

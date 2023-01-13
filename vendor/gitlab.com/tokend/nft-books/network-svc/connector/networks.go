@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	networksEndpoint = "detailed"
+	networksEndpoint = "networks"
 )
 
 func (c *Connector) GetNetworkByChainID(chainID int64) (*models.NetworkResponse, error) {
@@ -25,7 +25,7 @@ func (c *Connector) GetNetworkByChainID(chainID int64) (*models.NetworkResponse,
 	}
 	log.Println("NET RES", result)
 
-	return result.ModelDetailed()
+	return result.ModelDefault()
 }
 func (c *Connector) GetNetworks() (*models.NetworkListResponse, error) {
 	var result []data.Network
@@ -42,7 +42,7 @@ func (c *Connector) GetNetworks() (*models.NetworkListResponse, error) {
 	var networks models.NetworkListResponse
 
 	for _, net := range result {
-		modelNet, err := net.ModelDetailed()
+		modelNet, err := net.ModelDefault()
 		if err != nil {
 			return nil, err
 		}
