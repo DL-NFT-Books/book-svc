@@ -24,7 +24,6 @@ type NetworkResponse struct {
 	TokenName      string `json:"token_name"`
 	TokenSymbol    string `json:"token_symbol"`
 }
-
 type NetworkListResponse struct {
 	Data []NetworkResponse `json:"data"`
 }
