@@ -75,7 +75,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	signatureConfig := helpers.DeploySignatureConfig(r)
 	logger.Info("CHAIN ID", request.Data.Attributes.ChainId)
 	networker := helpers.Networker(r)
-	network, err := networker.GetNetworkByChainID(request.Data.Attributes.ChainId)
+	network, err := networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId)
 	logger.Info("NETWOORK", network)
 	if err != nil {
 		logger.WithError(err).Error("failed to check if network exists")

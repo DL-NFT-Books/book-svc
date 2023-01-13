@@ -8,9 +8,26 @@ import (
 )
 
 const (
-	networksEndpoint = "networks"
+	networksEndpoint         = "networks"
+	networksDetailedEndpoint = "networks/detailed"
 )
 
+func (c *Connector) GetNetworkDetailedByChainID(chainID int64) (*models.NetworkDetailedResponse, error) {
+	var result data.Network
+
+	// setting full endpoint
+	fullEndpoint := fmt.Sprintf("%s/%s/%v", c.baseUrl, networksDetailedEndpoint, chainID)
+	log.Println("NETWORK CHAIN ID", chainID)
+	// getting response
+	if err := c.get(fullEndpoint, &result); err != nil {
+		// errors are already wrapped
+		log.Println("NET ERR", err)
+		return nil, err
+	}
+	log.Println("NET RES", result)
+
+	return result.ModelDetailed()
+}
 func (c *Connector) GetNetworkByChainID(chainID int64) (*models.NetworkResponse, error) {
 	var result data.Network
 
