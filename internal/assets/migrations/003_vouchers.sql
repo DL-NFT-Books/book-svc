@@ -1,8 +1,8 @@
 -- +migrate Up
 
 ALTER TABLE book
-ADD column voucher_token VARCHAR(60) DEFAULT null,
-ADD column voucher_token_amount bigint;
+ADD column voucher_token VARCHAR(60) DEFAULT '',
+ADD column voucher_token_amount VARCHAR(40) DEFAULT '';
 
 -- +migrate Down
 
