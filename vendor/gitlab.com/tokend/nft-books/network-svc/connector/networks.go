@@ -24,7 +24,7 @@ func (c *Connector) GetNetworkDetailedByChainID(chainID int64) (*models.NetworkD
 		log.Println("NET ERR", err)
 		return nil, err
 	}
-	log.Println("NET RES", result)
+	log.Println("NETWORK RES", result)
 
 	return result.ModelDetailed()
 }

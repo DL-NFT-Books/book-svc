@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"math/big"
 	"net/http"
 	"strconv"
@@ -75,6 +76,14 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	signatureConfig := helpers.DeploySignatureConfig(r)
 	logger.Info("CHAIN ID", request.Data.Attributes.ChainId)
 	networker := helpers.Networker(r)
+
+	netDef, err := networker.GetNetworkByChainID(request.Data.Attributes.ChainId)
+	if err != nil {
+		logger.WithError(err).Error("default failed to check if network exists")
+	} else {
+		log.Println("BOOK NET DEFAULT", netDef)
+	}
+
 	network, err := networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId)
 	logger.Info("NETWOORK", network)
 	if err != nil {
