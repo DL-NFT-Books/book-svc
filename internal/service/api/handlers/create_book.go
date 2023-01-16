@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/davecgh/go-spew/spew"
 	"log"
 	"math/big"
 	"net/http"
@@ -102,7 +103,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ContractVersion:  network.FactoryVersion,
 		ChainID:          network.ChainId,
 	}
-
+	spew.Dump(domainData)
 	// if there is no voucher then passing null address and 0 amount
 	voucher := "0x0000000000000000000000000000000000000000"
 	voucherAmount := big.NewInt(0)
@@ -136,24 +137,23 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// Saving book to the database
 	book := data.Book{
-		Title:           request.Data.Attributes.Title,
-		Description:     request.Data.Attributes.Description,
-		CreatedAt:       time.Now(),
-		Price:           request.Data.Attributes.Price,
-		ContractAddress: "mocked",
-		ContractName:    request.Data.Attributes.TokenName,
-		ContractSymbol:  request.Data.Attributes.TokenSymbol,
-		ContractVersion: network.FactoryVersion,
-		Banner:          media[0],
-		File:            media[1],
-		Deleted:         false,
-		TokenId:         createInfo.TokenContractId,
-		DeployStatus:    resources.DeployPending,
-		LastBlock:       0,
-		ChainId:         request.Data.Attributes.ChainId,
+		Title:              request.Data.Attributes.Title,
+		Description:        request.Data.Attributes.Description,
+		CreatedAt:          time.Now(),
+		Price:              request.Data.Attributes.Price,
+		ContractAddress:    "mocked",
+		ContractName:       request.Data.Attributes.TokenName,
+		ContractSymbol:     request.Data.Attributes.TokenSymbol,
+		ContractVersion:    network.FactoryVersion,
+		Banner:             media[0],
+		File:               media[1],
+		Deleted:            false,
+		TokenId:            createInfo.TokenContractId,
+		DeployStatus:       resources.DeployPending,
+		LastBlock:          0,
+		ChainId:            request.Data.Attributes.ChainId,
 		VoucherToken:       createInfo.VoucherTokenContract,
 		VoucherTokenAmount: createInfo.VoucherTokensAmount.String(),
-
 	}
 
 	db := helpers.DB(r)
