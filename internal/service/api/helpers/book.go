@@ -63,6 +63,7 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 			Banner:             media[0],
 			VoucherToken:       book.VoucherToken,
 			VoucherTokenAmount: book.VoucherTokenAmount,
+			ChainId:            book.ChainId,
 		},
 	}
 
