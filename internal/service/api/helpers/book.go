@@ -1,9 +1,10 @@
 package helpers
 
 import (
-	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"net/http"
 	"strconv"
+
+	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
@@ -106,6 +107,7 @@ func applyQBooksFilters(q data.BookQ, request *requests.ListBooksRequest) data.B
 
 	if request.Title != nil {
 		q = q.FilterByTitle(*request.Title)
+	}
 
 	if len(request.ChainId) > 0 {
 		q = q.FilterByChainId(request.ChainId...)
