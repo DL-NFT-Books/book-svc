@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"strings"
 
 	"gitlab.com/tokend/nft-books/book-svc/resources"
 
@@ -54,6 +55,20 @@ func (b *BooksQ) Insert(data data.Book) (id int64, err error) {
 	return
 }
 
+func (b *BooksQ) Count(title *string) (uint64, error) {
+	var res uint64
+	selStmt := squirrel.Select("COUNT(id)").
+		From(booksTableName)
+
+	if title != nil {
+		selStmt = selStmt.Where(squirrel.Like{`LOWER(title)`: "%" + strings.ToLower(*title) + "%"})
+	}
+
+	err := b.db.Get(&res, selStmt)
+
+	return res, err
+}
+
 func (b *BooksQ) Get() (*data.Book, error) {
 	var result data.Book
 
@@ -74,6 +89,11 @@ func (b *BooksQ) Select() ([]data.Book, error) {
 
 func (b *BooksQ) FilterByID(id ...int64) data.BookQ {
 	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{idColumn: id})
+	return b
+}
+
+func (b *BooksQ) FilterByTitle(title string) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Like{`LOWER(title)`: "%" + strings.ToLower(title) + "%"})
 	return b
 }
 

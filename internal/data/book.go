@@ -13,6 +13,7 @@ type BookQ interface {
 
 	Get() (*Book, error)
 	Select() ([]Book, error)
+	Count(title *string) (uint64, error)
 
 	Insert(data Book) (int64, error)
 	DeleteByID(id int64) error
@@ -30,6 +31,7 @@ type BookQ interface {
 	// FilterActual does not include deleted books
 	FilterActual() BookQ
 	FilterByID(id ...int64) BookQ
+	FilterByTitle(title string) BookQ
 	FilterByTokenId(tokenId ...int64) BookQ
 	FilterByDeployStatus(status ...resources.DeployStatus) BookQ
 	FilterByContractAddress(address ...string) BookQ
