@@ -16,6 +16,7 @@ type ListBooksRequest struct {
 	Id       []int64                  `filter:"id"`
 	TokenId  []int64                  `filter:"token_id"`
 	Title    *string                  `filter:"title"`
+	ChainId  []int64                  `filter:"chain_id"`
 }
 
 func NewListBooksRequest(r *http.Request) (ListBooksRequest, error) {

@@ -67,6 +67,7 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 			Banner:             media[0],
 			VoucherToken:       book.VoucherToken,
 			VoucherTokenAmount: book.VoucherTokenAmount,
+			ChainId:            book.ChainId,
 		},
 	}
 
@@ -102,8 +103,12 @@ func applyQBooksFilters(q data.BookQ, request *requests.ListBooksRequest) data.B
 	if len(request.TokenId) > 0 {
 		q = q.FilterByTokenId(request.TokenId...)
 	}
+
 	if request.Title != nil {
 		q = q.FilterByTitle(*request.Title)
+
+	if len(request.ChainId) > 0 {
+		q = q.FilterByChainId(request.ChainId...)
 	}
 
 	q = q.Page(request.OffsetPageParams)

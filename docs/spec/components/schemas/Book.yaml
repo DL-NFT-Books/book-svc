@@ -19,6 +19,7 @@ allOf:
           - banner
           - token_id
           - deploy_status
+          - chain_id
           - voucher_token
           - voucher_token_amount
         properties:
@@ -76,6 +77,9 @@ allOf:
               - name: failed
                 value: 3
             example: 2
+          chain_id:
+            type: integer
+            format: int64
           voucher_token:
             type: string
             description: Voucher token contract address, that can be used to claim free book

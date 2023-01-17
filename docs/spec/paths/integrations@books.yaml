@@ -71,6 +71,14 @@ get:
       required: false
       schema:
         type: string
+    - in: query
+      name: 'filter[network]'
+      required: false
+      description: Chain addresses to be filtered with
+      schema:
+        type: array
+        items:
+          type: string
   responses:
     '200':
       description: Success

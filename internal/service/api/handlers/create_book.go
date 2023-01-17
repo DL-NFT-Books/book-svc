@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"github.com/davecgh/go-spew/spew"
+	"log"
 	"math/big"
 	"net/http"
 	"strconv"
@@ -73,14 +75,35 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// Forming signature createInfo
 	signatureConfig := helpers.DeploySignatureConfig(r)
+	logger.Info("CHAIN ID", request.Data.Attributes.ChainId)
+	networker := helpers.Networker(r)
 
-	domainData := signature.EIP712DomainData{
-		VerifyingAddress: signatureConfig.TokenFactoryAddress,
-		ContractName:     signatureConfig.TokenFactoryName,
-		ContractVersion:  signatureConfig.TokenFactoryVersion,
-		ChainID:          signatureConfig.ChainId,
+	netDef, err := networker.GetNetworkByChainID(request.Data.Attributes.ChainId)
+	if err != nil {
+		logger.WithError(err).Error("default failed to check if network exists")
+	} else {
+		log.Println("BOOK NET DEFAULT", netDef)
 	}
 
+	network, err := networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId)
+	logger.Info("NETWOORK", network)
+	if err != nil {
+		logger.WithError(err).Error("failed to check if network exists")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	if network == nil {
+		logger.Error("network doesn't exist exist")
+		ape.RenderErr(w, problems.NotFound())
+		return
+	}
+	domainData := signature.EIP712DomainData{
+		VerifyingAddress: network.FactoryAddress,
+		ContractName:     network.FactoryName,
+		ContractVersion:  network.FactoryVersion,
+		ChainID:          network.ChainId,
+	}
+	spew.Dump(domainData)
 	// if there is no voucher then passing null address and 0 amount
 	voucher := "0x0000000000000000000000000000000000000000"
 	voucherAmount := big.NewInt(0)
@@ -121,13 +144,14 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ContractAddress:    "mocked",
 		ContractName:       request.Data.Attributes.TokenName,
 		ContractSymbol:     request.Data.Attributes.TokenSymbol,
-		ContractVersion:    signatureConfig.TokenFactoryVersion,
+		ContractVersion:    network.FactoryVersion,
 		Banner:             media[0],
 		File:               media[1],
 		Deleted:            false,
 		TokenId:            createInfo.TokenContractId,
 		DeployStatus:       resources.DeployPending,
 		LastBlock:          0,
+		ChainId:            request.Data.Attributes.ChainId,
 		VoucherToken:       createInfo.VoucherTokenContract,
 		VoucherTokenAmount: createInfo.VoucherTokensAmount.String(),
 	}

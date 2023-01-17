@@ -13,20 +13,21 @@ import (
 )
 
 const (
-	booksTableName           = "book"
-	idColumn                 = "id"
-	tokenIdColumn            = "token_id"
-	priceColumn              = "price"
-	deletedColumn            = "deleted"
-	contractNameColumn       = "contract_name"
-	contractAddressColumn    = "contract_address"
-	deployStatusColumn       = "deploy_status"
-	contractSymbolColumn     = "contract_symbol"
-	bannerColumn             = "banner"
-	fileColumn               = "file"
-	titleColumn              = "title"
-	lastBlockColumn          = "last_block"
-	descriptionColumn        = "description"
+	booksTableName        = "book"
+	idColumn              = "id"
+	tokenIdColumn         = "token_id"
+	priceColumn           = "price"
+	deletedColumn         = "deleted"
+	contractNameColumn    = "contract_name"
+	contractAddressColumn = "contract_address"
+	deployStatusColumn    = "deploy_status"
+	contractSymbolColumn  = "contract_symbol"
+	bannerColumn          = "banner"
+	fileColumn            = "file"
+	titleColumn           = "title"
+	lastBlockColumn       = "last_block"
+	descriptionColumn     = "description"
+	chainIdColumn         = "chain_id"
 	voucherTokenColumn       = "voucher_token"
 	voucherTokenAmountColumn = "voucher_token_amount"
 )
@@ -99,6 +100,11 @@ func (b *BooksQ) FilterByTitle(title string) data.BookQ {
 
 func (b *BooksQ) FilterByTokenId(tokenId ...int64) data.BookQ {
 	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{tokenIdColumn: tokenId})
+	return b
+}
+
+func (b *BooksQ) FilterByChainId(chainId ...int64) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{chainIdColumn: chainId})
 	return b
 }
 
