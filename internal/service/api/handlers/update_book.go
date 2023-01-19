@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"gitlab.com/distributed_lab/logan/v3"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -87,11 +88,11 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	contractName := request.Data.Attributes.ContractName
+	contractError := errors.New("invalid contract name length")
 	if contractName != nil {
 		if len(*contractName) > requests.MaxTitleLength {
-			err = errors.New(fmt.Sprintf("invalid contract name length (max len is %v)", requests.MaxTitleLength))
-			helpers.Log(r).WithError(err).Error("failed to validate book's contract name")
-			ape.RenderErr(w, problems.BadRequest(err)...)
+			helpers.Log(r).WithFields(logan.F{"max_title_len": requests.MaxTitleLength}).Error(contractError)
+			ape.RenderErr(w, problems.BadRequest(contractError)...)
 			return
 		}
 

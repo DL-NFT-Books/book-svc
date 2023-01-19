@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/ethereum/go-ethereum/common"
 	"math/big"
 	"net/http"
 	"strconv"
@@ -82,7 +83,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// if there is no voucher then passing null address and 0 amount
-	voucher := "0x0000000000000000000000000000000000000000"
+	voucher := common.Address{}.String()
 	voucherAmount := big.NewInt(0)
 
 	if request.Data.Attributes.VoucherToken != nil && request.Data.Attributes.VoucherTokenAmount != nil {
