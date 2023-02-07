@@ -29,6 +29,10 @@ allOf:
             description: Address of a contract corresponding to this book
             type: string
             example: "0xff04b6fBd9FEcbcac666cc0FFfEed58488c73c7B"
+          floor_price:
+            type: string
+            description: Book floor price in NFT($)
+            example: "10050"
           deploy_status:
             type: DeployStatus
             description: status of a book deployment
