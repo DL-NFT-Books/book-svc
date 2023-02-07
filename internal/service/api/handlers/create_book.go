@@ -140,7 +140,6 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		Description:        request.Data.Attributes.Description,
 		CreatedAt:          time.Now(),
 		Price:              request.Data.Attributes.Price,
-		FloorPrice:         request.Data.Attributes.FloorPrice,
 		ContractAddress:    "mocked",
 		ContractName:       request.Data.Attributes.TokenName,
 		ContractSymbol:     request.Data.Attributes.TokenSymbol,

@@ -26,8 +26,6 @@ type BookAttributes struct {
 	// Book description
 	Description string `json:"description"`
 	File        Media  `json:"file"`
-	// Book floor price in NFT($)
-	FloorPrice string `json:"floor_price"`
 	// Book price ($)
 	Price string `json:"price"`
 	// Book title

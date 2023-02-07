@@ -51,29 +51,27 @@ type BookUpdateParams struct {
 	DeployStatus       *resources.DeployStatus
 	Symbol             *string
 	Price              *string
-	FloorPrice         *string
 	VoucherToken       *string
 	VoucherTokenAmount *string
 }
 
 type Book struct {
-	ID                 int64                  `db:"id" structs:"-"`
-	Title              string                 `db:"title" structs:"title"`
-	Description        string                 `db:"description" structs:"description"`
-	CreatedAt          time.Time              `db:"created_at" structs:"created_at"`
-	Price              string                 `db:"price" structs:"price"`
-	FloorPrice         string                 `db:"floor_price" structs:"floor_price"`
-	ContractAddress    string                 `db:"contract_address" structs:"contract_address"`
-	ContractName       string                 `db:"contract_name" structs:"contract_name"`
-	ContractSymbol     string                 `db:"contract_symbol" structs:"contract_symbol"`
-	ContractVersion    string                 `db:"contract_version" structs:"contract_version"`
-	Banner             string                 `db:"banner" structs:"banner"`
-	File               string                 `db:"file" structs:"file"`
-	Deleted            bool                   `db:"deleted" structs:"-"`
-	TokenId            int64                  `db:"token_id" structs:"token_id"`
-	DeployStatus       resources.DeployStatus `db:"deploy_status" structs:"deploy_status"`
-	LastBlock          uint64                 `db:"last_block" structs:"last_block"`
-	ChainId            int64                  `db:"chain_id" structs:"chain_id"`
+	ID              int64                  `db:"id" structs:"-"`
+	Title           string                 `db:"title" structs:"title"`
+	Description     string                 `db:"description" structs:"description"`
+	CreatedAt       time.Time              `db:"created_at" structs:"created_at"`
+	Price           string                 `db:"price" structs:"price"`
+	ContractAddress string                 `db:"contract_address" structs:"contract_address"`
+	ContractName    string                 `db:"contract_name" structs:"contract_name"`
+	ContractSymbol  string                 `db:"contract_symbol" structs:"contract_symbol"`
+	ContractVersion string                 `db:"contract_version" structs:"contract_version"`
+	Banner          string                 `db:"banner" structs:"banner"`
+	File            string                 `db:"file" structs:"file"`
+	Deleted         bool                   `db:"deleted" structs:"-"`
+	TokenId         int64                  `db:"token_id" structs:"token_id"`
+	DeployStatus    resources.DeployStatus `db:"deploy_status" structs:"deploy_status"`
+	LastBlock       uint64                 `db:"last_block" structs:"last_block"`
+	ChainId         int64                  `db:"chain_id" structs:"chain_id"`
 	VoucherToken       string                 `db:"voucher_token" structs:"voucher_token"`
 	VoucherTokenAmount string                 `db:"voucher_token_amount" structs:"voucher_token_amount"`
 }

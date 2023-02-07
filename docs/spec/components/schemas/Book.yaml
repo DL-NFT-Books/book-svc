@@ -15,7 +15,6 @@ allOf:
           - contract_symbol
           - contract_version
           - price
-          - floor_price
           - file
           - banner
           - token_id
@@ -39,10 +38,6 @@ allOf:
           price:
             type: string
             description: Book price ($)
-            example: "10050"
-          floor_price:
-            type: string
-            description: Book floor price in NFT($)
             example: "10050"
           contract_address:
             type: string

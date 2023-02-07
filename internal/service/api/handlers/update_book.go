@@ -33,7 +33,6 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		Contract:           request.Data.Attributes.ContractAddress,
 		DeployStatus:       request.Data.Attributes.DeployStatus,
 		Price:              request.Data.Attributes.Price,
-		FloorPrice:         request.Data.Attributes.FloorPrice,
 		Symbol:             request.Data.Attributes.TokenSymbol,
 		VoucherToken:       request.Data.Attributes.VoucherToken,
 		VoucherTokenAmount: request.Data.Attributes.VoucherTokenAmount,
