@@ -14,6 +14,7 @@ type CreateInfo struct {
 	TokenName            string
 	TokenSymbol          string
 	PricePerOneToken     *big.Int
+	FloorPrice           *big.Int
 	VoucherTokenContract string
 	VoucherTokensAmount  *big.Int
 

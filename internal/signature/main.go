@@ -60,6 +60,7 @@ func signCreateInfoByEIP712(
 				{Name: "pricePerOneToken", Type: "uint256"},
 				{Name: "voucherTokenContract", Type: "address"},
 				{Name: "voucherTokensAmount", Type: "uint256"},
+				{Name: "minNFTFloorPrice", Type: "uint256"},
 			},
 			"EIP712Domain": []apitypes.Type{
 				{Name: "name", Type: "string"},
@@ -82,6 +83,7 @@ func signCreateInfoByEIP712(
 			"pricePerOneToken":     createInfo.PricePerOneToken.String(),
 			"voucherTokenContract": createInfo.VoucherTokenContract,
 			"voucherTokensAmount":  createInfo.VoucherTokensAmount.String(),
+			"minNFTFloorPrice":     createInfo.FloorPrice.String(),
 		},
 	}
 

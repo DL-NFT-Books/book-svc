@@ -60,8 +60,14 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	tokenPrice, ok := big.NewInt(0).SetString(request.Data.Attributes.Price, 10)
 	if !ok {
-		logger.Error("failed to cast price to big.Int")
+		logger.Error("failed to cast token price to big.Int")
 		ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse token price"))...)
+		return
+	}
+	floorPrice, ok := big.NewInt(0).SetString(request.Data.Attributes.FloorPrice, 10)
+	if !ok {
+		logger.Error("failed to cast floor price to big.Int")
+		ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse floor price"))...)
 		return
 	}
 
@@ -74,18 +80,13 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// Forming signature createInfo
 	signatureConfig := helpers.DeploySignatureConfig(r)
-	logger.Info("CHAIN ID", request.Data.Attributes.ChainId)
 	networker := helpers.Networker(r)
 
-	netDef, err := networker.GetNetworkByChainID(request.Data.Attributes.ChainId)
-	if err != nil {
+	if _, err = networker.GetNetworkByChainID(request.Data.Attributes.ChainId); err != nil {
 		logger.WithError(err).Error("default failed to check if network exists")
-	} else {
-		logger.Info("BOOK NET DEFAULT", netDef)
 	}
 
 	network, err := networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId)
-	logger.Info("NETWOORK", network)
 	if err != nil {
 		logger.WithError(err).Error("failed to check if network exists")
 		ape.RenderErr(w, problems.InternalError())
@@ -124,6 +125,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		PricePerOneToken:     tokenPrice,
 		VoucherTokenContract: voucher,
 		VoucherTokensAmount:  voucherAmount,
+		FloorPrice:           floorPrice,
 	}
 
 	// Signing
