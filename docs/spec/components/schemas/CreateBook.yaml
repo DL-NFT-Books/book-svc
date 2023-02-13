@@ -14,7 +14,6 @@ allOf:
           - token_name
           - token_symbol
           - price
-          - floor_price
           - chain_id
         properties:
           title:

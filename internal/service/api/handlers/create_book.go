@@ -64,13 +64,6 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse token price"))...)
 		return
 	}
-	floorPrice, ok := big.NewInt(0).SetString(request.Data.Attributes.FloorPrice, 10)
-	if !ok {
-		logger.Error("failed to cast floor price to big.Int")
-		ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse floor price"))...)
-		return
-	}
-
 	lastTokenContractID, err := helpers.GetLastTokenID(r)
 	if err != nil {
 		logger.WithError(err).Error("failed to get last token id")
@@ -118,6 +111,16 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	floorPrice := big.NewInt(0)
+	if request.Data.Attributes.FloorPrice != nil {
+		floorPrice, ok = big.NewInt(0).SetString(*request.Data.Attributes.FloorPrice, 10)
+		if !ok {
+			logger.Error("failed to cast floor price to big.Int")
+			ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse floor price"))...)
+			return
+		}
+
+	}
 	createInfo := signature.CreateInfo{
 		TokenContractId:      lastTokenContractID + 1,
 		TokenName:            request.Data.Attributes.TokenName,
@@ -142,7 +145,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		Description:        request.Data.Attributes.Description,
 		CreatedAt:          time.Now(),
 		Price:              request.Data.Attributes.Price,
-		FloorPrice:         request.Data.Attributes.FloorPrice,
+		FloorPrice:         createInfo.FloorPrice.String(),
 		ContractAddress:    "mocked",
 		ContractName:       request.Data.Attributes.TokenName,
 		ContractSymbol:     request.Data.Attributes.TokenSymbol,
