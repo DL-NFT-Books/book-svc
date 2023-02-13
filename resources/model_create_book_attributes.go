@@ -11,7 +11,7 @@ type CreateBookAttributes struct {
 	Description string `json:"description"`
 	File        Media  `json:"file"`
 	// Book floor price in NFT($)
-	FloorPrice *string `json:"floor_price,omitempty"`
+	FloorPrice string `json:"floor_price"`
 	// Price per one token ($)
 	Price string `json:"price"`
 	// Book title

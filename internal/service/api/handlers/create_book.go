@@ -111,15 +111,11 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	floorPrice := big.NewInt(0)
-	if request.Data.Attributes.FloorPrice != nil {
-		floorPrice, ok = big.NewInt(0).SetString(*request.Data.Attributes.FloorPrice, 10)
-		if !ok {
-			logger.Error("failed to cast floor price to big.Int")
-			ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse floor price"))...)
-			return
-		}
-
+	floorPrice, ok := big.NewInt(0).SetString(request.Data.Attributes.FloorPrice, 10)
+	if !ok {
+		logger.Error("failed to cast floor price to big.Int")
+		ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse floor price"))...)
+		return
 	}
 	createInfo := signature.CreateInfo{
 		TokenContractId:      lastTokenContractID + 1,
