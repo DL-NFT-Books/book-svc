@@ -83,7 +83,9 @@ allOf:
           voucher_token:
             type: string
             description: Voucher token contract address, that can be used to claim free book
+            example: "0xdac17f958d2ee523a2206206994597c13d831ec7"
           voucher_token_amount:
             type: string
-            description: How many voucher tokens user have to pay that book
+            description: How many voucher tokens user has to pay that book
+            example: "1"
 

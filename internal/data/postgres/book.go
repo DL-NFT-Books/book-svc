@@ -13,21 +13,21 @@ import (
 )
 
 const (
-	booksTableName        = "book"
-	idColumn              = "id"
-	tokenIdColumn         = "token_id"
-	priceColumn           = "price"
-	deletedColumn         = "deleted"
-	contractNameColumn    = "contract_name"
-	contractAddressColumn = "contract_address"
-	deployStatusColumn    = "deploy_status"
-	contractSymbolColumn  = "contract_symbol"
-	bannerColumn          = "banner"
-	fileColumn            = "file"
-	titleColumn           = "title"
-	lastBlockColumn       = "last_block"
-	descriptionColumn     = "description"
-	chainIdColumn         = "chain_id"
+	booksTableName           = "book"
+	idColumn                 = "id"
+	tokenIdColumn            = "token_id"
+	priceColumn              = "price"
+	deletedColumn            = "deleted"
+	contractNameColumn       = "contract_name"
+	contractAddressColumn    = "contract_address"
+	deployStatusColumn       = "deploy_status"
+	contractSymbolColumn     = "contract_symbol"
+	bannerColumn             = "banner"
+	fileColumn               = "file"
+	titleColumn              = "title"
+	lastBlockColumn          = "last_block"
+	descriptionColumn        = "description"
+	chainIdColumn            = "chain_id"
 	voucherTokenColumn       = "voucher_token"
 	voucherTokenAmountColumn = "voucher_token_amount"
 )
@@ -56,15 +56,10 @@ func (b *BooksQ) Insert(data data.Book) (id int64, err error) {
 	return
 }
 
-func (b *BooksQ) Count(title *string) (uint64, error) {
+func (b *BooksQ) Count() (uint64, error) {
 	var res uint64
-	selStmt := squirrel.Select("COUNT(id)").
-		From(booksTableName)
-
-	if title != nil {
-		selStmt = selStmt.Where(squirrel.Like{`LOWER(title)`: "%" + strings.ToLower(*title) + "%"})
-	}
-
+	selStmt := squirrel.Select("COUNT(book)").
+		FromSelect(b.selectBuilder, "book")
 	err := b.db.Get(&res, selStmt)
 
 	return res, err
