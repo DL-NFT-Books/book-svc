@@ -26,6 +26,8 @@ type BookAttributes struct {
 	// Book description
 	Description string `json:"description"`
 	File        Media  `json:"file"`
+	// Book floor price ($)
+	FloorPrice string `json:"floor_price"`
 	// Book price ($)
 	Price string `json:"price"`
 	// Book title
@@ -34,6 +36,6 @@ type BookAttributes struct {
 	TokenId int64 `json:"token_id"`
 	// Voucher token contract address, that can be used to claim free book
 	VoucherToken string `json:"voucher_token"`
-	// How many voucher tokens user have to pay that book
+	// How many voucher tokens user has to pay that book
 	VoucherTokenAmount string `json:"voucher_token_amount"`
 }

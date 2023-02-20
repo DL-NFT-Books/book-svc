@@ -15,6 +15,8 @@ type UpdateBookAttributes struct {
 	// Book description
 	Description *string `json:"description,omitempty"`
 	File        *Media  `json:"file,omitempty"`
+	// Book floor price ($)
+	FloorPrice *string `json:"floor_price,omitempty"`
 	// Price per one token ($)
 	Price *string `json:"price,omitempty"`
 	// Book title

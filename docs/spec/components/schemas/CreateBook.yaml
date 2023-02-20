@@ -14,6 +14,7 @@ allOf:
           - token_name
           - token_symbol
           - price
+          - floor_price
           - chain_id
         properties:
           title:
@@ -39,6 +40,10 @@ allOf:
           price:
             type: string
             description: Price per one token ($)
+          floor_price:
+            type: string
+            description: Book floor price ($)
+            example: "10050"
           chain_id:
             type: integer
             format: int64

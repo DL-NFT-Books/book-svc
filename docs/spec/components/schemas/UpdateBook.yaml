@@ -46,6 +46,10 @@ allOf:
           price:
             type: string
             description: Price per one token ($)
+          floor_price:
+            type: string
+            description: Book floor price ($)
+            example: "10050"
           voucher_token:
             type: string
             description: Voucher token contract address, that can be used to claim free book
