@@ -51,6 +51,7 @@ type BookUpdateParams struct {
 	DeployStatus       *resources.DeployStatus
 	Symbol             *string
 	Price              *string
+	FloorPrice         *string
 	VoucherToken       *string
 	VoucherTokenAmount *string
 }
