@@ -38,17 +38,12 @@ func ListBooks(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-	links := responses.CreateLinks(
-		r.URL, request.OffsetPageParams)
-
-	count, err := helpers.GetBooksCount(r, request.Title)
+	links, err := responses.CreateLinks(
+		r, request)
 	if err != nil {
-		helpers.Log(r).WithError(err).Error("failed to form up book list response")
+		helpers.Log(r).WithError(err).Error("failed to create links")
 		ape.RenderErr(w, problems.InternalError())
 		return
-	}
-	if count <= (request.OffsetPageParams.PageNumber+1)*request.OffsetPageParams.Limit {
-		links.Next = ""
 	}
 	ape.Render(w, resources.BookListResponse{
 		Data:  data,

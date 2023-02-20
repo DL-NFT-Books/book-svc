@@ -15,8 +15,8 @@ func GetBookByID(r *http.Request, id int64) (*data.Book, error) {
 	return DB(r).Books().FilterActual().FilterByID(id).Get()
 }
 
-func GetBooksCount(r *http.Request, title *string) (uint64, error) {
-	return DB(r).Books().Count(title)
+func GetBooksCount(r *http.Request, request *requests.ListBooksRequest) (uint64, error) {
+	return applyQBooksFilters(DB(r).Books(), request).Count()
 }
 
 func GetBookListByRequest(r *http.Request, request *requests.ListBooksRequest) ([]data.Book, error) {
@@ -58,7 +58,6 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 			Description:        book.Description,
 			CreatedAt:          book.CreatedAt,
 			Price:              book.Price,
-			FloorPrice:         book.FloorPrice,
 			ContractAddress:    book.ContractAddress,
 			ContractName:       book.ContractName,
 			ContractSymbol:     book.ContractSymbol,

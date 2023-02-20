@@ -17,7 +17,6 @@ const (
 	idColumn                 = "id"
 	tokenIdColumn            = "token_id"
 	priceColumn              = "price"
-	floorPriceColumn         = "floor_price"
 	deletedColumn            = "deleted"
 	contractNameColumn       = "contract_name"
 	contractAddressColumn    = "contract_address"
@@ -57,15 +56,10 @@ func (b *BooksQ) Insert(data data.Book) (id int64, err error) {
 	return
 }
 
-func (b *BooksQ) Count(title *string) (uint64, error) {
+func (b *BooksQ) Count() (uint64, error) {
 	var res uint64
-	selStmt := squirrel.Select("COUNT(id)").
-		From(booksTableName)
-
-	if title != nil {
-		selStmt = selStmt.Where(squirrel.Like{`LOWER(title)`: "%" + strings.ToLower(*title) + "%"})
-	}
-
+	selStmt := squirrel.Select("COUNT(book)").
+		FromSelect(b.selectBuilder, "book")
 	err := b.db.Get(&res, selStmt)
 
 	return res, err
@@ -178,9 +172,6 @@ func (b *BooksQ) applyUpdateParams(sql squirrel.UpdateBuilder, updater data.Book
 	}
 	if updater.Price != nil {
 		sql = sql.Set(priceColumn, *updater.Price)
-	}
-	if updater.FloorPrice != nil {
-		sql = sql.Set(floorPriceColumn, *updater.FloorPrice)
 	}
 	if updater.VoucherToken != nil {
 		sql = sql.Set(voucherTokenColumn, *updater.VoucherToken)

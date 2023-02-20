@@ -12,7 +12,6 @@ type (
 		Description string
 		File        resources.Media
 		Price       string
-		FloorPrice  string
 		Title       string
 		TokenName   string
 		TokenSymbol string
@@ -30,7 +29,6 @@ type (
 		DeployStatus       *resources.DeployStatus `json:"deploy_status,omitempty"`
 		Symbol             *string                 `json:"symbol,omitempty"`
 		Price              *string                 `json:"price,omitempty"`
-		FloorPrice         *string                 `json:"price,omitempty"`
 		VoucherToken       *string                 `json:"voucher_token,omitempty"`
 		VoucherTokenAmount *string                 `json:"voucher_token_amount,omitempty"`
 	}

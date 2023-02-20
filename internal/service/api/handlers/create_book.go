@@ -19,6 +19,12 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/resources"
 )
 
+var (
+	// if there is no voucher then passing null address and 0 amount
+	zeroVoucher       = common.Address{}.String()
+	zeroVoucherAmount = big.NewInt(0)
+)
+
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	logger := helpers.Log(r)
 
@@ -80,13 +86,14 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	network, err := networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId)
+
 	if err != nil {
 		logger.WithError(err).Error("failed to check if network exists")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 	if network == nil {
-		logger.Error("network doesn't exist exist")
+		logger.Error("network doesn't exist")
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
@@ -98,8 +105,8 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// if there is no voucher then passing null address and 0 amount
-	voucher := common.Address{}.String()
-	voucherAmount := big.NewInt(0)
+	voucher := zeroVoucher
+	voucherAmount := zeroVoucherAmount
 
 	if request.Data.Attributes.VoucherToken != nil && request.Data.Attributes.VoucherTokenAmount != nil {
 		voucher = *request.Data.Attributes.VoucherToken

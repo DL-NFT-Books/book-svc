@@ -13,6 +13,8 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
 )
 
+var invalidContractNameErr = errors.New("invalid contract name length")
+
 func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewUpdateBookRequest(r)
 	if err != nil {
@@ -33,7 +35,6 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		Contract:           request.Data.Attributes.ContractAddress,
 		DeployStatus:       request.Data.Attributes.DeployStatus,
 		Price:              request.Data.Attributes.Price,
-		FloorPrice:         request.Data.Attributes.FloorPrice,
 		Symbol:             request.Data.Attributes.TokenSymbol,
 		VoucherToken:       request.Data.Attributes.VoucherToken,
 		VoucherTokenAmount: request.Data.Attributes.VoucherTokenAmount,
@@ -89,11 +90,10 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	contractName := request.Data.Attributes.ContractName
-	contractError := errors.New("invalid contract name length")
 	if contractName != nil {
 		if len(*contractName) > requests.MaxTitleLength {
-			helpers.Log(r).WithFields(logan.F{"max_title_len": requests.MaxTitleLength}).Error(contractError)
-			ape.RenderErr(w, problems.BadRequest(contractError)...)
+			helpers.Log(r).WithFields(logan.F{"max_title_len": requests.MaxTitleLength}).Error(invalidContractNameErr)
+			ape.RenderErr(w, problems.BadRequest(invalidContractNameErr)...)
 			return
 		}
 
