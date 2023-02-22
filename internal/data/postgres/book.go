@@ -173,6 +173,9 @@ func (b *BooksQ) applyUpdateParams(sql squirrel.UpdateBuilder, updater data.Book
 	if updater.Price != nil {
 		sql = sql.Set(priceColumn, *updater.Price)
 	}
+	if updater.FloorPrice != nil {
+		sql = sql.Set(priceColumn, *updater.Price)
+	}
 	if updater.VoucherToken != nil {
 		sql = sql.Set(voucherTokenColumn, *updater.VoucherToken)
 	}
