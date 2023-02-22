@@ -17,6 +17,7 @@ const (
 	idColumn                 = "id"
 	tokenIdColumn            = "token_id"
 	priceColumn              = "price"
+	floorPriceColumn         = "floor_price"
 	deletedColumn            = "deleted"
 	contractNameColumn       = "contract_name"
 	contractAddressColumn    = "contract_address"
@@ -174,7 +175,7 @@ func (b *BooksQ) applyUpdateParams(sql squirrel.UpdateBuilder, updater data.Book
 		sql = sql.Set(priceColumn, *updater.Price)
 	}
 	if updater.FloorPrice != nil {
-		sql = sql.Set(priceColumn, *updater.Price)
+		sql = sql.Set(floorPriceColumn, *updater.FloorPrice)
 	}
 	if updater.VoucherToken != nil {
 		sql = sql.Set(voucherTokenColumn, *updater.VoucherToken)
