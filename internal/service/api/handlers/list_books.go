@@ -38,8 +38,7 @@ func ListBooks(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-	links, err := responses.CreateLinks(
-		r, request)
+	links, err := responses.CreateLinks(r, request)
 	if err != nil {
 		helpers.Log(r).WithError(err).Error("failed to create links")
 		ape.RenderErr(w, problems.InternalError())
