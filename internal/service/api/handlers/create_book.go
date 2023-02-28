@@ -81,7 +81,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	signatureConfig := helpers.DeploySignatureConfig(r)
 	networker := helpers.Networker(r)
 
-	if _, err = networker.GetNetworkByChainID(request.Data.Attributes.ChainId); err != nil {
+	if _, err = networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId); err != nil {
 		logger.WithError(err).Error("default failed to check if network exists")
 		ape.RenderErr(w, problems.InternalError())
 		return
