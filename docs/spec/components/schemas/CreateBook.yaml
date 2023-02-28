@@ -34,12 +34,15 @@ allOf:
           token_name:
             type: string
             description: Token name
+            example: "Book #1"
           token_symbol:
             type: string
             description: Token symbol
+            example: "TSM"
           price:
             type: string
             description: Price per one token ($)
+            example: "100"
           floor_price:
             type: string
             description: Book floor price ($)
@@ -47,6 +50,8 @@ allOf:
           chain_id:
             type: integer
             format: int64
+            description: Networks chain id
+            example: 5
           voucher_token:
             type: string
             description: Voucher token contract address, that can be used to claim free book

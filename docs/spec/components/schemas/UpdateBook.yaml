@@ -43,9 +43,11 @@ allOf:
           token_symbol:
             type: string
             description: Token symbol
+            example: "BDS1"
           price:
             type: string
             description: Price per one token ($)
+            example: "1000"
           floor_price:
             type: string
             description: Book floor price ($)

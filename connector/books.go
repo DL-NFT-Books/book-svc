@@ -63,7 +63,7 @@ func (c *Connector) UpdateBook(params models.UpdateBookParams) error {
 				DeployStatus:       params.DeployStatus,
 				TokenSymbol:        params.Symbol,
 				Price:              params.Price,
-				FloorPrice:         params.FLoorPrice,
+				FloorPrice:         params.FloorPrice,
 				VoucherToken:       params.VoucherToken,
 				VoucherTokenAmount: params.VoucherTokenAmount,
 			},

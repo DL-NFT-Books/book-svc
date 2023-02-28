@@ -1,7 +1,7 @@
 package responses
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
@@ -13,9 +13,8 @@ import (
 // links from given url and pagination structure.
 func CreateLinks(r *http.Request, request requests.ListBooksRequest) (*resources.Links, error) {
 	count, err := helpers.GetBooksCount(r, &request)
-	fmt.Println(count)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to get books count")
 	}
 	if count <= (request.OffsetPageParams.PageNumber+1)*request.OffsetPageParams.Limit {
 		return &resources.Links{}, nil
