@@ -2,14 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.2.0] - 2023-01-19
- 
-### Added
-- Support for NFT exchange: add floor price to book
-
 ## [1.1.0] - 2023-01-19
  
 ### Added
+- Support for NFT exchange: add floor price to book
 - Support for various networks
 - Promo-codes support
 - Vouchers support
@@ -36,4 +32,9 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - First stable version with basic functions: adding, updating, deleting, and getting book. 
+
+
+[1.1.0]: https://gitlab.com/tokend/nft-books/book-svc/compare/1.0.0...1.1.0
+[1.0.0]: https://gitlab.com/tokend/nft-books/book-svc/compare/1.0.0-rc.0...1.0.0
+[1.0.0-rc.0]: https://gitlab.com/tokend/nft-books/book-svc/tags/1.0.0-rc.0
 
