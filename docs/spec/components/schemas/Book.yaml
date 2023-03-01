@@ -27,39 +27,40 @@ allOf:
           title:
             type: string
             description: Book title
-            example: "BDS volume 1"
+            example: BDS volume 1
           description:
             type: string
             description: Book description
-            example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+            example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
           created_at:
-            type: time.Time
+            type: string
+            format: time.Time
             description: Book creation time
-            example: "2022-11-03T21:36:21.022589Z"
+            example: '2022-11-03T21:36:21.022589Z'
           price:
             type: string
             description: Book price ($)
-            example: "10050"
+            example: '10050'
           floor_price:
             type: string
             description: Book floor price ($)
-            example: "10050"
+            example: '10050'
           contract_address:
             type: string
             description: Token contract address
-            example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+            example: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
           contract_name:
             type: string
             description: Token contract name
-            example: "Blockchain and decentralized systems volume 1"
+            example: Blockchain and decentralized systems volume 1
           contract_symbol:
             type: string
             description: Token contract symbol
-            example: "BDS1"
+            example: BDS1
           contract_version:
             type: string
             description: Token contract version
-            example: "1"
+            example: '1'
           banner:
             description: Banner info
             $ref: '#/components/schemas/Media'
@@ -89,10 +90,11 @@ allOf:
             example: 5
           voucher_token:
             type: string
-            description: Voucher token contract address, that can be used to claim free book
-            example: "0xdac17f958d2ee523a2206206994597c13d831ec7"
+            description: >-
+              Voucher token contract address, that can be used to claim free
+              book
+            example: '0xdac17f958d2ee523a2206206994597c13d831ec7'
           voucher_token_amount:
             type: string
             description: How many voucher tokens user has to pay that book
-            example: "1"
-
+            example: '1'

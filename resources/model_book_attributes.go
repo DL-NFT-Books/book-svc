@@ -4,9 +4,7 @@
 
 package resources
 
-import (
-	"time"
-)
+import "time"
 
 type BookAttributes struct {
 	Banner Media `json:"banner"`

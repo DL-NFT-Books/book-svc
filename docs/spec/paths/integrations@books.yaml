@@ -9,7 +9,7 @@ post:
       required: true
       schema:
         type: string
-        format: Bearer {token}
+        format: 'Bearer {token}'
         example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   requestBody:
     content:
@@ -53,7 +53,7 @@ post:
         application/json:
           schema:
             type: object
-            $ref: "#/components/schemas/UnauthorizedError"
+            $ref: '#/components/schemas/UnauthorizedError'
     '500':
       $ref: '#/components/responses/InternalError'
 get:
