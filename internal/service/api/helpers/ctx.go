@@ -2,12 +2,12 @@ package helpers
 
 import (
 	"context"
+	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 	"net/http"
 
-	"gitlab.com/tokend/nft-books/doorman/connector"
-
 	"gitlab.com/tokend/nft-books/book-svc/internal/config"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data"
+	"gitlab.com/tokend/nft-books/doorman/connector"
+	networker "gitlab.com/tokend/nft-books/network-svc/connector"
 
 	"gitlab.com/distributed_lab/logan/v3"
 	s3connector "gitlab.com/tokend/nft-books/blob-svc/connector/api"
@@ -21,6 +21,7 @@ const (
 	deploySignatureCtxKey
 	doormanConnectorCtxKey
 	documenterConnectorCtxKey
+	networkerConnectorCtxKey
 	dbKey
 )
 
@@ -82,4 +83,13 @@ func CtxDocumenterConnector(entry s3connector.Connector) func(context.Context) c
 
 func DocumenterConnector(r *http.Request) s3connector.Connector {
 	return r.Context().Value(documenterConnectorCtxKey).(s3connector.Connector)
+}
+
+func CtxNetworkerConnector(entry networker.Connector) func(context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, networkerConnectorCtxKey, entry)
+	}
+}
+func Networker(r *http.Request) networker.Connector {
+	return r.Context().Value(networkerConnectorCtxKey).(networker.Connector)
 }

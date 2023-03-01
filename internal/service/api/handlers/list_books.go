@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/responses"
 	"net/http"
 
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
@@ -37,8 +38,14 @@ func ListBooks(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-
+	links, err := responses.CreateLinks(r, request)
+	if err != nil {
+		helpers.Log(r).WithError(err).Error("failed to create links")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
 	ape.Render(w, resources.BookListResponse{
-		Data: data,
+		Data:  data,
+		Links: links,
 	})
 }

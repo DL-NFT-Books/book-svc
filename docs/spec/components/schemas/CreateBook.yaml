@@ -14,15 +14,17 @@ allOf:
           - token_name
           - token_symbol
           - price
+          - floor_price
+          - chain_id
         properties:
           title:
             type: string
             description: Book title
-            example: "BDS volume 1"
+            example: BDS volume 1
           description:
             type: string
             description: Book description
-            example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+            example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
           banner:
             description: Banner info
             $ref: '#/components/schemas/Media'
@@ -32,9 +34,29 @@ allOf:
           token_name:
             type: string
             description: Token name
+            example: 'Book #1'
           token_symbol:
             type: string
             description: Token symbol
+            example: TSM
           price:
             type: string
             description: Price per one token ($)
+            example: '100'
+          floor_price:
+            type: string
+            description: Book floor price ($)
+            example: '10050'
+          chain_id:
+            type: integer
+            format: int64
+            description: Networks chain id
+            example: 5
+          voucher_token:
+            type: string
+            description: >-
+              Voucher token contract address, that can be used to claim free
+              book
+          voucher_token_amount:
+            type: string
+            description: How many voucher tokens user have to pay that book

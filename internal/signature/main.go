@@ -58,6 +58,9 @@ func signCreateInfoByEIP712(
 				{Name: "tokenName", Type: "bytes32"},
 				{Name: "tokenSymbol", Type: "bytes32"},
 				{Name: "pricePerOneToken", Type: "uint256"},
+				{Name: "voucherTokenContract", Type: "address"},
+				{Name: "voucherTokensAmount", Type: "uint256"},
+				{Name: "minNFTFloorPrice", Type: "uint256"},
 			},
 			"EIP712Domain": []apitypes.Type{
 				{Name: "name", Type: "string"},
@@ -74,10 +77,13 @@ func signCreateInfoByEIP712(
 			VerifyingContract: domainData.VerifyingAddress,
 		},
 		Message: apitypes.TypedDataMessage{
-			"tokenContractId":  math.NewHexOrDecimal256(createInfo.TokenContractId),
-			"tokenName":        createInfo.HashedTokenName,
-			"tokenSymbol":      createInfo.HashedTokenSymbol,
-			"pricePerOneToken": createInfo.PricePerOneToken.String(),
+			"tokenContractId":      math.NewHexOrDecimal256(createInfo.TokenContractId),
+			"tokenName":            createInfo.HashedTokenName,
+			"tokenSymbol":          createInfo.HashedTokenSymbol,
+			"pricePerOneToken":     createInfo.PricePerOneToken.String(),
+			"voucherTokenContract": createInfo.VoucherTokenContract,
+			"voucherTokensAmount":  createInfo.VoucherTokensAmount.String(),
+			"minNFTFloorPrice":     createInfo.FloorPrice.String(),
 		},
 	}
 

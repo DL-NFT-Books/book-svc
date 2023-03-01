@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"gitlab.com/distributed_lab/logan/v3"
 	"net/http"
 
 	"gitlab.com/distributed_lab/ape"
@@ -11,6 +12,8 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
 )
+
+var invalidContractNameErr = errors.New("invalid contract name length")
 
 func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewUpdateBookRequest(r)
@@ -29,10 +32,13 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	updateParams := data.BookUpdateParams{
-		Contract:     request.Data.Attributes.ContractAddress,
-		DeployStatus: request.Data.Attributes.DeployStatus,
-		Price:        request.Data.Attributes.Price,
-		Symbol:       request.Data.Attributes.TokenSymbol,
+		Contract:           request.Data.Attributes.ContractAddress,
+		DeployStatus:       request.Data.Attributes.DeployStatus,
+		Price:              request.Data.Attributes.Price,
+		FloorPrice:         request.Data.Attributes.FloorPrice,
+		Symbol:             request.Data.Attributes.TokenSymbol,
+		VoucherToken:       request.Data.Attributes.VoucherToken,
+		VoucherTokenAmount: request.Data.Attributes.VoucherTokenAmount,
 	}
 
 	// Collecting update params
@@ -76,12 +82,23 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 	if title != nil {
 		if len(*title) > requests.MaxTitleLength {
 			err = errors.New(fmt.Sprintf("invalid title length (max len is %v)", requests.MaxTitleLength))
-			helpers.Log(r).WithError(err).Error("failed to validate book title")
+			helpers.Log(r).WithError(err).Error("failed to validate book's title")
 			ape.RenderErr(w, problems.BadRequest(err)...)
 			return
 		}
 
 		updateParams.Title = title
+	}
+
+	contractName := request.Data.Attributes.ContractName
+	if contractName != nil {
+		if len(*contractName) > requests.MaxTitleLength {
+			helpers.Log(r).WithFields(logan.F{"max_title_len": requests.MaxTitleLength}).Error(invalidContractNameErr)
+			ape.RenderErr(w, problems.BadRequest(invalidContractNameErr)...)
+			return
+		}
+
+		updateParams.ContractName = contractName
 	}
 
 	description := request.Data.Attributes.Description

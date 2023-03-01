@@ -28,6 +28,7 @@ func (s *service) router() chi.Router {
 			// Connectors
 			helpers.CtxDoormanConnector(s.doorman),
 			helpers.CtxDocumenterConnector(*s.documenter),
+			helpers.CtxNetworkerConnector(*s.cfg.NetworkConnector()),
 		),
 	)
 

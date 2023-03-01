@@ -2,10 +2,9 @@ package requests
 
 import (
 	"encoding/json"
-	"net/http"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"gitlab.com/distributed_lab/logan/v3/errors"
+	"net/http"
 
 	"gitlab.com/tokend/nft-books/book-svc/resources"
 )

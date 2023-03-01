@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"strings"
 
 	"gitlab.com/tokend/nft-books/book-svc/resources"
 
@@ -12,20 +13,24 @@ import (
 )
 
 const (
-	booksTableName        = "book"
-	idColumn              = "id"
-	tokenIdColumn         = "token_id"
-	priceColumn           = "price"
-	deletedColumn         = "deleted"
-	contractNameColumn    = "contract_name"
-	contractAddressColumn = "contract_address"
-	deployStatusColumn    = "deploy_status"
-	contractSymbolColumn  = "contract_symbol"
-	bannerColumn          = "banner"
-	fileColumn            = "file"
-	titleColumn           = "title"
-	lastBlockColumn       = "last_block"
-	descriptionColumn     = "description"
+	booksTableName           = "book"
+	idColumn                 = "id"
+	tokenIdColumn            = "token_id"
+	priceColumn              = "price"
+	floorPriceColumn         = "floor_price"
+	deletedColumn            = "deleted"
+	contractNameColumn       = "contract_name"
+	contractAddressColumn    = "contract_address"
+	deployStatusColumn       = "deploy_status"
+	contractSymbolColumn     = "contract_symbol"
+	bannerColumn             = "banner"
+	fileColumn               = "file"
+	titleColumn              = "title"
+	lastBlockColumn          = "last_block"
+	descriptionColumn        = "description"
+	chainIdColumn            = "chain_id"
+	voucherTokenColumn       = "voucher_token"
+	voucherTokenAmountColumn = "voucher_token_amount"
 )
 
 func NewBooksQ(db *pgdb.DB) data.BookQ {
@@ -52,6 +57,15 @@ func (b *BooksQ) Insert(data data.Book) (id int64, err error) {
 	return
 }
 
+func (b *BooksQ) Count() (uint64, error) {
+	var res uint64
+	selStmt := squirrel.Select("COUNT(book)").
+		FromSelect(b.selectBuilder, "book")
+	err := b.db.Get(&res, selStmt)
+
+	return res, err
+}
+
 func (b *BooksQ) Get() (*data.Book, error) {
 	var result data.Book
 
@@ -75,8 +89,18 @@ func (b *BooksQ) FilterByID(id ...int64) data.BookQ {
 	return b
 }
 
+func (b *BooksQ) FilterByTitle(title string) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Like{`LOWER(title)`: "%" + strings.ToLower(title) + "%"})
+	return b
+}
+
 func (b *BooksQ) FilterByTokenId(tokenId ...int64) data.BookQ {
 	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{tokenIdColumn: tokenId})
+	return b
+}
+
+func (b *BooksQ) FilterByChainId(chainId ...int64) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{chainIdColumn: chainId})
 	return b
 }
 
@@ -138,6 +162,9 @@ func (b *BooksQ) applyUpdateParams(sql squirrel.UpdateBuilder, updater data.Book
 	if updater.Contract != nil {
 		sql = sql.Set(contractAddressColumn, *updater.Contract)
 	}
+	if updater.ContractName != nil {
+		sql = sql.Set(contractNameColumn, *updater.ContractName)
+	}
 	if updater.DeployStatus != nil {
 		sql = sql.Set(deployStatusColumn, *updater.DeployStatus)
 	}
@@ -146,6 +173,15 @@ func (b *BooksQ) applyUpdateParams(sql squirrel.UpdateBuilder, updater data.Book
 	}
 	if updater.Price != nil {
 		sql = sql.Set(priceColumn, *updater.Price)
+	}
+	if updater.FloorPrice != nil {
+		sql = sql.Set(floorPriceColumn, *updater.FloorPrice)
+	}
+	if updater.VoucherToken != nil {
+		sql = sql.Set(voucherTokenColumn, *updater.VoucherToken)
+	}
+	if updater.VoucherTokenAmount != nil {
+		sql = sql.Set(voucherTokenAmountColumn, *updater.VoucherTokenAmount)
 	}
 
 	return sql

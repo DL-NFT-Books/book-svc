@@ -15,10 +15,12 @@ allOf:
             type: integer
             format: int64
             description: ID of new token contract
+            example: 1
           book_id:
             type: integer
             format: int64
             description: ID of new book
+            example: 3
       relationships:
         type: object
         required:

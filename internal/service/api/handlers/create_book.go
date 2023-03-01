@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/ethereum/go-ethereum/common"
 	"math/big"
 	"net/http"
 	"strconv"
@@ -16,6 +17,12 @@ import (
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/responses"
 	"gitlab.com/tokend/nft-books/book-svc/internal/signature"
 	"gitlab.com/tokend/nft-books/book-svc/resources"
+)
+
+var (
+	// if there is no voucher then passing null address and 0 amount
+	zeroVoucher       = common.Address{}.String()
+	zeroVoucherAmount = big.NewInt(0)
 )
 
 func CreateBook(w http.ResponseWriter, r *http.Request) {
@@ -59,11 +66,10 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	tokenPrice, ok := big.NewInt(0).SetString(request.Data.Attributes.Price, 10)
 	if !ok {
-		logger.Error("failed to cast price to big.Int")
+		logger.Error("failed to cast token price to big.Int")
 		ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse token price"))...)
 		return
 	}
-
 	lastTokenContractID, err := helpers.GetLastTokenID(r)
 	if err != nil {
 		logger.WithError(err).Error("failed to get last token id")
@@ -73,19 +79,61 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// Forming signature createInfo
 	signatureConfig := helpers.DeploySignatureConfig(r)
+	networker := helpers.Networker(r)
 
-	domainData := signature.EIP712DomainData{
-		VerifyingAddress: signatureConfig.TokenFactoryAddress,
-		ContractName:     signatureConfig.TokenFactoryName,
-		ContractVersion:  signatureConfig.TokenFactoryVersion,
-		ChainID:          signatureConfig.ChainId,
+	if _, err = networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId); err != nil {
+		logger.WithError(err).Error("default failed to check if network exists")
+		ape.RenderErr(w, problems.InternalError())
+		return
 	}
 
+	network, err := networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId)
+
+	if err != nil {
+		logger.WithError(err).Error("failed to check if network exists")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	if network == nil {
+		logger.Error("network doesn't exist")
+		ape.RenderErr(w, problems.NotFound())
+		return
+	}
+	domainData := signature.EIP712DomainData{
+		VerifyingAddress: network.FactoryAddress,
+		ContractName:     network.FactoryName,
+		ContractVersion:  network.FactoryVersion,
+		ChainID:          network.ChainId,
+	}
+
+	// if there is no voucher then passing null address and 0 amount
+	voucher := zeroVoucher
+	voucherAmount := zeroVoucherAmount
+
+	if request.Data.Attributes.VoucherToken != nil && request.Data.Attributes.VoucherTokenAmount != nil {
+		voucher = *request.Data.Attributes.VoucherToken
+		voucherAmount, ok = big.NewInt(0).SetString(*request.Data.Attributes.VoucherTokenAmount, 10)
+		if !ok {
+			logger.Error("failed to cast price to big.Int")
+			ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse voucherTokenAmount"))...)
+			return
+		}
+	}
+
+	floorPrice, ok := big.NewInt(0).SetString(request.Data.Attributes.FloorPrice, 10)
+	if !ok {
+		logger.Error("failed to cast floor price to big.Int")
+		ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse floor price"))...)
+		return
+	}
 	createInfo := signature.CreateInfo{
-		TokenContractId:  lastTokenContractID + 1,
-		TokenName:        request.Data.Attributes.TokenName,
-		TokenSymbol:      request.Data.Attributes.TokenSymbol,
-		PricePerOneToken: tokenPrice,
+		TokenContractId:      lastTokenContractID + 1,
+		TokenName:            request.Data.Attributes.TokenName,
+		TokenSymbol:          request.Data.Attributes.TokenSymbol,
+		PricePerOneToken:     tokenPrice,
+		VoucherTokenContract: voucher,
+		VoucherTokensAmount:  voucherAmount,
+		FloorPrice:           floorPrice,
 	}
 
 	// Signing
@@ -98,20 +146,24 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// Saving book to the database
 	book := data.Book{
-		Title:           request.Data.Attributes.Title,
-		Description:     request.Data.Attributes.Description,
-		CreatedAt:       time.Now(),
-		Price:           request.Data.Attributes.Price,
-		ContractAddress: "mocked",
-		ContractName:    request.Data.Attributes.TokenName,
-		ContractSymbol:  request.Data.Attributes.TokenSymbol,
-		ContractVersion: signatureConfig.TokenFactoryVersion,
-		Banner:          media[0],
-		File:            media[1],
-		Deleted:         false,
-		TokenId:         createInfo.TokenContractId,
-		DeployStatus:    resources.DeployPending,
-		LastBlock:       0,
+		Title:              request.Data.Attributes.Title,
+		Description:        request.Data.Attributes.Description,
+		CreatedAt:          time.Now(),
+		Price:              request.Data.Attributes.Price,
+		FloorPrice:         createInfo.FloorPrice.String(),
+		ContractAddress:    "mocked",
+		ContractName:       request.Data.Attributes.TokenName,
+		ContractSymbol:     request.Data.Attributes.TokenSymbol,
+		ContractVersion:    network.FactoryVersion,
+		Banner:             media[0],
+		File:               media[1],
+		Deleted:            false,
+		TokenId:            createInfo.TokenContractId,
+		DeployStatus:       resources.DeployPending,
+		LastBlock:          0,
+		ChainId:            request.Data.Attributes.ChainId,
+		VoucherToken:       createInfo.VoucherTokenContract,
+		VoucherTokenAmount: createInfo.VoucherTokensAmount.String(),
 	}
 
 	db := helpers.DB(r)

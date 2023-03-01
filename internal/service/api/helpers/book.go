@@ -1,9 +1,10 @@
 package helpers
 
 import (
-	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 	"net/http"
 	"strconv"
+
+	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
 
 	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
@@ -14,8 +15,12 @@ func GetBookByID(r *http.Request, id int64) (*data.Book, error) {
 	return DB(r).Books().FilterActual().FilterByID(id).Get()
 }
 
+func GetBooksCount(r *http.Request, request *requests.ListBooksRequest) (uint64, error) {
+	return applyQBooksFilters(DB(r).Books(), request).Count()
+}
+
 func GetBookListByRequest(r *http.Request, request *requests.ListBooksRequest) ([]data.Book, error) {
-	return applyQBooksFilters(DB(r).Books(), request).Select()
+	return applyQBooksFilters(DB(r).Books(), request).Page(request.OffsetPageParams).FilterActual().Select()
 }
 
 func NewBooksList(books []data.Book) ([]resources.Book, error) {
@@ -49,18 +54,22 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 	res := resources.Book{
 		Key: resources.NewKeyInt64(book.ID, resources.BOOKS),
 		Attributes: resources.BookAttributes{
-			Title:           book.Title,
-			Description:     book.Description,
-			CreatedAt:       book.CreatedAt,
-			Price:           book.Price,
-			ContractAddress: book.ContractAddress,
-			ContractName:    book.ContractName,
-			ContractSymbol:  book.ContractSymbol,
-			ContractVersion: book.ContractVersion,
-			TokenId:         book.TokenId,
-			DeployStatus:    book.DeployStatus,
-			File:            media[1],
-			Banner:          media[0],
+			Title:              book.Title,
+			Description:        book.Description,
+			CreatedAt:          book.CreatedAt,
+			Price:              book.Price,
+			FloorPrice:         book.FloorPrice,
+			ContractAddress:    book.ContractAddress,
+			ContractName:       book.ContractName,
+			ContractSymbol:     book.ContractSymbol,
+			ContractVersion:    book.ContractVersion,
+			TokenId:            book.TokenId,
+			DeployStatus:       book.DeployStatus,
+			File:               media[1],
+			Banner:             media[0],
+			VoucherToken:       book.VoucherToken,
+			VoucherTokenAmount: book.VoucherTokenAmount,
+			ChainId:            book.ChainId,
 		},
 	}
 
@@ -97,8 +106,12 @@ func applyQBooksFilters(q data.BookQ, request *requests.ListBooksRequest) data.B
 		q = q.FilterByTokenId(request.TokenId...)
 	}
 
-	q = q.Page(request.OffsetPageParams)
-	q = q.FilterActual()
+	if request.Title != nil {
+		q = q.FilterByTitle(*request.Title)
+	}
 
+	if len(request.ChainId) > 0 {
+		q = q.FilterByChainId(request.ChainId...)
+	}
 	return q
 }

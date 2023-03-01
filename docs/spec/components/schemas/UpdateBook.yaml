@@ -10,11 +10,15 @@ allOf:
           title:
             type: string
             description: Book title
-            example: "BDS volume 1"
+            example: BDS volume 1
+          contract_name:
+            type: string
+            description: Contract name (in most cases coincides with a title field)
+            example: BDS volume 1
           description:
             type: string
             description: Book description
-            example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+            example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
           banner:
             description: Banner info
             $ref: '#/components/schemas/Media'
@@ -24,7 +28,7 @@ allOf:
           contract_address:
             description: Address of a contract corresponding to this book
             type: string
-            example: "0xff04b6fBd9FEcbcac666cc0FFfEed58488c73c7B"
+            example: '0xff04b6fBd9FEcbcac666cc0FFfEed58488c73c7B'
           deploy_status:
             type: DeployStatus
             description: status of a book deployment
@@ -39,6 +43,20 @@ allOf:
           token_symbol:
             type: string
             description: Token symbol
+            example: BDS1
           price:
             type: string
             description: Price per one token ($)
+            example: '1000'
+          floor_price:
+            type: string
+            description: Book floor price ($)
+            example: '10050'
+          voucher_token:
+            type: string
+            description: >-
+              Voucher token contract address, that can be used to claim free
+              book
+          voucher_token_amount:
+            type: string
+            description: How many voucher tokens user have to pay that book
