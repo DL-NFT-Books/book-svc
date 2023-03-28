@@ -5,7 +5,7 @@ import (
 
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"gitlab.com/tokend/nft-books/book-svc/resources"
+	"github.com/dl-nft-books/book-svc/resources"
 )
 
 type ListBooksRequest struct {

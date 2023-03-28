@@ -1,6 +1,6 @@
 package responses
 
-import "gitlab.com/tokend/nft-books/book-svc/resources"
+import "github.com/dl-nft-books/book-svc/resources"
 
 func NewSignCreateResponse(bookId, tokenId int64, signature resources.SignatureAttributes) resources.CreateSignatureResponse {
 	createSignatureKey := resources.NewKeyInt64(1, resources.CREATE_SIGNATURES)

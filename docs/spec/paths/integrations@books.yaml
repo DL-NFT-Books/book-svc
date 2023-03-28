@@ -18,7 +18,6 @@ post:
           type: object
           properties:
             data:
-              type: object
               $ref: '#/components/schemas/CreateBook'
   responses:
     '200':
@@ -52,7 +51,6 @@ post:
       content:
         application/json:
           schema:
-            type: object
             $ref: '#/components/schemas/UnauthorizedError'
     '500':
       $ref: '#/components/responses/InternalError'
@@ -68,6 +66,7 @@ get:
     - $ref: '#/components/parameters/DeployStatusFilterParam'
     - in: query
       name: 'filter[title]'
+      description: Title or a part of a title to be filtered with
       required: false
       schema:
         type: string
@@ -91,6 +90,19 @@ get:
                 type: array
                 items:
                   $ref: '#/components/schemas/Book'
+    '400':
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - errors
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CreateBookError'
     '404':
       $ref: '#/components/responses/NotFound'
     '500':

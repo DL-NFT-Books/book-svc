@@ -1,22 +1,23 @@
 package handlers
 
 import (
+	"github.com/dl-nft-books/book-svc/solidity/generated/rolemanager"
 	"github.com/ethereum/go-ethereum/common"
 	"math/big"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/dl-nft-books/book-svc/internal/data"
+	"github.com/dl-nft-books/book-svc/internal/data/postgres"
+	"github.com/dl-nft-books/book-svc/internal/service/api/helpers"
+	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
+	"github.com/dl-nft-books/book-svc/internal/service/api/responses"
+	"github.com/dl-nft-books/book-svc/internal/signature"
+	"github.com/dl-nft-books/book-svc/resources"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/responses"
-	"gitlab.com/tokend/nft-books/book-svc/internal/signature"
-	"gitlab.com/tokend/nft-books/book-svc/resources"
 )
 
 var (
@@ -27,10 +28,38 @@ var (
 
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	logger := helpers.Log(r)
+	networker := helpers.Networker(r)
 
 	request, err := requests.NewCreateBookRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
+		return
+	}
+	if _, err := networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId); err != nil {
+		logger.WithError(err).Error("default failed to check if network exists")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+
+	network, err := networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId)
+
+	address := r.Context().Value("address").(string)
+
+	roleManager, err := rolemanager.NewRolemanager(common.HexToAddress(network.FactoryAddress), network.RpcUrl)
+	if err != nil {
+		logger.WithError(err).Debug("failed to create role manager")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	isAdmin, err := roleManager.RolemanagerCaller.IsAdmin(nil, common.HexToAddress(address))
+	if err != nil {
+		logger.WithError(err).Debug("failed to check is admin")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	if !isAdmin {
+		logger.Debug("not admin's address")
+		ape.RenderErr(w, problems.Forbidden())
 		return
 	}
 
@@ -79,15 +108,6 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// Forming signature createInfo
 	signatureConfig := helpers.DeploySignatureConfig(r)
-	networker := helpers.Networker(r)
-
-	if _, err = networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId); err != nil {
-		logger.WithError(err).Error("default failed to check if network exists")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-
-	network, err := networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId)
 
 	if err != nil {
 		logger.WithError(err).Error("failed to check if network exists")
@@ -146,24 +166,14 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// Saving book to the database
 	book := data.Book{
-		Title:              request.Data.Attributes.Title,
-		Description:        request.Data.Attributes.Description,
-		CreatedAt:          time.Now(),
-		Price:              request.Data.Attributes.Price,
-		FloorPrice:         createInfo.FloorPrice.String(),
-		ContractAddress:    "mocked",
-		ContractName:       request.Data.Attributes.TokenName,
-		ContractSymbol:     request.Data.Attributes.TokenSymbol,
-		ContractVersion:    network.FactoryVersion,
-		Banner:             media[0],
-		File:               media[1],
-		Deleted:            false,
-		TokenId:            createInfo.TokenContractId,
-		DeployStatus:       resources.DeployPending,
-		LastBlock:          0,
-		ChainId:            request.Data.Attributes.ChainId,
-		VoucherToken:       createInfo.VoucherTokenContract,
-		VoucherTokenAmount: createInfo.VoucherTokensAmount.String(),
+		Description:     request.Data.Attributes.Description,
+		CreatedAt:       time.Now(),
+		ContractAddress: "mocked",
+		Banner:          media[0],
+		File:            media[1],
+		TokenId:         createInfo.TokenContractId,
+		DeployStatus:    resources.DeployPending,
+		ChainId:         request.Data.Attributes.ChainId,
 	}
 
 	db := helpers.DB(r)

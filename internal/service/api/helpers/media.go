@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/dl-nft-books/book-svc/resources"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/nft-books/book-svc/resources"
 )
 
 func MarshalMedia(media ...*resources.Media) []string {

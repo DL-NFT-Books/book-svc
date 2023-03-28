@@ -3,9 +3,9 @@ package responses
 import (
 	"github.com/pkg/errors"
 	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
-	"gitlab.com/tokend/nft-books/book-svc/resources"
+	"github.com/dl-nft-books/book-svc/internal/service/api/helpers"
+	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
+	"github.com/dl-nft-books/book-svc/resources"
 	"net/http"
 )
 

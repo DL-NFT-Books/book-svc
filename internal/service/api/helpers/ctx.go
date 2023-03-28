@@ -2,10 +2,10 @@ package helpers
 
 import (
 	"context"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data"
+	"github.com/dl-nft-books/book-svc/internal/data"
 	"net/http"
 
-	"gitlab.com/tokend/nft-books/book-svc/internal/config"
+	"github.com/dl-nft-books/book-svc/internal/config"
 	"gitlab.com/tokend/nft-books/doorman/connector"
 	networker "gitlab.com/tokend/nft-books/network-svc/connector"
 

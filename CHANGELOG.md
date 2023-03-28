@@ -34,7 +34,7 @@ All notable changes to this project will be documented in this file.
 - First stable version with basic functions: adding, updating, deleting, and getting book. 
 
 
-[1.1.0]: https://gitlab.com/tokend/nft-books/book-svc/compare/1.0.0...1.1.0
-[1.0.0]: https://gitlab.com/tokend/nft-books/book-svc/compare/1.0.0-rc.0...1.0.0
-[1.0.0-rc.0]: https://gitlab.com/tokend/nft-books/book-svc/tags/1.0.0-rc.0
+[1.1.0]: https://github.com/dl-nft-books/book-svc/compare/1.0.0...1.1.0
+[1.0.0]: https://github.com/dl-nft-books/book-svc/compare/1.0.0-rc.0...1.0.0
+[1.0.0-rc.0]: https://github.com/dl-nft-books/book-svc/tags/1.0.0-rc.0
 

@@ -3,19 +3,22 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"github.com/dl-nft-books/book-svc/solidity/generated/rolemanager"
+	"github.com/ethereum/go-ethereum/common"
 	"gitlab.com/distributed_lab/logan/v3"
 	"net/http"
 
+	"github.com/dl-nft-books/book-svc/internal/data"
+	"github.com/dl-nft-books/book-svc/internal/service/api/helpers"
+	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
 )
 
-var invalidContractNameErr = errors.New("invalid contract name length")
-
 func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
+
+	logger := helpers.Log(r)
+	networker := helpers.Networker(r)
 	request, err := requests.NewUpdateBookRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
@@ -31,14 +34,45 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
+
+	if _, err := networker.GetNetworkDetailedByChainID(book.ChainId); err != nil {
+		logger.WithError(err).Error("default failed to check if network exists")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+
+	network, err := networker.GetNetworkDetailedByChainID(book.ChainId)
+
+	address := r.Context().Value("address").(string)
+
+	roleManager, err := rolemanager.NewRolemanager(common.HexToAddress(network.FactoryAddress), network.RpcUrl)
+	if err != nil {
+		logger.WithError(err).Debug("failed to create role manager")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	isAdmin, err := roleManager.RolemanagerCaller.IsAdmin(nil, common.HexToAddress(address))
+	if err != nil {
+		logger.WithError(err).Debug("failed to check is admin")
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	if !isAdmin {
+		isMarketPlaceManager, err := roleManager.RolemanagerCaller.IsMarketplaceManager(nil, common.HexToAddress(address))
+		if err != nil {
+			logger.WithError(err).Debug("failed to check is admin")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		if !isMarketPlaceManager {
+			logger.WithFields(logan.F{"address": address}).Debug("user don't have access")
+			ape.RenderErr(w, problems.Forbidden())
+			return
+		}
+	}
+
 	updateParams := data.BookUpdateParams{
-		Contract:           request.Data.Attributes.ContractAddress,
-		DeployStatus:       request.Data.Attributes.DeployStatus,
-		Price:              request.Data.Attributes.Price,
-		FloorPrice:         request.Data.Attributes.FloorPrice,
-		Symbol:             request.Data.Attributes.TokenSymbol,
-		VoucherToken:       request.Data.Attributes.VoucherToken,
-		VoucherTokenAmount: request.Data.Attributes.VoucherTokenAmount,
+		DeployStatus: request.Data.Attributes.DeployStatus,
 	}
 
 	// Collecting update params
@@ -76,29 +110,6 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 
 		fileMediaRaw := helpers.MarshalMedia(file)
 		updateParams.File = &fileMediaRaw[0]
-	}
-
-	title := request.Data.Attributes.Title
-	if title != nil {
-		if len(*title) > requests.MaxTitleLength {
-			err = errors.New(fmt.Sprintf("invalid title length (max len is %v)", requests.MaxTitleLength))
-			helpers.Log(r).WithError(err).Error("failed to validate book's title")
-			ape.RenderErr(w, problems.BadRequest(err)...)
-			return
-		}
-
-		updateParams.Title = title
-	}
-
-	contractName := request.Data.Attributes.ContractName
-	if contractName != nil {
-		if len(*contractName) > requests.MaxTitleLength {
-			helpers.Log(r).WithFields(logan.F{"max_title_len": requests.MaxTitleLength}).Error(invalidContractNameErr)
-			ape.RenderErr(w, problems.BadRequest(invalidContractNameErr)...)
-			return
-		}
-
-		updateParams.ContractName = contractName
 	}
 
 	description := request.Data.Attributes.Description

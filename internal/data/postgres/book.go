@@ -4,33 +4,24 @@ import (
 	"database/sql"
 	"strings"
 
-	"gitlab.com/tokend/nft-books/book-svc/resources"
+	"github.com/dl-nft-books/book-svc/resources"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/dl-nft-books/book-svc/internal/data"
 	"github.com/fatih/structs"
 	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data"
 )
 
 const (
-	booksTableName           = "book"
-	idColumn                 = "id"
-	tokenIdColumn            = "token_id"
-	priceColumn              = "price"
-	floorPriceColumn         = "floor_price"
-	deletedColumn            = "deleted"
-	contractNameColumn       = "contract_name"
-	contractAddressColumn    = "contract_address"
-	deployStatusColumn       = "deploy_status"
-	contractSymbolColumn     = "contract_symbol"
-	bannerColumn             = "banner"
-	fileColumn               = "file"
-	titleColumn              = "title"
-	lastBlockColumn          = "last_block"
-	descriptionColumn        = "description"
-	chainIdColumn            = "chain_id"
-	voucherTokenColumn       = "voucher_token"
-	voucherTokenAmountColumn = "voucher_token_amount"
+	booksTableName        = "book"
+	idColumn              = "id"
+	tokenIdColumn         = "token_id"
+	contractAddressColumn = "contract_address"
+	deployStatusColumn    = "deploy_status"
+	bannerColumn          = "banner"
+	fileColumn            = "file"
+	descriptionColumn     = "description"
+	chainIdColumn         = "chain_id"
 )
 
 func NewBooksQ(db *pgdb.DB) data.BookQ {
@@ -120,24 +111,6 @@ func (b *BooksQ) Page(params pgdb.OffsetPageParams) data.BookQ {
 	return b
 }
 
-func (b *BooksQ) FilterActual() data.BookQ {
-	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{
-		deletedColumn: "f",
-	})
-
-	return b
-}
-
-func (b *BooksQ) DeleteByID(id int64) error {
-	stmt := b.updateBuilder.
-		Set(deletedColumn, "t").
-		Where(squirrel.Eq{
-			idColumn: id,
-		})
-
-	return b.db.Exec(stmt)
-}
-
 func (b *BooksQ) Update(updater data.BookUpdateParams, id int64) error {
 	return b.db.Exec(
 		b.applyUpdateParams(b.updateBuilder, updater).
@@ -153,46 +126,7 @@ func (b *BooksQ) applyUpdateParams(sql squirrel.UpdateBuilder, updater data.Book
 	if updater.Banner != nil {
 		sql = sql.Set(bannerColumn, *updater.Banner)
 	}
-	if updater.Title != nil {
-		sql = sql.Set(titleColumn, *updater.Title)
-	}
-	if updater.Description != nil {
-		sql = sql.Set(descriptionColumn, *updater.Description)
-	}
-	if updater.Contract != nil {
-		sql = sql.Set(contractAddressColumn, *updater.Contract)
-	}
-	if updater.ContractName != nil {
-		sql = sql.Set(contractNameColumn, *updater.ContractName)
-	}
-	if updater.DeployStatus != nil {
-		sql = sql.Set(deployStatusColumn, *updater.DeployStatus)
-	}
-	if updater.Symbol != nil {
-		sql = sql.Set(contractSymbolColumn, *updater.Symbol)
-	}
-	if updater.Price != nil {
-		sql = sql.Set(priceColumn, *updater.Price)
-	}
-	if updater.FloorPrice != nil {
-		sql = sql.Set(floorPriceColumn, *updater.FloorPrice)
-	}
-	if updater.VoucherToken != nil {
-		sql = sql.Set(voucherTokenColumn, *updater.VoucherToken)
-	}
-	if updater.VoucherTokenAmount != nil {
-		sql = sql.Set(voucherTokenAmountColumn, *updater.VoucherTokenAmount)
-	}
-
 	return sql
-}
-
-func (b *BooksQ) UpdatePrice(price string, id int64) error {
-	return b.db.Exec(b.updateBuilder.Set(priceColumn, price).Where(squirrel.Eq{idColumn: id}))
-}
-
-func (b *BooksQ) UpdateContractName(name string, id int64) error {
-	return b.db.Exec(b.updateBuilder.Set(contractNameColumn, name).Where(squirrel.Eq{idColumn: id}))
 }
 
 func (b *BooksQ) UpdateDeployStatus(newStatus resources.DeployStatus, id int64) error {
@@ -201,23 +135,4 @@ func (b *BooksQ) UpdateDeployStatus(newStatus resources.DeployStatus, id int64) 
 
 func (b *BooksQ) UpdateContractAddress(newAddress string, id int64) error {
 	return b.db.Exec(b.updateBuilder.Set(contractAddressColumn, newAddress).Where(squirrel.Eq{idColumn: id}))
-}
-
-func (b *BooksQ) UpdateLastBlock(newLastBlock uint64, id int64) error {
-	return b.db.Exec(b.updateBuilder.Set(lastBlockColumn, newLastBlock).Where(squirrel.Eq{idColumn: id}))
-}
-
-func (b *BooksQ) UpdateSymbol(newSymbol string, id int64) error {
-	return b.db.Exec(b.updateBuilder.Set(contractSymbolColumn, newSymbol).Where(squirrel.Eq{idColumn: id}))
-}
-
-func (b *BooksQ) UpdateContractParams(name, symbol, price string, id int64) error {
-	return b.db.Exec(b.updateBuilder.
-		Set(contractNameColumn, name).
-		Set(contractSymbolColumn, symbol).
-		Set(priceColumn, price).
-		Where(squirrel.Eq{
-			idColumn: id,
-		}),
-	)
 }

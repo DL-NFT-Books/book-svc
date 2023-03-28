@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"gitlab.com/tokend/nft-books/book-svc/internal/assets"
-	"gitlab.com/tokend/nft-books/book-svc/internal/config"
+	"github.com/dl-nft-books/book-svc/internal/assets"
+	"github.com/dl-nft-books/book-svc/internal/config"
 
 	migrate "github.com/rubenv/sql-migrate"
 	"gitlab.com/distributed_lab/logan/v3/errors"

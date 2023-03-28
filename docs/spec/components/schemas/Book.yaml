@@ -62,10 +62,8 @@ allOf:
             description: Token contract version
             example: '1'
           banner:
-            description: Banner info
             $ref: '#/components/schemas/Media'
           file:
-            description: File info
             $ref: '#/components/schemas/Media'
           token_id:
             type: integer
@@ -73,7 +71,7 @@ allOf:
             description: id from the contract that corresponds to the given book
             example: 5
           deploy_status:
-            type: DeployStatus
+            type: integer
             description: status of a book deployment
             enum:
               - name: pending
@@ -90,9 +88,7 @@ allOf:
             example: 5
           voucher_token:
             type: string
-            description: >-
-              Voucher token contract address, that can be used to claim free
-              book
+            description: 'Voucher token contract address, that can be used to claim free book'
             example: '0xdac17f958d2ee523a2206206994597c13d831ec7'
           voucher_token_amount:
             type: string

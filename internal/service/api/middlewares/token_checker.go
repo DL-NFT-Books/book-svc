@@ -1,20 +1,21 @@
 package middlewares
 
 import (
+	"context"
 	"net/http"
 
+	"github.com/dl-nft-books/book-svc/internal/service/api/helpers"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
 )
 
 func CheckAccessToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if _, err := helpers.ValidateJwt(r); err != nil {
+		address, err := helpers.ValidateJwt(r)
+		if err != nil {
 			ape.RenderErr(w, problems.Unauthorized())
 			return
 		}
-
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), "address", address)))
 	})
 }

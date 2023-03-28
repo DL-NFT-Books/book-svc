@@ -1,13 +1,13 @@
 package api
 
 import (
+	"github.com/dl-nft-books/book-svc/internal/service/api/handlers"
+	"github.com/dl-nft-books/book-svc/internal/service/api/helpers"
+	"github.com/dl-nft-books/book-svc/internal/service/api/middlewares"
 	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/ape"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/handlers"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/middlewares"
 
-	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
+	"github.com/dl-nft-books/book-svc/internal/data/postgres"
 )
 
 func (s *service) router() chi.Router {
@@ -39,7 +39,6 @@ func (s *service) router() chi.Router {
 		r.Route("/{id}", func(r chi.Router) {
 			r.Get("/", handlers.GetBookByID)
 			r.With(middlewares.CheckAccessToken).Patch("/", handlers.UpdateBookByID)
-			r.With(middlewares.CheckAccessToken).Delete("/", handlers.DeleteBookByID)
 		})
 	})
 

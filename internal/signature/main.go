@@ -11,8 +11,8 @@ import (
 	"github.com/ethersphere/bee/pkg/crypto/eip712"
 	sha3 "github.com/miguelmota/go-solidity-sha3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/nft-books/book-svc/internal/config"
-	"gitlab.com/tokend/nft-books/book-svc/resources"
+	"github.com/dl-nft-books/book-svc/internal/config"
+	"github.com/dl-nft-books/book-svc/resources"
 )
 
 func SignCreateInfo(

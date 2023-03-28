@@ -4,15 +4,15 @@ import (
 	"net/http"
 	"strconv"
 
-	"gitlab.com/tokend/nft-books/book-svc/internal/data/postgres"
+	"github.com/dl-nft-books/book-svc/internal/data/postgres"
 
-	"gitlab.com/tokend/nft-books/book-svc/internal/data"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
-	"gitlab.com/tokend/nft-books/book-svc/resources"
+	"github.com/dl-nft-books/book-svc/internal/data"
+	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
+	"github.com/dl-nft-books/book-svc/resources"
 )
 
 func GetBookByID(r *http.Request, id int64) (*data.Book, error) {
-	return DB(r).Books().FilterActual().FilterByID(id).Get()
+	return DB(r).Books().FilterByID(id).Get()
 }
 
 func GetBooksCount(r *http.Request, request *requests.ListBooksRequest) (uint64, error) {
@@ -20,7 +20,7 @@ func GetBooksCount(r *http.Request, request *requests.ListBooksRequest) (uint64,
 }
 
 func GetBookListByRequest(r *http.Request, request *requests.ListBooksRequest) ([]data.Book, error) {
-	return applyQBooksFilters(DB(r).Books(), request).Page(request.OffsetPageParams).FilterActual().Select()
+	return applyQBooksFilters(DB(r).Books(), request).Page(request.OffsetPageParams).Select()
 }
 
 func NewBooksList(books []data.Book) ([]resources.Book, error) {
@@ -54,22 +54,14 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 	res := resources.Book{
 		Key: resources.NewKeyInt64(book.ID, resources.BOOKS),
 		Attributes: resources.BookAttributes{
-			Title:              book.Title,
-			Description:        book.Description,
-			CreatedAt:          book.CreatedAt,
-			Price:              book.Price,
-			FloorPrice:         book.FloorPrice,
-			ContractAddress:    book.ContractAddress,
-			ContractName:       book.ContractName,
-			ContractSymbol:     book.ContractSymbol,
-			ContractVersion:    book.ContractVersion,
-			TokenId:            book.TokenId,
-			DeployStatus:       book.DeployStatus,
-			File:               media[1],
-			Banner:             media[0],
-			VoucherToken:       book.VoucherToken,
-			VoucherTokenAmount: book.VoucherTokenAmount,
-			ChainId:            book.ChainId,
+			Description:     book.Description,
+			CreatedAt:       book.CreatedAt,
+			ContractAddress: book.ContractAddress,
+			TokenId:         book.TokenId,
+			DeployStatus:    book.DeployStatus,
+			File:            media[1],
+			Banner:          media[0],
+			ChainId:         book.ChainId,
 		},
 	}
 
@@ -105,11 +97,6 @@ func applyQBooksFilters(q data.BookQ, request *requests.ListBooksRequest) data.B
 	if len(request.TokenId) > 0 {
 		q = q.FilterByTokenId(request.TokenId...)
 	}
-
-	if request.Title != nil {
-		q = q.FilterByTitle(*request.Title)
-	}
-
 	if len(request.ChainId) > 0 {
 		q = q.FilterByChainId(request.ChainId...)
 	}

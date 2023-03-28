@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/responses"
+	"github.com/dl-nft-books/book-svc/internal/service/api/responses"
 	"net/http"
 
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
-	"gitlab.com/tokend/nft-books/book-svc/resources"
+	"github.com/dl-nft-books/book-svc/internal/service/api/helpers"
+	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
+	"github.com/dl-nft-books/book-svc/resources"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"

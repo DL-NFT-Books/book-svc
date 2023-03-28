@@ -20,17 +20,15 @@ allOf:
             description: Book description
             example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
           banner:
-            description: Banner info
             $ref: '#/components/schemas/Media'
           file:
-            description: File info
             $ref: '#/components/schemas/Media'
           contract_address:
             description: Address of a contract corresponding to this book
             type: string
             example: '0xff04b6fBd9FEcbcac666cc0FFfEed58488c73c7B'
           deploy_status:
-            type: DeployStatus
+            type: integer
             description: status of a book deployment
             enum:
               - name: pending

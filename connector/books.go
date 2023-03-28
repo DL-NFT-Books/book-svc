@@ -3,14 +3,14 @@ package connector
 import (
 	"encoding/json"
 	"fmt"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
+	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
 
+	"github.com/dl-nft-books/book-svc/connector/models"
+	"github.com/dl-nft-books/book-svc/resources"
 	"github.com/spf13/cast"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/urlval"
-	"gitlab.com/tokend/nft-books/book-svc/connector/models"
-	"gitlab.com/tokend/nft-books/book-svc/resources"
 )
 
 const booksEndpoint = "books"

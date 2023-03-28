@@ -6,7 +6,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"net/http"
 
-	"gitlab.com/tokend/nft-books/book-svc/resources"
+	"github.com/dl-nft-books/book-svc/resources"
 )
 
 const (
