@@ -3,7 +3,6 @@ package handlers
 import (
 	"github.com/dl-nft-books/book-svc/solidity/generated/rolemanager"
 	"github.com/ethereum/go-ethereum/common"
-	"math/big"
 	"net/http"
 	"strconv"
 	"time"
@@ -12,18 +11,10 @@ import (
 	"github.com/dl-nft-books/book-svc/internal/data/postgres"
 	"github.com/dl-nft-books/book-svc/internal/service/api/helpers"
 	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
-	"github.com/dl-nft-books/book-svc/internal/service/api/responses"
-	"github.com/dl-nft-books/book-svc/internal/signature"
 	"github.com/dl-nft-books/book-svc/resources"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-)
-
-var (
-	// if there is no voucher then passing null address and 0 amount
-	zeroVoucher       = common.Address{}.String()
-	zeroVoucherAmount = big.NewInt(0)
 )
 
 func CreateBook(w http.ResponseWriter, r *http.Request) {
@@ -93,12 +84,6 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokenPrice, ok := big.NewInt(0).SetString(request.Data.Attributes.Price, 10)
-	if !ok {
-		logger.Error("failed to cast token price to big.Int")
-		ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse token price"))...)
-		return
-	}
 	lastTokenContractID, err := helpers.GetLastTokenID(r)
 	if err != nil {
 		logger.WithError(err).Error("failed to get last token id")
@@ -106,63 +91,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Forming signature createInfo
-	signatureConfig := helpers.DeploySignatureConfig(r)
-
-	if err != nil {
-		logger.WithError(err).Error("failed to check if network exists")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-	if network == nil {
-		logger.Error("network doesn't exist")
-		ape.RenderErr(w, problems.NotFound())
-		return
-	}
-	domainData := signature.EIP712DomainData{
-		VerifyingAddress: network.FactoryAddress,
-		ContractName:     network.FactoryName,
-		ContractVersion:  network.FactoryVersion,
-		ChainID:          network.ChainId,
-	}
-
-	// if there is no voucher then passing null address and 0 amount
-	voucher := zeroVoucher
-	voucherAmount := zeroVoucherAmount
-
-	if request.Data.Attributes.VoucherToken != nil && request.Data.Attributes.VoucherTokenAmount != nil {
-		voucher = *request.Data.Attributes.VoucherToken
-		voucherAmount, ok = big.NewInt(0).SetString(*request.Data.Attributes.VoucherTokenAmount, 10)
-		if !ok {
-			logger.Error("failed to cast price to big.Int")
-			ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse voucherTokenAmount"))...)
-			return
-		}
-	}
-
-	floorPrice, ok := big.NewInt(0).SetString(request.Data.Attributes.FloorPrice, 10)
-	if !ok {
-		logger.Error("failed to cast floor price to big.Int")
-		ape.RenderErr(w, problems.BadRequest(errors.New("failed to parse floor price"))...)
-		return
-	}
-	createInfo := signature.CreateInfo{
-		TokenContractId:      lastTokenContractID + 1,
-		TokenName:            request.Data.Attributes.TokenName,
-		TokenSymbol:          request.Data.Attributes.TokenSymbol,
-		PricePerOneToken:     tokenPrice,
-		VoucherTokenContract: voucher,
-		VoucherTokensAmount:  voucherAmount,
-		FloorPrice:           floorPrice,
-	}
-
-	// Signing
-	createSignature, err := signature.SignCreateInfo(&createInfo, &domainData, signatureConfig)
-	if err != nil {
-		logger.WithError(err).Error("failed to generate eip712 create signature")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
+	tokenContractId := lastTokenContractID + 1
 
 	// Saving book to the database
 	book := data.Book{
@@ -171,7 +100,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ContractAddress: "mocked",
 		Banner:          media[0],
 		File:            media[1],
-		TokenId:         createInfo.TokenContractId,
+		TokenId:         tokenContractId,
 		DeployStatus:    resources.DeployPending,
 		ChainId:         request.Data.Attributes.ChainId,
 	}
@@ -189,7 +118,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		// Updating last token id
 		if err = db.KeyValue().Upsert(data.KeyValue{
 			Key:   postgres.TokenIdIncrementKey,
-			Value: strconv.FormatInt(createInfo.TokenContractId, 10),
+			Value: strconv.FormatInt(tokenContractId, 10),
 		}); err != nil {
 			return errors.Wrap(err, "failed to update last created token id")
 		}
@@ -201,6 +130,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-
-	ape.Render(w, responses.NewSignCreateResponse(bookId, createInfo.TokenContractId, *createSignature))
+	ape.Render(w, resources.KeyResponse{
+		Data: resources.NewKeyInt64(bookId, resources.BOOKS),
+	})
 }

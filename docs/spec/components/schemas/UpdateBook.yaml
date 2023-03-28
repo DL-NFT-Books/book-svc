@@ -30,6 +30,7 @@ allOf:
           deploy_status:
             type: integer
             description: status of a book deployment
+            format: DeployStatus
             enum:
               - name: pending
                 value: 1
