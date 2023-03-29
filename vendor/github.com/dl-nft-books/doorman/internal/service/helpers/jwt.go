@@ -8,7 +8,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pkg/errors"
 
-	"gitlab.com/tokend/nft-books/doorman/internal/config"
+	"github.com/dl-nft-books/doorman/internal/config"
 )
 
 type standardClaims struct {

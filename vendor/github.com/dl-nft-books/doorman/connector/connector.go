@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"gitlab.com/tokend/nft-books/doorman/internal/service/helpers"
-	"gitlab.com/tokend/nft-books/doorman/resources"
+	"github.com/dl-nft-books/doorman/internal/service/helpers"
+	"github.com/dl-nft-books/doorman/resources"
 
 	"github.com/pkg/errors"
 )

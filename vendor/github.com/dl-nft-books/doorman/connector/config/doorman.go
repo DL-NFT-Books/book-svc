@@ -5,7 +5,7 @@ import (
 	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/nft-books/doorman/connector"
+	"github.com/dl-nft-books/doorman/connector"
 )
 
 type DoormanConfiger interface {

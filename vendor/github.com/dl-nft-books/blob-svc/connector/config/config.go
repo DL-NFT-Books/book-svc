@@ -5,7 +5,7 @@ import (
 	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/nft-books/blob-svc/connector/api"
+	"github.com/dl-nft-books/blob-svc/connector/api"
 )
 
 type Documenter interface {

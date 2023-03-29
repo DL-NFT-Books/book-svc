@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"gitlab.com/tokend/nft-books/doorman/resources"
+	"github.com/dl-nft-books/doorman/resources"
 )
 
 type ConnectorMockKyc struct {

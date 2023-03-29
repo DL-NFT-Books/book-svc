@@ -6,11 +6,11 @@ import (
 	"net/http"
 
 	"github.com/dl-nft-books/book-svc/internal/config"
-	"gitlab.com/tokend/nft-books/doorman/connector"
-	networker "gitlab.com/tokend/nft-books/network-svc/connector"
+	"github.com/dl-nft-books/doorman/connector"
+	networker "github.com/dl-nft-books/network-svc/connector"
 
 	"gitlab.com/distributed_lab/logan/v3"
-	s3connector "gitlab.com/tokend/nft-books/blob-svc/connector/api"
+	s3connector "github.com/dl-nft-books/blob-svc/connector/api"
 )
 
 type ctxKey int

@@ -1,7 +1,7 @@
 package connector
 
 import (
-	"gitlab.com/tokend/nft-books/doorman/resources"
+	"github.com/dl-nft-books/doorman/resources"
 )
 
 func NewClaimsModel(address string, purpose string) resources.JwtClaims {

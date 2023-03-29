@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/nft-books/blob-svc/connector/models"
+	"github.com/dl-nft-books/blob-svc/connector/models"
 )
 
 func (c *Connector) GetDocumentLink(key string) (models.LinkResponse, error) {

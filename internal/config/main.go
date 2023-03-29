@@ -6,9 +6,9 @@ import (
 	"gitlab.com/distributed_lab/kit/copus/types"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/kit/pgdb"
-	documenter "gitlab.com/tokend/nft-books/blob-svc/connector/config"
-	doormaner "gitlab.com/tokend/nft-books/doorman/connector/config"
-	networker "gitlab.com/tokend/nft-books/network-svc/connector"
+	documenter "github.com/dl-nft-books/blob-svc/connector/config"
+	doormaner "github.com/dl-nft-books/doorman/connector/config"
+	networker "github.com/dl-nft-books/network-svc/connector"
 )
 
 type Config interface {
