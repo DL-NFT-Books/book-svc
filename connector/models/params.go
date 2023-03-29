@@ -11,11 +11,6 @@ type (
 		Banner      resources.Media
 		Description string
 		File        resources.Media
-		Price       string
-		FloorPrice  string
-		Title       string
-		TokenName   string
-		TokenSymbol string
 	}
 
 	// UpdateBookParams is a helper struct to be included when calling UpdateBook request

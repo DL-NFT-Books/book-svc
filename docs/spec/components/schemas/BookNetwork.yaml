@@ -1,0 +1,40 @@
+allOf:
+  - $ref: '#/components/schemas/BookNetworkKey'
+  - type: object
+    required:
+      - attributes
+    properties:
+      attributes:
+        type: object
+        required:
+          - contract_address
+          - token_id
+          - deploy_status
+          - chain_id
+        properties:
+          contract_address:
+            type: string
+            description: Token contract address
+            example: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+          token_id:
+            type: integer
+            format: int64
+            description: id from the contract that corresponds to the given book
+            example: 5
+          deploy_status:
+            type: integer
+            description: status of a book deployment
+            format: DeployStatus
+            enum:
+              - name: pending
+                value: 1
+              - name: successful
+                value: 2
+              - name: failed
+                value: 3
+            example: 2
+          chain_id:
+            type: integer
+            format: int64
+            description: Networks chain id
+            example: 5

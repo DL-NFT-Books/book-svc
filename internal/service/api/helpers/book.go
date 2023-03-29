@@ -1,6 +1,8 @@
 package helpers
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -43,25 +45,39 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 		return nil, nil
 	}
 
-	media, err := UnmarshalMedia(book.Banner, book.File)
-	if err != nil {
+	//media, err := UnmarshalMedia(book.Banner, book.File)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//media[0].Key = resources.NewKeyInt64(book.ID, resources.BANNERS)
+	//media[1].Key = resources.NewKeyInt64(book.ID, resources.FILES)
+	fmt.Println(book.Description, book.NetworkAsString)
+	var networksAttributes []resources.BookNetworkAttributes
+	if err := json.Unmarshal([]byte(book.NetworkAsString), &networksAttributes); err != nil {
 		return nil, err
 	}
-
-	media[0].Key = resources.NewKeyInt64(book.ID, resources.BANNERS)
-	media[1].Key = resources.NewKeyInt64(book.ID, resources.FILES)
-
+	var networks []resources.BookNetwork
+	for i, network := range networksAttributes {
+		networks = append(networks, resources.BookNetwork{
+			Key:        resources.NewKeyInt64(int64(i), resources.BOOK_NETWORK),
+			Attributes: network,
+		})
+	}
 	res := resources.Book{
 		Key: resources.NewKeyInt64(book.ID, resources.BOOKS),
 		Attributes: resources.BookAttributes{
-			Description:     book.Description,
-			CreatedAt:       book.CreatedAt,
-			ContractAddress: book.ContractAddress,
-			TokenId:         book.TokenId,
-			DeployStatus:    book.DeployStatus,
-			File:            media[1],
-			Banner:          media[0],
-			ChainId:         book.ChainId,
+			Description: book.Description,
+			CreatedAt:   book.CreatedAt,
+			File: resources.Media{
+				Key:        resources.Key{},
+				Attributes: resources.MediaAttributes{},
+			},
+			Banner: resources.Media{
+				Key:        resources.Key{},
+				Attributes: resources.MediaAttributes{},
+			},
+			Networks: networks,
 		},
 	}
 

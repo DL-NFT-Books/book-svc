@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"github.com/dl-nft-books/book-svc/solidity/generated/contractsregistry"
 	"github.com/dl-nft-books/book-svc/solidity/generated/rolemanager"
 	"github.com/ethereum/go-ethereum/common"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -24,55 +25,66 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-
-	book, err := helpers.GetBookByID(r, request.ID)
+	address := r.Context().Value("address").(string)
+	bookData, err := helpers.GetBookByID(r, request.ID)
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-	if book == nil {
+	if bookData == nil {
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
-
-	if _, err := networker.GetNetworkDetailedByChainID(book.ChainId); err != nil {
-		logger.WithError(err).Error("default failed to check if network exists")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-
-	network, err := networker.GetNetworkDetailedByChainID(book.ChainId)
-
-	address := r.Context().Value("address").(string)
-
-	roleManager, err := rolemanager.NewRolemanager(common.HexToAddress(network.FactoryAddress), network.RpcUrl)
-	if err != nil {
-		logger.WithError(err).Debug("failed to create role manager")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-	isAdmin, err := roleManager.RolemanagerCaller.IsAdmin(nil, common.HexToAddress(address))
-	if err != nil {
-		logger.WithError(err).Debug("failed to check is admin")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-	if !isAdmin {
-		isMarketPlaceManager, err := roleManager.RolemanagerCaller.IsMarketplaceManager(nil, common.HexToAddress(address))
+	book, err := helpers.NewBook(bookData)
+	for _, networkData := range book.Attributes.Networks {
+		network, err := networker.GetNetworkDetailedByChainID(networkData.Attributes.ChainId)
+		if err != nil {
+			logger.WithError(err).Error("default failed to check if network exists")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		contractRegistry, err := contractsregistry.NewContractsregistry(common.HexToAddress(network.FactoryAddress), network.RpcUrl)
+		if err != nil {
+			logger.WithError(err).Debug("failed to create contract registry")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		roleManagerContract, err := contractRegistry.GetRoleManagerContract(nil)
+		if err != nil {
+			logger.WithError(err).Debug("failed to get role manager contract")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		roleManager, err := rolemanager.NewRolemanager(roleManagerContract, network.RpcUrl)
+		if err != nil {
+			logger.WithError(err).Debug("failed to create role manager")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		isAdmin, err := roleManager.RolemanagerCaller.IsAdmin(nil, common.HexToAddress(address))
 		if err != nil {
 			logger.WithError(err).Debug("failed to check is admin")
 			ape.RenderErr(w, problems.InternalError())
 			return
 		}
-		if !isMarketPlaceManager {
-			logger.WithFields(logan.F{"address": address}).Debug("user don't have access")
-			ape.RenderErr(w, problems.Forbidden())
-			return
+		if !isAdmin {
+			isManager, err := roleManager.RolemanagerCaller.IsAdmin(nil, common.HexToAddress(address))
+			if err != nil {
+				logger.WithError(err).Debug("failed to check is admin")
+				ape.RenderErr(w, problems.InternalError())
+				return
+			}
+			if !isManager {
+				logger.WithFields(logan.F{"account": address}).Debug("you don't have permission to create book")
+				ape.RenderErr(w, problems.Forbidden())
+				return
+			}
 		}
 	}
-
 	updateParams := data.BookUpdateParams{
-		DeployStatus: request.Data.Attributes.DeployStatus,
+		Banner:      nil,
+		File:        nil,
+		Description: nil,
 	}
 
 	// Collecting update params
@@ -130,6 +142,15 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-
+	if request.Data.Attributes.Network != nil {
+		if err = helpers.DB(r).Books().UpdateDeployStatus(
+			request.Data.Attributes.Network.Attributes.DeployStatus,
+			request.ID,
+			request.Data.Attributes.Network.Attributes.ChainId); err != nil {
+			helpers.Log(r).WithError(err).Error("failed to update book deploy status param")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+	}
 	ape.Render(w, http.StatusNoContent)
 }

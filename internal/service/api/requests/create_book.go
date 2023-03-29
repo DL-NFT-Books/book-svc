@@ -30,18 +30,10 @@ func NewCreateBookRequest(r *http.Request) (CreateBookRequest, error) {
 
 func (r CreateBookRequest) validate() error {
 	return validation.Errors{
-		"/data/attributes/title": validation.Validate(
-			&r.Data.Attributes.Title,
-			validation.Required,
-			validation.Length(1, MaxTitleLength)),
 		"/data/attributes/description": validation.Validate(
 			&r.Data.Attributes.Description,
 			validation.Required,
 			validation.Length(1, MaxDescriptionLength)),
-		"/data/attributes/token_name":   validation.Validate(&r.Data.Attributes.TokenName, validation.Required),
-		"/data/attributes/token_symbol": validation.Validate(&r.Data.Attributes.TokenSymbol, validation.Required),
-		"/data/attributes/price":        validation.Validate(&r.Data.Attributes.Price, validation.Required),
-
 		"/included/banner/attributes/name":      validation.Validate(&r.Data.Attributes.Banner.Attributes.Name, validation.Required),
 		"/included/banner/attributes/mime_type": validation.Validate(&r.Data.Attributes.Banner.Attributes.MimeType, validation.Required),
 		"/included/banner/attributes/key":       validation.Validate(&r.Data.Attributes.Banner.Attributes.Key, validation.Required),

@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"github.com/dl-nft-books/book-svc/solidity/generated/contractsregistry"
 	"github.com/dl-nft-books/book-svc/solidity/generated/rolemanager"
 	"github.com/ethereum/go-ethereum/common"
+	"gitlab.com/distributed_lab/logan/v3"
 	"net/http"
 	"strconv"
 	"time"
@@ -26,34 +28,53 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-	if _, err := networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId); err != nil {
-		logger.WithError(err).Error("default failed to check if network exists")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-
-	network, err := networker.GetNetworkDetailedByChainID(request.Data.Attributes.ChainId)
 
 	address := r.Context().Value("address").(string)
-
-	roleManager, err := rolemanager.NewRolemanager(common.HexToAddress(network.FactoryAddress), network.RpcUrl)
-	if err != nil {
-		logger.WithError(err).Debug("failed to create role manager")
-		ape.RenderErr(w, problems.InternalError())
-		return
+	for _, networkData := range request.Data.Attributes.Networks {
+		network, err := networker.GetNetworkDetailedByChainID(networkData.Attributes.ChainId)
+		if err != nil {
+			logger.WithError(err).Error("default failed to check if network exists")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		contractRegistry, err := contractsregistry.NewContractsregistry(common.HexToAddress(network.FactoryAddress), network.RpcUrl)
+		if err != nil {
+			logger.WithError(err).Debug("failed to create contract registry")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		roleManagerContract, err := contractRegistry.GetRoleManagerContract(nil)
+		if err != nil {
+			logger.WithError(err).Debug("failed to get role manager contract")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		roleManager, err := rolemanager.NewRolemanager(roleManagerContract, network.RpcUrl)
+		if err != nil {
+			logger.WithError(err).Debug("failed to create role manager")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		isAdmin, err := roleManager.RolemanagerCaller.IsAdmin(nil, common.HexToAddress(address))
+		if err != nil {
+			logger.WithError(err).Debug("failed to check is admin")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		if !isAdmin {
+			isManager, err := roleManager.RolemanagerCaller.IsAdmin(nil, common.HexToAddress(address))
+			if err != nil {
+				logger.WithError(err).Debug("failed to check is admin")
+				ape.RenderErr(w, problems.InternalError())
+				return
+			}
+			if !isManager {
+				logger.WithFields(logan.F{"account": address}).Debug("you don't have permission to create book")
+				ape.RenderErr(w, problems.Forbidden())
+				return
+			}
+		}
 	}
-	isAdmin, err := roleManager.RolemanagerCaller.IsAdmin(nil, common.HexToAddress(address))
-	if err != nil {
-		logger.WithError(err).Debug("failed to check is admin")
-		ape.RenderErr(w, problems.InternalError())
-		return
-	}
-	if !isAdmin {
-		logger.Debug("not admin's address")
-		ape.RenderErr(w, problems.Forbidden())
-		return
-	}
-
 	// Validating info
 	banner := request.Data.Attributes.Banner
 	file := request.Data.Attributes.File
@@ -95,16 +116,11 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	// Saving book to the database
 	book := data.Book{
-		Description:     request.Data.Attributes.Description,
-		CreatedAt:       time.Now(),
-		ContractAddress: "mocked",
-		Banner:          media[0],
-		File:            media[1],
-		TokenId:         tokenContractId,
-		DeployStatus:    resources.DeployPending,
-		ChainId:         request.Data.Attributes.ChainId,
+		Description: request.Data.Attributes.Description,
+		CreatedAt:   time.Now(),
+		Banner:      media[0],
+		File:        media[1],
 	}
-
 	db := helpers.DB(r)
 	var bookId int64
 
@@ -115,6 +131,19 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 			return errors.Wrap(err, "failed to save book")
 		}
 
+		// Inserting book networks
+
+		var bookNetwork []data.BookNetwork
+		for _, network := range request.Data.Attributes.Networks {
+			bookNetwork = append(bookNetwork, data.BookNetwork{
+				BookId:          bookId,
+				TokenId:         tokenContractId,
+				DeployStatus:    resources.DeployPending,
+				ContractAddress: network.Attributes.ContractAddress,
+				ChainId:         network.Attributes.ChainId,
+			})
+		}
+		err = db.Books().InsertNetwork(bookNetwork...)
 		// Updating last token id
 		if err = db.KeyValue().Upsert(data.KeyValue{
 			Key:   postgres.TokenIdIncrementKey,
