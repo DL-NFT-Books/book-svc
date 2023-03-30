@@ -26,7 +26,9 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	address := r.Context().Value("address").(string)
-	bookData, err := helpers.GetBookByID(r, request.ID)
+	bookData, err := helpers.GetBookByID(r, requests.GetBookByIDRequest{
+		ID: request.ID,
+	})
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return

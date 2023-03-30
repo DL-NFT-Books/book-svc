@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"gitlab.com/distributed_lab/urlval"
 	"net/http"
 	"strconv"
 
@@ -10,7 +11,8 @@ import (
 )
 
 type GetBookByIDRequest struct {
-	ID int64 `json:"id"`
+	ID      int64   `json:"id"`
+	ChainId []int64 `filter:"chain_id"`
 }
 
 func NewGetBookByIDRequest(r *http.Request) (GetBookByIDRequest, error) {
@@ -20,7 +22,6 @@ func NewGetBookByIDRequest(r *http.Request) (GetBookByIDRequest, error) {
 	if _, err := strconv.Atoi(id); err != nil {
 		return request, errors.New("id is not an integer")
 	}
-
 	request.ID = cast.ToInt64(id)
-	return request, nil
+	return request, urlval.Decode(r.URL.Query(), &request)
 }

@@ -19,8 +19,7 @@ func GetBookByID(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-
-	book, err := helpers.GetBookByID(r, request.ID)
+	book, err := helpers.GetBookByID(r, request)
 	if err != nil {
 		logger.WithError(err).Error("failed to get book by id")
 		ape.RenderErr(w, problems.InternalError())

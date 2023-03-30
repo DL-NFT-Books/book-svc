@@ -12,8 +12,11 @@ import (
 	"github.com/dl-nft-books/book-svc/resources"
 )
 
-func GetBookByID(r *http.Request, id int64) (*data.Book, error) {
-	return DB(r).Books().FilterByID(id).Get()
+func GetBookByID(r *http.Request, request requests.GetBookByIDRequest) (*data.Book, error) {
+	if len(request.ChainId) > 0 {
+		return DB(r).Books().FilterByID(request.ID).FilterByChainId(request.ChainId...).Get()
+	}
+	return DB(r).Books().FilterByID(request.ID).Get()
 }
 
 func GetBooksCount(r *http.Request, request *requests.ListBooksRequest) (uint64, error) {

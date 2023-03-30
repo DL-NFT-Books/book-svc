@@ -58,17 +58,17 @@ func (c *Connector) ListBooks(request models.ListBooksParams) (*models.ListBooks
 	return &result, nil
 }
 
-func (c *Connector) GetBookById(id int64) (*models.GetBookResponse, error) {
+func (c *Connector) GetBookById(bookId int64, chainId ...int64) (*models.GetBookResponse, error) {
 	var result models.GetBookResponse
 
 	// setting full endpoint
-	fullEndpoint := fmt.Sprintf("%s/%s/%d", c.baseUrl, booksEndpoint, id)
+	fullEndpoint := fmt.Sprintf("%s/%s/%d?%s", c.baseUrl, booksEndpoint, bookId, urlval.MustEncode(chainId))
 
 	// getting response
 	found, err := c.get(fullEndpoint, &result)
 	if err != nil {
 		// errors are already wrapped
-		return nil, errors.From(err, logan.F{"id": id})
+		return nil, errors.From(err, logan.F{"id": bookId})
 	}
 	if !found {
 		return nil, nil
