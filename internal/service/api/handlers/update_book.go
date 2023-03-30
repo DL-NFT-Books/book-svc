@@ -144,15 +144,5 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-	if request.Data.Attributes.Network != nil {
-		if err = helpers.DB(r).Books().UpdateDeployStatus(
-			request.Data.Attributes.Network.Attributes.DeployStatus,
-			request.ID,
-			request.Data.Attributes.Network.Attributes.ChainId); err != nil {
-			helpers.Log(r).WithError(err).Error("failed to update book deploy status param")
-			ape.RenderErr(w, problems.InternalError())
-			return
-		}
-	}
 	ape.Render(w, http.StatusNoContent)
 }

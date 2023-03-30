@@ -97,14 +97,8 @@ func GetLastTokenID(r *http.Request) (int64, error) {
 }
 
 func applyQBooksFilters(q data.BookQ, request *requests.ListBooksRequest) data.BookQ {
-	if len(request.Status) > 0 {
-		q = q.FilterByDeployStatus(request.Status...)
-	}
 	if len(request.Id) > 0 {
 		q = q.FilterByID(request.Id...)
-	}
-	if len(request.Contract) > 0 {
-		q = q.FilterByContractAddress(request.Contract...)
 	}
 	if len(request.TokenId) > 0 {
 		q = q.FilterByTokenId(request.TokenId...)

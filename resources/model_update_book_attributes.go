@@ -7,7 +7,6 @@ package resources
 type UpdateBookAttributes struct {
 	Banner *Media `json:"banner,omitempty"`
 	// Book description
-	Description *string      `json:"description,omitempty"`
-	File        *Media       `json:"file,omitempty"`
-	Network     *BookNetwork `json:"network,omitempty"`
+	Description *string `json:"description,omitempty"`
+	File        *Media  `json:"file,omitempty"`
 }

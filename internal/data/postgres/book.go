@@ -3,10 +3,6 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
-	"strings"
-
-	"github.com/dl-nft-books/book-svc/resources"
-
 	"github.com/Masterminds/squirrel"
 	"github.com/dl-nft-books/book-svc/internal/data"
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -23,8 +19,6 @@ const (
 	booksNetworksTableName = "book_network"
 	bookIdColumn           = "book_id"
 	tokenIdColumn          = "token_id"
-	contractAddressColumn  = "contract_address"
-	deployStatusColumn     = "deploy_status"
 	chainIdColumn          = "chain_id"
 )
 
@@ -32,10 +26,8 @@ func NewBooksQ(db *pgdb.DB) data.BookQ {
 	return &BooksQ{
 		db: db.Clone(),
 		selectBuilder: squirrel.Select(booksTableName+".*",
-			fmt.Sprintf("json_agg(json_build_object('%s', %s, '%s', %s, '%s', %s, '%s', %s)) as network",
+			fmt.Sprintf("json_agg(json_build_object('%s', %s, '%s', %s)) as network",
 				tokenIdColumn, tokenIdColumn,
-				contractAddressColumn, contractAddressColumn,
-				deployStatusColumn, deployStatusColumn,
 				chainIdColumn, chainIdColumn)).From(booksTableName).
 			Join(fmt.Sprintf("%s on %s.%s = %s.%s", booksNetworksTableName,
 				booksNetworksTableName, bookIdColumn,
@@ -67,9 +59,9 @@ func (b *BooksQ) Insert(data data.Book) (id int64, err error) {
 
 func (b *BooksQ) InsertNetwork(data ...data.BookNetwork) (err error) {
 	statement := squirrel.Insert(booksNetworksTableName).
-		Columns(bookIdColumn, tokenIdColumn, contractAddressColumn, chainIdColumn, deployStatusColumn)
+		Columns(bookIdColumn, tokenIdColumn, chainIdColumn)
 	for _, network := range data {
-		statement = statement.Values(network.BookId, network.TokenId, network.ContractAddress, network.ChainId, network.DeployStatus)
+		statement = statement.Values(network.BookId, network.TokenId, network.ChainId)
 	}
 
 	return b.db.Exec(statement)
@@ -116,19 +108,6 @@ func (b *BooksQ) FilterByChainId(chainId ...int64) data.BookQ {
 	return b
 }
 
-func (b *BooksQ) FilterByDeployStatus(status ...resources.DeployStatus) data.BookQ {
-	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{deployStatusColumn: status})
-	return b
-}
-
-func (b *BooksQ) FilterByContractAddress(address ...string) data.BookQ {
-	for i, a := range address {
-		address[i] = strings.ToLower(a)
-	}
-	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{fmt.Sprintf("LOWER(%s)", contractAddressColumn): address})
-	return b
-}
-
 func (b *BooksQ) Page(params pgdb.OffsetPageParams) data.BookQ {
 	b.selectBuilder = params.ApplyTo(b.selectBuilder, idColumn)
 
@@ -154,12 +133,4 @@ func (b *BooksQ) applyUpdateParams(sql squirrel.UpdateBuilder, updater data.Book
 		sql = sql.Set(descriptionColumn, *updater.Description)
 	}
 	return sql
-}
-
-func (b *BooksQ) UpdateDeployStatus(newStatus resources.DeployStatus, bookId, chainId int64) error {
-	return b.db.Exec(b.networkUpdateBuilder.Set(deployStatusColumn, newStatus).Where(squirrel.Eq{bookIdColumn: bookId, chainIdColumn: chainId}))
-}
-
-func (b *BooksQ) UpdateContractAddress(newAddress string, id int64) error {
-	return b.db.Exec(b.updateBuilder.Set(contractAddressColumn, newAddress).Where(squirrel.Eq{idColumn: id}))
 }

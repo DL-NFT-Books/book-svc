@@ -15,5 +15,3 @@ allOf:
             $ref: '#/components/schemas/Media'
           file:
             $ref: '#/components/schemas/Media'
-          network:
-            $ref: '#/components/schemas/BookNetwork'

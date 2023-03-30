@@ -135,11 +135,9 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		var bookNetwork []data.BookNetwork
 		for _, chainID := range request.Data.Attributes.ChainIds {
 			bookNetwork = append(bookNetwork, data.BookNetwork{
-				BookId:          bookId,
-				TokenId:         tokenContractId,
-				DeployStatus:    resources.DeployPending,
-				ContractAddress: "mocked",
-				ChainId:         chainID,
+				BookId:  bookId,
+				TokenId: tokenContractId,
+				ChainId: chainID,
 			})
 		}
 		err = db.Books().InsertNetwork(bookNetwork...)

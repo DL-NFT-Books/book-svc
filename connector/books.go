@@ -23,13 +23,6 @@ func (c *Connector) UpdateBook(params models.UpdateBookParams) error {
 				Banner:      params.Banner,
 				Description: params.Description,
 				File:        params.File,
-				Network: &resources.BookNetwork{
-					Attributes: resources.BookNetworkAttributes{
-						ChainId:         params.ChainId,
-						ContractAddress: params.ContractAddress,
-						DeployStatus:    params.DeployStatus,
-					},
-				},
 			},
 		},
 	}
