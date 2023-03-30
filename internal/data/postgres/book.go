@@ -106,11 +106,6 @@ func (b *BooksQ) FilterByID(id ...int64) data.BookQ {
 	return b
 }
 
-func (b *BooksQ) FilterByTitle(title string) data.BookQ {
-	b.selectBuilder = b.selectBuilder.Where(squirrel.Like{`LOWER(title)`: "%" + strings.ToLower(title) + "%"})
-	return b
-}
-
 func (b *BooksQ) FilterByTokenId(tokenId ...int64) data.BookQ {
 	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{tokenIdColumn: tokenId})
 	return b
@@ -127,7 +122,10 @@ func (b *BooksQ) FilterByDeployStatus(status ...resources.DeployStatus) data.Boo
 }
 
 func (b *BooksQ) FilterByContractAddress(address ...string) data.BookQ {
-	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{contractAddressColumn: address})
+	for i, a := range address {
+		address[i] = strings.ToLower(a)
+	}
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{fmt.Sprintf("LOWER(%s)", contractAddressColumn): address})
 	return b
 }
 

@@ -3,9 +3,9 @@ package requests
 import (
 	"net/http"
 
+	"github.com/dl-nft-books/book-svc/resources"
 	"gitlab.com/distributed_lab/kit/pgdb"
 	"gitlab.com/distributed_lab/urlval"
-	"github.com/dl-nft-books/book-svc/resources"
 )
 
 type ListBooksRequest struct {
@@ -15,7 +15,6 @@ type ListBooksRequest struct {
 	Contract []string                 `filter:"contract"`
 	Id       []int64                  `filter:"id"`
 	TokenId  []int64                  `filter:"token_id"`
-	Title    *string                  `filter:"title"`
 	ChainId  []int64                  `filter:"chain_id"`
 }
 
