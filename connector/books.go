@@ -3,9 +3,8 @@ package connector
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
-
 	"github.com/dl-nft-books/book-svc/connector/models"
+	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
 	"github.com/dl-nft-books/book-svc/resources"
 	"github.com/spf13/cast"
 	"gitlab.com/distributed_lab/logan/v3"
@@ -15,52 +14,22 @@ import (
 
 const booksEndpoint = "books"
 
-func (c *Connector) CreateBook(params models.CreateBookParams) (createdId int64, err error) {
-	request := requests.CreateBookRequest{
-		Data: resources.CreateBook{
-			Key: resources.NewKeyInt64(0, resources.BOOKS),
-			Attributes: resources.CreateBookAttributes{
-				Banner:      params.Banner,
-				Description: params.Description,
-				File:        params.File,
-			},
-		},
-	}
-
-	var response resources.CreateBookResponse
-
-	endpoint := fmt.Sprintf("%s/%s", c.baseUrl, booksEndpoint)
-	requestAsBytes, err := json.Marshal(request)
-	if err != nil {
-		return 0, errors.Wrap(err, "failed to marshal request")
-	}
-
-	if err = c.post(endpoint, requestAsBytes, &response); err != nil {
-		return 0, errors.Wrap(err, "failed to create a book")
-	}
-
-	createdBookId := cast.ToInt64(response.Data.ID)
-	return createdBookId, nil
-}
-
 func (c *Connector) UpdateBook(params models.UpdateBookParams) error {
 	request := requests.UpdateBookRequest{
-		ID: params.Id,
+		ID: cast.ToInt64(params.ID),
 		Data: resources.UpdateBook{
-			Key: resources.NewKeyInt64(params.Id, resources.BOOKS),
+			Key: resources.NewKeyInt64(cast.ToInt64(params.ID), resources.BOOKS),
 			Attributes: resources.UpdateBookAttributes{
-				Banner:             params.Banner,
-				Description:        params.Description,
-				File:               params.File,
-				Title:              params.Title,
-				ContractAddress:    params.ContractAddress,
-				ContractName:       params.ContractName,
-				DeployStatus:       params.DeployStatus,
-				TokenSymbol:        params.Symbol,
-				Price:              params.Price,
-				FloorPrice:         params.FloorPrice,
-				VoucherToken:       params.VoucherToken,
-				VoucherTokenAmount: params.VoucherTokenAmount,
+				Banner:      params.Attributes.Banner,
+				Description: params.Attributes.Description,
+				File:        params.Attributes.File,
+				Network: &resources.BookNetwork{
+					Attributes: resources.BookNetworkAttributes{
+						ChainId:         params.Attributes.Network.Attributes.ChainId,
+						ContractAddress: params.Attributes.Network.Attributes.ContractAddress,
+						DeployStatus:    params.Attributes.Network.Attributes.DeployStatus,
+					},
+				},
 			},
 		},
 	}

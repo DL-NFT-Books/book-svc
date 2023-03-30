@@ -36,11 +36,6 @@ type BookUpdateParams struct {
 	Description *string
 }
 
-// BookNetworkUpdateParams is a structure for applicable update params on bookQ `Update`
-type BookNetworkUpdateParams struct {
-	DeployStatus *resources.DeployStatus
-}
-
 type Book struct {
 	ID              int64     `db:"id" structs:"-"`
 	Description     string    `db:"description" structs:"description"`

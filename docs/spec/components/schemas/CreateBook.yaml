@@ -10,7 +10,7 @@ allOf:
           - description
           - banner
           - file
-          - networks
+          - chain_ids
         properties:
           description:
             type: string
@@ -20,7 +20,8 @@ allOf:
             $ref: '#/components/schemas/Media'
           file:
             $ref: '#/components/schemas/Media'
-          networks:
+          chain_ids:
             type: array
             items:
-              $ref: '#/components/schemas/BookNetwork'
+              type: integer
+              format: int64

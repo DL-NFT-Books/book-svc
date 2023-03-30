@@ -30,8 +30,8 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	address := r.Context().Value("address").(string)
-	for _, networkData := range request.Data.Attributes.Networks {
-		network, err := networker.GetNetworkDetailedByChainID(networkData.Attributes.ChainId)
+	for _, chainID := range request.Data.Attributes.ChainIds {
+		network, err := networker.GetNetworkDetailedByChainID(chainID)
 		if err != nil {
 			logger.WithError(err).Error("default failed to check if network exists")
 			ape.RenderErr(w, problems.InternalError())
@@ -134,13 +134,13 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		// Inserting book networks
 
 		var bookNetwork []data.BookNetwork
-		for _, network := range request.Data.Attributes.Networks {
+		for _, chainID := range request.Data.Attributes.ChainIds {
 			bookNetwork = append(bookNetwork, data.BookNetwork{
 				BookId:          bookId,
 				TokenId:         tokenContractId,
 				DeployStatus:    resources.DeployPending,
-				ContractAddress: network.Attributes.ContractAddress,
-				ChainId:         network.Attributes.ChainId,
+				ContractAddress: "mocked",
+				ChainId:         chainID,
 			})
 		}
 		err = db.Books().InsertNetwork(bookNetwork...)
