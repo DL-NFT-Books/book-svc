@@ -3,8 +3,8 @@ CREATE TABLE book(
     id BIGSERIAL PRIMARY KEY,
     description VARCHAR(500) NOT NULL,
     created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    banner JSONB DEFAULT NULL,
-    file JSONB DEFAULT NULL
+    banner JSONB NOT NULL,
+    file JSONB NOT NULL
 );
 
 CREATE TABLE book_network(

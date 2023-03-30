@@ -57,6 +57,7 @@ func (b *BooksQ) New() data.BookQ {
 }
 
 func (b *BooksQ) Insert(data data.Book) (id int64, err error) {
+	fmt.Println(data.Banner)
 	statement := squirrel.Insert(booksTableName).
 		Columns(bannerColumn, fileColumn, descriptionColumn, createdAtColumn).
 		Values(data.Banner, data.File, data.Description, data.CreatedAt).Suffix("returning id")

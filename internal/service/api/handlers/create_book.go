@@ -113,7 +113,6 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tokenContractId := lastTokenContractID + 1
-
 	// Saving book to the database
 	book := data.Book{
 		Description: request.Data.Attributes.Description,

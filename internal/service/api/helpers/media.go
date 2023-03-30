@@ -56,7 +56,6 @@ func SetMediaLink(r *http.Request, media *resources.Media) error {
 	if err != nil {
 		return err
 	}
-
 	media.Attributes.Url = &link.Data.Attributes.Url
 
 	return nil
