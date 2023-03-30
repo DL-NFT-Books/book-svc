@@ -16,18 +16,18 @@ const booksEndpoint = "books"
 
 func (c *Connector) UpdateBook(params models.UpdateBookParams) error {
 	request := requests.UpdateBookRequest{
-		ID: cast.ToInt64(params.ID),
+		ID: cast.ToInt64(params.Id),
 		Data: resources.UpdateBook{
-			Key: resources.NewKeyInt64(cast.ToInt64(params.ID), resources.BOOKS),
+			Key: resources.NewKeyInt64(cast.ToInt64(params.Id), resources.BOOKS),
 			Attributes: resources.UpdateBookAttributes{
-				Banner:      params.Attributes.Banner,
-				Description: params.Attributes.Description,
-				File:        params.Attributes.File,
+				Banner:      params.Banner,
+				Description: params.Description,
+				File:        params.File,
 				Network: &resources.BookNetwork{
 					Attributes: resources.BookNetworkAttributes{
-						ChainId:         params.Attributes.Network.Attributes.ChainId,
-						ContractAddress: params.Attributes.Network.Attributes.ContractAddress,
-						DeployStatus:    params.Attributes.Network.Attributes.DeployStatus,
+						ChainId:         params.ChainId,
+						ContractAddress: params.ContractAddress,
+						DeployStatus:    params.DeployStatus,
 					},
 				},
 			},
