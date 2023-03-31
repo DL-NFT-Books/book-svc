@@ -3,6 +3,8 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
+	"strings"
+
 	"github.com/Masterminds/squirrel"
 	"github.com/dl-nft-books/book-svc/internal/data"
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -18,7 +20,7 @@ const (
 
 	booksNetworksTableName = "book_network"
 	bookIdColumn           = "book_id"
-	tokenIdColumn          = "token_id"
+	contractAddressColumn  = "contract_address"
 	chainIdColumn          = "chain_id"
 )
 
@@ -27,7 +29,7 @@ func NewBooksQ(db *pgdb.DB) data.BookQ {
 		db: db.Clone(),
 		selectBuilder: squirrel.Select(booksTableName+".*",
 			fmt.Sprintf("json_agg(json_build_object('%s', %s, '%s', %s)) as network",
-				tokenIdColumn, tokenIdColumn,
+				contractAddressColumn, contractAddressColumn,
 				chainIdColumn, chainIdColumn)).From(booksTableName).
 			Join(fmt.Sprintf("%s on %s.%s = %s.%s", booksNetworksTableName,
 				booksNetworksTableName, bookIdColumn,
@@ -59,9 +61,9 @@ func (b *BooksQ) Insert(data data.Book) (id int64, err error) {
 
 func (b *BooksQ) InsertNetwork(data ...data.BookNetwork) (err error) {
 	statement := squirrel.Insert(booksNetworksTableName).
-		Columns(bookIdColumn, tokenIdColumn, chainIdColumn)
+		Columns(bookIdColumn, contractAddressColumn, chainIdColumn)
 	for _, network := range data {
-		statement = statement.Values(network.BookId, network.TokenId, network.ChainId)
+		statement = statement.Values(network.BookId, network.ContractAddress, network.ChainId)
 	}
 
 	return b.db.Exec(statement)
@@ -90,6 +92,7 @@ func (b *BooksQ) Get() (*data.Book, error) {
 func (b *BooksQ) Select() ([]data.Book, error) {
 	var result []data.Book
 	err := b.db.Select(&result, b.selectBuilder)
+	fmt.Println(b.selectBuilder.ToSql())
 	return result, err
 }
 
@@ -98,13 +101,16 @@ func (b *BooksQ) FilterByID(id ...int64) data.BookQ {
 	return b
 }
 
-func (b *BooksQ) FilterByTokenId(tokenId ...int64) data.BookQ {
-	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{tokenIdColumn: tokenId})
+func (b *BooksQ) FilterByChainId(chainId ...int64) data.BookQ {
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{chainIdColumn: chainId})
 	return b
 }
 
-func (b *BooksQ) FilterByChainId(chainId ...int64) data.BookQ {
-	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{chainIdColumn: chainId})
+func (b *BooksQ) FilterByContractAddress(address ...string) data.BookQ {
+	for i, a := range address {
+		address[i] = strings.ToLower(a)
+	}
+	b.selectBuilder = b.selectBuilder.Where(squirrel.Eq{fmt.Sprintf("LOWER(%s)", contractAddressColumn): address})
 	return b
 }
 
@@ -133,4 +139,8 @@ func (b *BooksQ) applyUpdateParams(sql squirrel.UpdateBuilder, updater data.Book
 		sql = sql.Set(descriptionColumn, *updater.Description)
 	}
 	return sql
+}
+
+func (b *BooksQ) UpdateContractAddress(newAddress string, id int64) error {
+	return b.db.Exec(b.updateBuilder.Set(contractAddressColumn, newAddress).Where(squirrel.Eq{idColumn: id}))
 }

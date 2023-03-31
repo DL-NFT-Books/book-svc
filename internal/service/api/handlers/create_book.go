@@ -6,11 +6,9 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"gitlab.com/distributed_lab/logan/v3"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/dl-nft-books/book-svc/internal/data"
-	"github.com/dl-nft-books/book-svc/internal/data/postgres"
 	"github.com/dl-nft-books/book-svc/internal/service/api/helpers"
 	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
 	"github.com/dl-nft-books/book-svc/resources"
@@ -105,14 +103,12 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lastTokenContractID, err := helpers.GetLastTokenID(r)
 	if err != nil {
 		logger.WithError(err).Error("failed to get last token id")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
 
-	tokenContractId := lastTokenContractID + 1
 	// Saving book to the database
 	book := data.Book{
 		Description: request.Data.Attributes.Description,
@@ -135,19 +131,12 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		var bookNetwork []data.BookNetwork
 		for _, chainID := range request.Data.Attributes.ChainIds {
 			bookNetwork = append(bookNetwork, data.BookNetwork{
-				BookId:  bookId,
-				TokenId: tokenContractId,
-				ChainId: chainID,
+				BookId:          bookId,
+				ContractAddress: "mocked",
+				ChainId:         chainID,
 			})
 		}
 		err = db.Books().InsertNetwork(bookNetwork...)
-		// Updating last token id
-		if err = db.KeyValue().Upsert(data.KeyValue{
-			Key:   postgres.TokenIdIncrementKey,
-			Value: strconv.FormatInt(tokenContractId, 10),
-		}); err != nil {
-			return errors.Wrap(err, "failed to update last created token id")
-		}
 
 		return nil
 	},

@@ -18,7 +18,7 @@ type BookQ interface {
 	Update(updater BookUpdateParams, id int64) error
 
 	FilterByID(id ...int64) BookQ
-	FilterByTokenId(tokenId ...int64) BookQ
+	FilterByContractAddress(address ...string) BookQ
 	FilterByChainId(chainId ...int64) BookQ
 
 	Page(params pgdb.OffsetPageParams) BookQ
@@ -40,7 +40,7 @@ type Book struct {
 	NetworkAsString string    `db:"network" structs:"network"`
 }
 type BookNetwork struct {
-	BookId  int64 `db:"book_id" structs:"book_id"`
-	TokenId int64 `db:"token_id" structs:"token_id"`
-	ChainId int64 `db:"chain_id" structs:"chain_id"`
+	BookId          int64  `db:"book_id" structs:"book_id"`
+	ContractAddress string `db:"contract_address" structs:"contract_address"`
+	ChainId         int64  `db:"chain_id" structs:"chain_id"`
 }

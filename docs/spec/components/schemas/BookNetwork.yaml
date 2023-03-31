@@ -7,14 +7,13 @@ allOf:
       attributes:
         type: object
         required:
-          - token_id
+          - contract_address
           - chain_id
         properties:
-          token_id:
-            type: integer
-            format: int64
-            description: id from the contract that corresponds to the given book
-            example: 5
+          contract_address:
+            type: string
+            description: Token contract address
+            example: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
           chain_id:
             type: integer
             format: int64

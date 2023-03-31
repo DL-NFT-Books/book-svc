@@ -9,7 +9,7 @@ CREATE TABLE book(
 
 CREATE TABLE book_network(
      book_id BIGSERIAL REFERENCES book(id) ON DELETE CASCADE,
-     token_id bigint,
+     contract_address VARCHAR(42) NOT NULL,
      chain_id bigint not null default 0
 );
 -- +migrate Down

@@ -2,14 +2,10 @@ package helpers
 
 import (
 	"encoding/json"
-	"net/http"
-	"strconv"
-
-	"github.com/dl-nft-books/book-svc/internal/data/postgres"
-
 	"github.com/dl-nft-books/book-svc/internal/data"
 	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
 	"github.com/dl-nft-books/book-svc/resources"
+	"net/http"
 )
 
 func GetBookByID(r *http.Request, request requests.GetBookByIDRequest) (*data.Book, error) {
@@ -80,28 +76,12 @@ func NewBook(book *data.Book) (*resources.Book, error) {
 	return &res, nil
 }
 
-func GetLastTokenID(r *http.Request) (int64, error) {
-	tokenKV, err := DB(r).KeyValue().Get(postgres.TokenIdIncrementKey)
-	if err != nil {
-		return 0, err
-	}
-
-	if tokenKV == nil {
-		tokenKV = &data.KeyValue{
-			Key:   postgres.TokenIdIncrementKey,
-			Value: "0",
-		}
-	}
-
-	return strconv.ParseInt(tokenKV.Value, 10, 64)
-}
-
 func applyQBooksFilters(q data.BookQ, request *requests.ListBooksRequest) data.BookQ {
 	if len(request.Id) > 0 {
 		q = q.FilterByID(request.Id...)
 	}
-	if len(request.TokenId) > 0 {
-		q = q.FilterByTokenId(request.TokenId...)
+	if len(request.Contract) > 0 {
+		q = q.FilterByContractAddress(request.Contract...)
 	}
 	if len(request.ChainId) > 0 {
 		q = q.FilterByChainId(request.ChainId...)
