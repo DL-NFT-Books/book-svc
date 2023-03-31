@@ -3,9 +3,6 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"github.com/dl-nft-books/book-svc/solidity/generated/contractsregistry"
-	"github.com/dl-nft-books/book-svc/solidity/generated/rolemanager"
-	"github.com/ethereum/go-ethereum/common"
 	"gitlab.com/distributed_lab/logan/v3"
 	"net/http"
 
@@ -38,49 +35,23 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	book, err := helpers.NewBook(bookData)
-	for _, networkData := range book.Attributes.Networks {
-		network, err := networker.GetNetworkDetailedByChainID(networkData.Attributes.ChainId)
+	for _, net := range book.Attributes.Networks {
+		network, err := networker.GetNetworkDetailedByChainID(net.Attributes.ChainId)
 		if err != nil {
 			logger.WithError(err).Error("default failed to check if network exists")
 			ape.RenderErr(w, problems.InternalError())
 			return
 		}
-		contractRegistry, err := contractsregistry.NewContractsregistry(common.HexToAddress(network.FactoryAddress), network.RpcUrl)
-		if err != nil {
-			logger.WithError(err).Debug("failed to create contract registry")
-			ape.RenderErr(w, problems.InternalError())
-			return
-		}
-		roleManagerContract, err := contractRegistry.GetRoleManagerContract(nil)
-		if err != nil {
-			logger.WithError(err).Debug("failed to get role manager contract")
-			ape.RenderErr(w, problems.InternalError())
-			return
-		}
-		roleManager, err := rolemanager.NewRolemanager(roleManagerContract, network.RpcUrl)
-		if err != nil {
-			logger.WithError(err).Debug("failed to create role manager")
-			ape.RenderErr(w, problems.InternalError())
-			return
-		}
-		isAdmin, err := roleManager.RolemanagerCaller.IsAdmin(nil, common.HexToAddress(address))
+		isMarketplaceManager, err := helpers.CheckMarketplacePerrmision(*network, address)
 		if err != nil {
 			logger.WithError(err).Debug("failed to check is admin")
 			ape.RenderErr(w, problems.InternalError())
 			return
 		}
-		if !isAdmin {
-			isManager, err := roleManager.RolemanagerCaller.IsAdmin(nil, common.HexToAddress(address))
-			if err != nil {
-				logger.WithError(err).Debug("failed to check is admin")
-				ape.RenderErr(w, problems.InternalError())
-				return
-			}
-			if !isManager {
-				logger.WithFields(logan.F{"account": address}).Debug("you don't have permission to create book")
-				ape.RenderErr(w, problems.Forbidden())
-				return
-			}
+		if !isMarketplaceManager {
+			logger.WithFields(logan.F{"account": address}).Debug("you don't have permission to create book")
+			ape.RenderErr(w, problems.Forbidden())
+			return
 		}
 	}
 	updateParams := data.BookUpdateParams{
