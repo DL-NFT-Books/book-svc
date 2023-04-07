@@ -21,8 +21,7 @@ type service struct {
 	db       *pgdb.DB
 
 	// Custom configs
-	mimeTypes          *config.MimeTypes
-	deploySignatureCfg *config.DeploySignatureConfig
+	mimeTypes *config.MimeTypes
 
 	// Connectors
 	doorman    doorman.ConnectorI
@@ -42,13 +41,12 @@ func (s *service) run() error {
 
 func newService(cfg config.Config) *service {
 	return &service{
-		cfg:                cfg,
-		log:                cfg.Log(),
-		copus:              cfg.Copus(),
-		listener:           cfg.Listener(),
-		db:                 cfg.DB(),
-		mimeTypes:          cfg.MimeTypes(),
-		deploySignatureCfg: cfg.DeploySignatureConfig(),
+		cfg:       cfg,
+		log:       cfg.Log(),
+		copus:     cfg.Copus(),
+		listener:  cfg.Listener(),
+		db:        cfg.DB(),
+		mimeTypes: cfg.MimeTypes(),
 
 		doorman:    cfg.DoormanConnector(),
 		documenter: cfg.DocumenterConnector(),

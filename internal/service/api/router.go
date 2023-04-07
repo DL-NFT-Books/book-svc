@@ -23,7 +23,6 @@ func (s *service) router() chi.Router {
 
 			// Service configs
 			helpers.CtxMimeTypes(s.mimeTypes),
-			helpers.CtxDeploySignature(s.deploySignatureCfg),
 
 			// Connectors
 			helpers.CtxDoormanConnector(s.doorman),
@@ -39,6 +38,7 @@ func (s *service) router() chi.Router {
 		r.Route("/{id}", func(r chi.Router) {
 			r.Get("/", handlers.GetBookByID)
 			r.With(middlewares.CheckAccessToken).Patch("/", handlers.UpdateBookByID)
+			r.With(middlewares.CheckAccessToken).Post("/network", handlers.AddBookNetwork)
 		})
 	})
 

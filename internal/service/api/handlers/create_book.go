@@ -28,8 +28,13 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	for _, net := range request.Data.Attributes.Networks {
 		network, err := networker.GetNetworkDetailedByChainID(net.Attributes.ChainId)
 		if err != nil {
-			logger.WithError(err).Error("default failed to check if network exists")
+			logger.WithError(err).Error("failed to check if network exists")
 			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		if network == nil {
+			logger.WithError(err).Error("network does not exist")
+			ape.RenderErr(w, problems.NotFound())
 			return
 		}
 		isMarketplaceManager, err := helpers.CheckMarketplacePerrmision(*network, address)

@@ -12,6 +12,8 @@ CREATE TABLE book_network(
      contract_address VARCHAR(42) NOT NULL,
      chain_id bigint not null default 0
 );
+ALTER TABLE book_network ADD UNIQUE ("book_id", "chain_id");
+
 -- +migrate Down
 DROP TABLE book;
 DROP TABLE book_network;

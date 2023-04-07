@@ -35,11 +35,20 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	book, err := helpers.NewBook(bookData)
+	if err != nil {
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
 	for _, net := range book.Attributes.Networks {
 		network, err := networker.GetNetworkDetailedByChainID(net.Attributes.ChainId)
 		if err != nil {
 			logger.WithError(err).Error("default failed to check if network exists")
 			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		if network == nil {
+			logger.WithError(err).Error("network does not exist")
+			ape.RenderErr(w, problems.NotFound())
 			return
 		}
 		isMarketplaceManager, err := helpers.CheckMarketplacePerrmision(*network, address)

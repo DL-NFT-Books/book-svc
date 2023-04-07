@@ -9,8 +9,8 @@ import (
 	"github.com/dl-nft-books/doorman/connector"
 	networker "github.com/dl-nft-books/network-svc/connector"
 
-	"gitlab.com/distributed_lab/logan/v3"
 	s3connector "github.com/dl-nft-books/blob-svc/connector/api"
+	"gitlab.com/distributed_lab/logan/v3"
 )
 
 type ctxKey int
@@ -18,7 +18,6 @@ type ctxKey int
 const (
 	logCtxKey ctxKey = iota
 	mimeTypesCtxKey
-	deploySignatureCtxKey
 	doormanConnectorCtxKey
 	documenterConnectorCtxKey
 	networkerConnectorCtxKey
@@ -45,16 +44,6 @@ func CtxMimeTypes(entry *config.MimeTypes) func(ctx context.Context) context.Con
 	return func(ctx context.Context) context.Context {
 		return context.WithValue(ctx, mimeTypesCtxKey, entry)
 	}
-}
-
-func CtxDeploySignature(entry *config.DeploySignatureConfig) func(ctx context.Context) context.Context {
-	return func(ctx context.Context) context.Context {
-		return context.WithValue(ctx, deploySignatureCtxKey, entry)
-	}
-}
-
-func DeploySignatureConfig(r *http.Request) *config.DeploySignatureConfig {
-	return r.Context().Value(deploySignatureCtxKey).(*config.DeploySignatureConfig)
 }
 
 func MimeTypes(r *http.Request) *config.MimeTypes {

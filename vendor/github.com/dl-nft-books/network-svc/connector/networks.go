@@ -20,6 +20,9 @@ func (c *Connector) GetNetworkDetailedByChainID(chainID int64) (*models.NetworkD
 		// errors are already wrapped
 		return nil, err
 	}
+	if result.Data.Attributes.ChainId == 0 {
+		return nil, nil
+	}
 	return models.NewDetailedFromResources(result.Data)
 }
 
