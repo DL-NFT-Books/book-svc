@@ -3,6 +3,10 @@ on:
     branches:
       - '**'
 
+env:
+  CI_JOB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
 jobs:
   converge:
     name: Converge
