@@ -32,7 +32,7 @@ func (s *service) router() chi.Router {
 	)
 
 	r.Route("/integrations/books", func(r chi.Router) {
-		r.With(middlewares.CheckAccessToken).Post("/", handlers.CreateBook)
+		r.Post("/", handlers.CreateBook)
 		r.Get("/", handlers.ListBooks)
 
 		r.Route("/{id}", func(r chi.Router) {
