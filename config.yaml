@@ -17,10 +17,6 @@ connector:
   url:
   token:
 
-deploy_signature:
-  eth_signer: cfc041596c8516237ca47ad13927f13e9be6ebd9442777bc4369b569cae8f887
-  initial_offset: 7210
-
 listener:
   addr: :8732
 
