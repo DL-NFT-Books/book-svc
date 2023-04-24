@@ -78,6 +78,7 @@ github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 h1:q0rUy8C/TYNBQS1+CGKw68tLOF
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/certifi/gocertifi v0.0.0-20200211180108-c7c1fbc02894 h1:JLaf/iINcLyjwbtTsCJjc6rtlASgHeIJPrB6QmwURnA=
 github.com/certifi/gocertifi v0.0.0-20200211180108-c7c1fbc02894/go.mod h1:sGbDF6GwGcLpkNXPUTkMRoywsNa/ol15pxFe6ERfguA=
+github.com/cespare/cp v0.1.0 h1:SE+dxFebS7Iik5LK0tsi1k9ZCxEaFX4AjQmoyA+1dJk=
 github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+qY=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
@@ -110,6 +111,14 @@ github.com/dgraph-io/badger v1.6.0/go.mod h1:zwt7syl517jmP8s94KqSxTlM6IMsdhYy6ps
 github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-farm v0.0.0-20190423205320-6a90982ecee2/go.mod h1:SqUrOPUnsFjfmXRMNPybcSiG0BgUW2AuFH8PAnS2iTw=
+github.com/dl-nft-books/blob-svc v0.0.4-0.20230329152701-87d01e0d57b1 h1:YxFBtfliodjS0qx61AGRkJz7fiF2XHesPKHmoS2/JFQ=
+github.com/dl-nft-books/blob-svc v0.0.4-0.20230329152701-87d01e0d57b1/go.mod h1:tuG5Ti1c4LnFxKyaigIsKwe0y6Falxfb//+rz2+IuuM=
+github.com/dl-nft-books/doorman v0.1.0-rc.1.0.20230329143604-2590a5e15d38 h1:YzbKI36bN0rgDOf1tDcPZYXRD3kR2NLn2uYNEL+4E/Y=
+github.com/dl-nft-books/doorman v0.1.0-rc.1.0.20230329143604-2590a5e15d38/go.mod h1:5WJHU1A3BCPtueHD7fWEW/IDdslcs6mOy5Lg+AKj7Bk=
+github.com/dl-nft-books/go-sdk v0.1.3-0.20230323134428-c084d93a35a8 h1:/T7X/jECBSsfP50UQoGr6hbjR1tenvu8DJDbA7SPcGw=
+github.com/dl-nft-books/go-sdk v0.1.3-0.20230323134428-c084d93a35a8/go.mod h1:4Q2oIQhKO4R29Hne4ttIxe0KNijh/vNdi7oFlbJLo00=
+github.com/dl-nft-books/network-svc v0.0.0-20230329160452-99950496eafe h1:dcHuGXbKkGsqb9vainB5Tah9O7jlyBur3cylR0FZh1A=
+github.com/dl-nft-books/network-svc v0.0.0-20230329160452-99950496eafe/go.mod h1:s3Vq12eYQ3bRigx4Yvr76334YrHMBOMKFTRW0qjVmfo=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
 github.com/edsrzf/mmap-go v1.0.0 h1:CEBF7HpRnUCSJgGUb5h1Gm7e3VkmVDrR8lvWVLtrOFw=
 github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385/go.mod h1:0vRUJqYpeSZifjYj7uP3BG/gKcuzL9xWVV/Y+cK33KM=
@@ -246,6 +255,7 @@ github.com/google/renameio v0.1.0/go.mod h1:KWCgfxg9yswjAJkECMjeO8J8rahYeXnNhOm4
 github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
+github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/googleapis/gax-go/v2 v2.0.4/go.mod h1:0Wqv26UfaUD9n4G6kQubkQ+KchISgw+vpHVxEJEs9eg=
 github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5mhpdKc/us6bOk=
 github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1/go.mod h1:wJfORRmW1u3UXTncJ5qlYoELFm8eSnnEO6hX4iZ3EWY=
@@ -416,6 +426,7 @@ github.com/poy/onpar v0.0.0-20190519213022-ee068f8ea4d1/go.mod h1:nSbFQvMj97ZyhF
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/prometheus/tsdb v0.7.1 h1:YZcsG11NqnK4czYLrWd9mpEuAJIHVQLwdrleYfszMAA=
 github.com/rjeczalik/notify v0.9.2 h1:MiTWrPj55mNDHEiIX5YUSKefw/+lCQVoAFmD6oQm5w8=
+github.com/rjeczalik/notify v0.9.2/go.mod h1:aErll2f0sUX9PXZnVNyeiObbmTlk5jnMoCa4QEjJeqM=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.8.0/go.mod h1:WmiCO8CzOY8rg0OYDC4/i/2WRWAB6poM+XZ2dLUbcbE=
@@ -519,14 +530,6 @@ gitlab.com/distributed_lab/running v1.6.0 h1:O2GQHgYkpNRDbobR11atOCH2rhS1okNKyad
 gitlab.com/distributed_lab/running v1.6.0/go.mod h1:4TnADX84dQjQMRHKIMPCVL0L97rD/Jxv0xDbrN6aKzk=
 gitlab.com/distributed_lab/urlval v3.0.0+incompatible h1:OWU3CcZU+z0BVooufOSQFO9biDfsjM3e7YYauC278HU=
 gitlab.com/distributed_lab/urlval v3.0.0+incompatible/go.mod h1:cKnUlnZCHUuke/l95YLvW5JoGC2yn53HVgF9rt1WiIg=
-gitlab.com/tokend/nft-books/blob-svc v0.0.4-0.20221207105353-c6d1df229e8d h1:ce1dOWmTbuKeXEV9FexbPMgt2jgvoiFGKhtQ39NXr10=
-gitlab.com/tokend/nft-books/blob-svc v0.0.4-0.20221207105353-c6d1df229e8d/go.mod h1:q1z3N4ZyIFjFIPr5rJWaYlRjURgZ6WVB928KFpwd2bY=
-gitlab.com/tokend/nft-books/doorman v0.1.0-rc.1.0.20221208122624-848d4fe0422f h1:ddoLuVWHHPCUdMFbcszPNY2Na7wP8/IyqQx/o1upTjU=
-gitlab.com/tokend/nft-books/doorman v0.1.0-rc.1.0.20221208122624-848d4fe0422f/go.mod h1:OP0gfs3KcgJcCAdEadNUT2pMxwBqgEq32bmX9HItFTs=
-gitlab.com/tokend/nft-books/go-sdk v0.1.2 h1:w0+cHanVfAW951iJ4cE/BGy/T/DlukBgf+O7QQjLXkc=
-gitlab.com/tokend/nft-books/go-sdk v0.1.2/go.mod h1:GtEYT+rHPUb5pT8+0PULSnkqkcksmOz7vlfqPxCwhas=
-gitlab.com/tokend/nft-books/network-svc v0.0.0-20230228124725-092327ef3392 h1:0BiYHsv+MI6xo1atYJ4S9+rgxVi6x3nkZJrCvjciMlQ=
-gitlab.com/tokend/nft-books/network-svc v0.0.0-20230228124725-092327ef3392/go.mod h1:qSawvsusldNL6fGpkycUbbqXa7RiGUqMoHt4THxMvMc=
 go.etcd.io/etcd/api/v3 v3.5.0/go.mod h1:cbVKeC6lCfl7j/8jBhAK6aIYO9XOjdptoxU/nLQcPvs=
 go.etcd.io/etcd/client/pkg/v3 v3.5.0/go.mod h1:IJHfcCEKxYu1Os13ZdwCwIUTUVGYTSAM3YSwc9/Ac1g=
 go.etcd.io/etcd/client/v2 v2.305.0/go.mod h1:h9puh54ZTgAKtEbut2oe9P4L/oqKCVB6xsXlzd7alYQ=
@@ -659,6 +662,7 @@ golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJ
 golang.org/x/sys v0.0.0-20180823144017-11551d06cbcc/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+golang.org/x/sys v0.0.0-20180926160741-c2ed4eda69e7/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20181026203630-95b1ffbd15a5/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20181205085412-a5c9d58dba9a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=

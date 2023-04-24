@@ -1,0 +1,21 @@
+allOf:
+  - $ref: '#/components/schemas/BookNetworkKey'
+  - type: object
+    required:
+      - attributes
+    properties:
+      attributes:
+        type: object
+        required:
+          - contract_address
+          - chain_id
+        properties:
+          contract_address:
+            type: string
+            description: Token contract address
+            example: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+          chain_id:
+            type: integer
+            format: int64
+            description: Networks chain id
+            example: 5

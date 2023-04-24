@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"gitlab.com/distributed_lab/kit/pgdb"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data"
+	"github.com/dl-nft-books/book-svc/internal/data"
 )
 
 type db struct {

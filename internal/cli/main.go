@@ -4,8 +4,8 @@ import (
 	"github.com/alecthomas/kingpin"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3"
-	"gitlab.com/tokend/nft-books/book-svc/internal/config"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api"
+	"github.com/dl-nft-books/book-svc/internal/config"
+	"github.com/dl-nft-books/book-svc/internal/service/api"
 )
 
 var (

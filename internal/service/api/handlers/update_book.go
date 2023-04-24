@@ -6,39 +6,67 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"net/http"
 
+	"github.com/dl-nft-books/book-svc/internal/data"
+	"github.com/dl-nft-books/book-svc/internal/service/api/helpers"
+	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
 )
 
-var invalidContractNameErr = errors.New("invalid contract name length")
-
 func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
+
+	logger := helpers.Log(r)
+	networker := helpers.Networker(r)
 	request, err := requests.NewUpdateBookRequest(r)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-
-	book, err := helpers.GetBookByID(r, request.ID)
+	address := helpers.UserAddress(r)
+	bookData, err := helpers.GetBookByID(r, requests.GetBookByIDRequest{
+		ID: request.ID,
+	})
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-	if book == nil {
+	if bookData == nil {
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
+	book, err := helpers.NewBook(bookData)
+	if err != nil {
+		ape.RenderErr(w, problems.InternalError())
+		return
+	}
+	for _, net := range book.Attributes.Networks {
+		network, err := networker.GetNetworkDetailedByChainID(net.Attributes.ChainId)
+		if err != nil {
+			logger.WithError(err).Error("default failed to check if network exists")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		if network == nil {
+			logger.WithError(err).Error("network does not exist")
+			ape.RenderErr(w, problems.NotFound())
+			return
+		}
+		isMarketplaceManager, err := helpers.CheckMarketplacePermission(*network, address)
+		if err != nil {
+			logger.WithError(err).Debug("failed to check is admin")
+			ape.RenderErr(w, problems.InternalError())
+			return
+		}
+		if !isMarketplaceManager {
+			logger.WithFields(logan.F{"account": address}).Debug("you don't have permission to create book")
+			ape.RenderErr(w, problems.Forbidden())
+			return
+		}
+	}
 	updateParams := data.BookUpdateParams{
-		Contract:           request.Data.Attributes.ContractAddress,
-		DeployStatus:       request.Data.Attributes.DeployStatus,
-		Price:              request.Data.Attributes.Price,
-		FloorPrice:         request.Data.Attributes.FloorPrice,
-		Symbol:             request.Data.Attributes.TokenSymbol,
-		VoucherToken:       request.Data.Attributes.VoucherToken,
-		VoucherTokenAmount: request.Data.Attributes.VoucherTokenAmount,
+		Banner:      nil,
+		File:        nil,
+		Description: nil,
 	}
 
 	// Collecting update params
@@ -78,29 +106,6 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		updateParams.File = &fileMediaRaw[0]
 	}
 
-	title := request.Data.Attributes.Title
-	if title != nil {
-		if len(*title) > requests.MaxTitleLength {
-			err = errors.New(fmt.Sprintf("invalid title length (max len is %v)", requests.MaxTitleLength))
-			helpers.Log(r).WithError(err).Error("failed to validate book's title")
-			ape.RenderErr(w, problems.BadRequest(err)...)
-			return
-		}
-
-		updateParams.Title = title
-	}
-
-	contractName := request.Data.Attributes.ContractName
-	if contractName != nil {
-		if len(*contractName) > requests.MaxTitleLength {
-			helpers.Log(r).WithFields(logan.F{"max_title_len": requests.MaxTitleLength}).Error(invalidContractNameErr)
-			ape.RenderErr(w, problems.BadRequest(invalidContractNameErr)...)
-			return
-		}
-
-		updateParams.ContractName = contractName
-	}
-
 	description := request.Data.Attributes.Description
 	if description != nil {
 		if len(*description) > requests.MaxDescriptionLength {
@@ -119,6 +124,5 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-
 	ape.Render(w, http.StatusNoContent)
 }

@@ -1,4 +1,4 @@
-module gitlab.com/tokend/nft-books/book-svc
+module github.com/dl-nft-books/book-svc
 
 go 1.18
 
@@ -6,6 +6,9 @@ require (
 	github.com/Masterminds/squirrel v1.4.0
 	github.com/alecthomas/kingpin v2.2.6+incompatible
 	github.com/davecgh/go-spew v1.1.1
+	github.com/dl-nft-books/blob-svc v0.0.4-0.20230329152701-87d01e0d57b1
+	github.com/dl-nft-books/doorman v0.1.0-rc.1.0.20230329143604-2590a5e15d38
+	github.com/dl-nft-books/network-svc v0.0.0-20230329160452-99950496eafe
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/ethersphere/bee v1.9.0
 	github.com/fatih/structs v1.1.0
@@ -20,9 +23,6 @@ require (
 	gitlab.com/distributed_lab/kit v1.11.1
 	gitlab.com/distributed_lab/logan v3.8.1+incompatible
 	gitlab.com/distributed_lab/urlval v3.0.0+incompatible
-	gitlab.com/tokend/nft-books/blob-svc v0.0.4-0.20221207105353-c6d1df229e8d
-	gitlab.com/tokend/nft-books/doorman v0.1.0-rc.1.0.20221208122624-848d4fe0422f
-	gitlab.com/tokend/nft-books/network-svc v0.0.0-20230228124725-092327ef3392
 )
 
 require (
@@ -35,6 +35,7 @@ require (
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
+	github.com/dl-nft-books/go-sdk v0.1.3-0.20230323134428-c084d93a35a8 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/getsentry/raven-go v0.2.0 // indirect
 	github.com/getsentry/sentry-go v0.7.0 // indirect
@@ -42,6 +43,7 @@ require (
 	github.com/go-ole/go-ole v1.2.5 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/google/jsonapi v0.0.0-20200226002910-c8283f632fb7 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jmoiron/sqlx v1.2.0 // indirect
@@ -52,6 +54,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/pelletier/go-toml v1.9.3 // indirect
+	github.com/rjeczalik/notify v0.9.2 // indirect
 	github.com/shirou/gopsutil v3.21.5+incompatible // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
@@ -63,7 +66,6 @@ require (
 	github.com/tklauser/numcpus v0.2.2 // indirect
 	gitlab.com/distributed_lab/lorem v0.2.0 // indirect
 	gitlab.com/distributed_lab/running v1.6.0 // indirect
-	gitlab.com/tokend/nft-books/go-sdk v0.1.2 // indirect
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/text v0.3.7 // indirect

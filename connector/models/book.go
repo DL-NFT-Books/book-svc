@@ -1,6 +1,6 @@
 package models
 
-import "gitlab.com/tokend/nft-books/book-svc/resources"
+import "github.com/dl-nft-books/book-svc/resources"
 
 type (
 	GetBookResponse   resources.BookResponse

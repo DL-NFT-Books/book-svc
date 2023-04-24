@@ -2,15 +2,15 @@ package helpers
 
 import (
 	"context"
-	"gitlab.com/tokend/nft-books/book-svc/internal/data"
+	"github.com/dl-nft-books/book-svc/internal/data"
 	"net/http"
 
-	"gitlab.com/tokend/nft-books/book-svc/internal/config"
-	"gitlab.com/tokend/nft-books/doorman/connector"
-	networker "gitlab.com/tokend/nft-books/network-svc/connector"
+	"github.com/dl-nft-books/book-svc/internal/config"
+	"github.com/dl-nft-books/doorman/connector"
+	networker "github.com/dl-nft-books/network-svc/connector"
 
+	s3connector "github.com/dl-nft-books/blob-svc/connector/api"
 	"gitlab.com/distributed_lab/logan/v3"
-	s3connector "gitlab.com/tokend/nft-books/blob-svc/connector/api"
 )
 
 type ctxKey int
@@ -18,7 +18,7 @@ type ctxKey int
 const (
 	logCtxKey ctxKey = iota
 	mimeTypesCtxKey
-	deploySignatureCtxKey
+	userAddressCtxKey
 	doormanConnectorCtxKey
 	documenterConnectorCtxKey
 	networkerConnectorCtxKey
@@ -47,18 +47,18 @@ func CtxMimeTypes(entry *config.MimeTypes) func(ctx context.Context) context.Con
 	}
 }
 
-func CtxDeploySignature(entry *config.DeploySignatureConfig) func(ctx context.Context) context.Context {
+func MimeTypes(r *http.Request) *config.MimeTypes {
+	return r.Context().Value(mimeTypesCtxKey).(*config.MimeTypes)
+}
+
+func CtxUserAddress(entry string) func(ctx context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
-		return context.WithValue(ctx, deploySignatureCtxKey, entry)
+		return context.WithValue(ctx, userAddressCtxKey, entry)
 	}
 }
 
-func DeploySignatureConfig(r *http.Request) *config.DeploySignatureConfig {
-	return r.Context().Value(deploySignatureCtxKey).(*config.DeploySignatureConfig)
-}
-
-func MimeTypes(r *http.Request) *config.MimeTypes {
-	return r.Context().Value(mimeTypesCtxKey).(*config.MimeTypes)
+func UserAddress(r *http.Request) string {
+	return r.Context().Value(userAddressCtxKey).(string)
 }
 
 func Log(r *http.Request) *logan.Entry {

@@ -105,18 +105,6 @@ delete:
         type: string
         format: 'Bearer {token}'
         example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
-  requestBody:
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            data:
-              $ref: '#/components/schemas/UpdateBook'
-            included:
-              type: array
-              items:
-                $ref: '#/components/schemas/Media'
   responses:
     '204':
       description: Success

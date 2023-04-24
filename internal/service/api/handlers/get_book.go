@@ -3,9 +3,9 @@ package handlers
 import (
 	"net/http"
 
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/helpers"
-	"gitlab.com/tokend/nft-books/book-svc/internal/service/api/requests"
-	"gitlab.com/tokend/nft-books/book-svc/resources"
+	"github.com/dl-nft-books/book-svc/internal/service/api/helpers"
+	"github.com/dl-nft-books/book-svc/internal/service/api/requests"
+	"github.com/dl-nft-books/book-svc/resources"
 
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
@@ -19,8 +19,7 @@ func GetBookByID(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-
-	book, err := helpers.GetBookByID(r, request.ID)
+	book, err := helpers.GetBookByID(r, request)
 	if err != nil {
 		logger.WithError(err).Error("failed to get book by id")
 		ape.RenderErr(w, problems.InternalError())

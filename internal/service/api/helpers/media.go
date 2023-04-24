@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/dl-nft-books/book-svc/resources"
 	"gitlab.com/distributed_lab/logan/v3/errors"
-	"gitlab.com/tokend/nft-books/book-svc/resources"
 )
 
 func MarshalMedia(media ...*resources.Media) []string {
@@ -56,7 +56,6 @@ func SetMediaLink(r *http.Request, media *resources.Media) error {
 	if err != nil {
 		return err
 	}
-
 	media.Attributes.Url = &link.Data.Attributes.Url
 
 	return nil

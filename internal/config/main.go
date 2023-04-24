@@ -1,14 +1,14 @@
 package config
 
 import (
+	documenter "github.com/dl-nft-books/blob-svc/connector/config"
+	doormaner "github.com/dl-nft-books/doorman/connector/config"
+	networker "github.com/dl-nft-books/network-svc/connector"
 	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/kit/copus"
 	"gitlab.com/distributed_lab/kit/copus/types"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/kit/pgdb"
-	documenter "gitlab.com/tokend/nft-books/blob-svc/connector/config"
-	doormaner "gitlab.com/tokend/nft-books/doorman/connector/config"
-	networker "gitlab.com/tokend/nft-books/network-svc/connector"
 )
 
 type Config interface {
@@ -25,7 +25,6 @@ type Config interface {
 
 	// Custom configs
 	MimeTypesConfigurator
-	DeploySignatureConfigurator
 }
 
 type config struct {
@@ -42,7 +41,6 @@ type config struct {
 
 	// Custom configs
 	MimeTypesConfigurator
-	DeploySignatureConfigurator
 
 	getter kv.Getter
 }
@@ -56,8 +54,7 @@ func New(getter kv.Getter) Config {
 		Logger:     comfig.NewLogger(getter, comfig.LoggerOpts{}),
 
 		// Custom configs
-		MimeTypesConfigurator:       NewMimeTypesConfigurator(getter),
-		DeploySignatureConfigurator: NewDeploySignatureConfigurator(getter),
+		MimeTypesConfigurator: NewMimeTypesConfigurator(getter),
 
 		// Connectors
 		Documenter:          documenter.NewDocumenter(getter),
