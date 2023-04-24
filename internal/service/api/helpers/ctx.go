@@ -18,6 +18,7 @@ type ctxKey int
 const (
 	logCtxKey ctxKey = iota
 	mimeTypesCtxKey
+	userAddressCtxKey
 	doormanConnectorCtxKey
 	documenterConnectorCtxKey
 	networkerConnectorCtxKey
@@ -48,6 +49,16 @@ func CtxMimeTypes(entry *config.MimeTypes) func(ctx context.Context) context.Con
 
 func MimeTypes(r *http.Request) *config.MimeTypes {
 	return r.Context().Value(mimeTypesCtxKey).(*config.MimeTypes)
+}
+
+func CtxUserAddress(entry string) func(ctx context.Context) context.Context {
+	return func(ctx context.Context) context.Context {
+		return context.WithValue(ctx, userAddressCtxKey, entry)
+	}
+}
+
+func UserAddress(r *http.Request) string {
+	return r.Context().Value(userAddressCtxKey).(string)
 }
 
 func Log(r *http.Request) *logan.Entry {

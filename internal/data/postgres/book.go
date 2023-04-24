@@ -68,15 +68,6 @@ func (b *BooksQ) InsertNetwork(data ...data.BookNetwork) (err error) {
 	return b.db.Exec(statement)
 }
 
-func (b *BooksQ) Count() (uint64, error) {
-	var res uint64
-	selStmt := squirrel.Select("COUNT(book)").
-		FromSelect(b.selectBuilder, "book")
-	err := b.db.Get(&res, selStmt)
-
-	return res, err
-}
-
 func (b *BooksQ) Get() (*data.Book, error) {
 	var result data.Book
 

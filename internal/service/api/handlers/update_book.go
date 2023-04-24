@@ -22,7 +22,7 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-	address := r.Context().Value("address").(string)
+	address := helpers.UserAddress(r)
 	bookData, err := helpers.GetBookByID(r, requests.GetBookByIDRequest{
 		ID: request.ID,
 	})
@@ -51,7 +51,7 @@ func UpdateBookByID(w http.ResponseWriter, r *http.Request) {
 			ape.RenderErr(w, problems.NotFound())
 			return
 		}
-		isMarketplaceManager, err := helpers.CheckMarketplacePerrmision(*network, address)
+		isMarketplaceManager, err := helpers.CheckMarketplacePermission(*network, address)
 		if err != nil {
 			logger.WithError(err).Debug("failed to check is admin")
 			ape.RenderErr(w, problems.InternalError())

@@ -24,7 +24,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	address := r.Context().Value("address").(string)
+	address := helpers.UserAddress(r)
 	for _, net := range request.Data.Attributes.Networks {
 		network, err := networker.GetNetworkDetailedByChainID(net.Attributes.ChainId)
 		if err != nil {
@@ -37,7 +37,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 			ape.RenderErr(w, problems.NotFound())
 			return
 		}
-		isMarketplaceManager, err := helpers.CheckMarketplacePerrmision(*network, address)
+		isMarketplaceManager, err := helpers.CheckMarketplacePermission(*network, address)
 		if err != nil {
 			logger.WithError(err).Debug("failed to check is admin")
 			ape.RenderErr(w, problems.InternalError())

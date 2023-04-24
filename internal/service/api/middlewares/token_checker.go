@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/dl-nft-books/book-svc/internal/service/api/helpers"
@@ -16,6 +15,7 @@ func CheckAccessToken(next http.Handler) http.Handler {
 			ape.RenderErr(w, problems.Unauthorized())
 			return
 		}
-		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), "address", address)))
+		helpers.CtxUserAddress(address)
+		next.ServeHTTP(w, r)
 	})
 }
